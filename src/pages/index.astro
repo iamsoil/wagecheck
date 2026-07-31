@@ -1,0 +1,31 @@
+<---
+import Layout from '../layouts/Layout';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import HeroSection from '../components/HeroSection';
+import CalculatorCard from '../components/CalculatorCard';
+--->
+<Layout>
+  <HeroSection />
+  <div class="max-w-4xl mx-auto px-4 py-12 space-y-8">
+    <CalculatorCard
+      title="Take-Home Pay Calculator"
+      description="Calculate your net salary after tax and national insurance."
+      href="/salary"
+      icon="<svg class=\"h-6 w-6 text-emerald-500\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M3 9v6a3 3 0 0 0 3 3h3a2 2 0 0 1 2-2H7a2 2 0 0 1 2-2z\"/></svg>"
+    />
+    <CalculatorCard
+      title="Stamp Duty Calculator"
+      description="Estimate stamp duty land tax on property purchases."
+      href="/stamp-duty"
+      icon="<svg class=\"h-6 w-6 text-emerald-500\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M2 21h4v-2H2v-7h2v-2H2v-7h4V9h2v12zM6 9h4v6H6V9z\"/></svg>"
+    />
+    <CalculatorCard
+      title="Rental Yield Calculator"
+      description="Calculate rental yield for property investments. <span class=\"text-yellow-600\">Coming soon</span>"
+      href="/rental-yield"
+      icon="<svg class=\"h-6 w-6 text-emerald-500\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 24 24\"><path d=\"M12 2a10 10 0 1 0 10 10A10.01 10.01 0 0 0 12 2zm0 18a8 8 0 1 1 0-16 8.01 8.01 0 0 1 0 16z\"/></svg>"
+      badge="Coming soon"
+    />
+  </div>
+</Layout>
