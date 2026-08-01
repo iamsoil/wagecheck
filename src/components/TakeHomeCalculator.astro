@@ -1,0 +1,473 @@
+---
+import OdometerNumber from './OdometerNumber.astro';
+import { calculateTakeHomePay } from '../lib/calculations';
+
+type Props = {
+  initialGrossSalary?: number;
+  initialPensionContribution?: number;
+  initialStudentLoanPlan?: 'none' | 'plan1' | 'plan2' | 'plan4' | 'postgraduate';
+  showCalculateButton?: boolean;
+  liveUpdate?: boolean;
+};
+
+const {
+  initialGrossSalary = 50000,
+  initialPensionContribution = 0,
+  initialStudentLoanPlan = 'none',
+  showCalculateButton = true,
+  liveUpdate = false,
+} = Astro.props as Props;
+
+const currency = new Intl.NumberFormat('en-GB', {
+  style: 'currency',
+  currency: 'GBP',
+  maximumFractionDigits: 0,
+});
+
+const initialCalculation = calculateTakeHomePay({
+  grossAnnualSalary: initialGrossSalary,
+  pensionContributionPercent: initialPensionContribution,
+  studentLoanPlan: initialStudentLoanPlan,
+});
+---
+
+<section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+  <div class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <form id="take-home-calculator" class="space-y-6">
+        <div>
+          <label for="grossSalary" class="mb-2 block text-sm font-medium text-slate-600">Gross annual salary</label>
+          <div class="flex items-center gap-3 border-b-2 border-slate-200 pb-2 focus-within:border-emerald-500">
+            <span class="text-slate-500">£</span>
+            <input
+              id="grossSalary"
+              name="grossSalary"
+              type="number"
+              min="0"
+              step="1000"
+              value={initialGrossSalary}
+              inputmode="numeric"
+              class="w-full border-0 bg-transparent p-0 text-lg font-medium text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0"
+              aria-describedby="grossSalaryHelp"
+            />
+          </div>
+          <p id="grossSalaryHelp" class="mt-2 text-xs text-slate-500">Enter your annual salary before pension deductions.</p>
+        </div>
+
+        <div>
+          <div class="mb-2 flex items-center justify-between gap-4">
+            <label for="pensionContribution" class="block text-sm font-medium text-slate-600">Pension contribution</label>
+            <output id="pensionContributionValue" class="text-sm font-semibold text-emerald-700">0%</output>
+          </div>
+          <input
+            id="pensionContribution"
+            name="pensionContribution"
+            type="range"
+            min="0"
+            max="20"
+            step="0.5"
+            value={initialPensionContribution}
+            class="h-2 w-full cursor-pointer appearance-none rounded-full bg-slate-200 accent-emerald-600"
+          />
+          <p class="mt-2 text-xs text-slate-500">Slider range: 0% to 20% of gross salary.</p>
+        </div>
+
+        <div>
+          <label for="studentLoanPlan" class="mb-2 block text-sm font-medium text-slate-600">Student loan plan</label>
+          <select
+            id="studentLoanPlan"
+            name="studentLoanPlan"
+            class="w-full border-b-2 border-slate-200 bg-transparent px-0 py-2 text-base font-medium text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-0"
+          >
+            <option value="none" selected={initialStudentLoanPlan === 'none'}>None</option>
+            <option value="plan1" selected={initialStudentLoanPlan === 'plan1'}>Plan 1</option>
+            <option value="plan2" selected={initialStudentLoanPlan === 'plan2'}>Plan 2</option>
+            <option value="plan4" selected={initialStudentLoanPlan === 'plan4'}>Plan 4</option>
+            <option value="postgraduate" selected={initialStudentLoanPlan === 'postgraduate'}>Postgraduate</option>
+          </select>
+        </div>
+
+        <div>
+          <p class="mb-2 block text-sm font-medium text-slate-600">Tax year</p>
+          <div class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+            2026/27
+          </div>
+        </div>
+
+        {showCalculateButton && (
+          <button
+            id="calculateButton"
+            type="button"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          >
+            <svg id="calculateSpinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4Zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 2.842 1.056 5.438 2.793 7.431l3.207-2.14Z"></path>
+            </svg>
+            <svg id="calculateIcon" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M4 2.75A1.75 1.75 0 0 1 5.75 1h8.5A1.75 1.75 0 0 1 16 2.75v14.5A1.75 1.75 0 0 1 14.25 19h-8.5A1.75 1.75 0 0 1 4 17.25V2.75ZM6 4.5h8V3.25a.25.25 0 0 0-.25-.25h-7.5a.25.25 0 0 0-.25.25V4.5Zm1 3A1.25 1.25 0 1 0 7 5a1.25 1.25 0 0 0 0 2.5Zm2.75-.75a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm-.75 4.75a.75.75 0 0 0 0 1.5h3.25a.75.75 0 0 0 0-1.5H9Zm-2-1.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z" />
+            </svg>
+            <span id="calculateButtonText">Calculate</span>
+          </button>
+        )}
+      </form>
+      <p id="calculationStatus" class="mt-4 hidden text-sm text-slate-500">Calculating...</p>
+    </div>
+
+    <div id="resultsPanel" class="hidden space-y-6" aria-live="polite">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Annual take-home</p>
+          <OdometerNumber id="annualTakeHome" value={initialCalculation.annualTakeHome} duration={1200} class="mt-3 text-4xl font-bold text-emerald-600" />
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Monthly take-home</p>
+          <OdometerNumber id="monthlyTakeHome" value={initialCalculation.monthlyTakeHome} duration={1200} class="mt-3 text-3xl font-bold text-slate-900" />
+        </article>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Income Tax</p>
+          <OdometerNumber id="incomeTaxAmount" value={initialCalculation.incomeTax} duration={800} class="mt-2 text-2xl font-bold text-slate-900" />
+          <p id="incomeTaxPercent" class="mt-1 text-sm text-slate-500">0% of gross</p>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">National Insurance</p>
+          <OdometerNumber id="niAmount" value={initialCalculation.nationalInsurance} duration={800} class="mt-2 text-2xl font-bold text-slate-900" />
+          <p id="niPercent" class="mt-1 text-sm text-slate-500">0% of gross</p>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Student Loan</p>
+          <OdometerNumber id="studentLoanAmount" value={initialCalculation.studentLoan} duration={800} class="mt-2 text-2xl font-bold text-slate-900" />
+          <p id="studentLoanPercent" class="mt-1 text-sm text-slate-500">0% of gross</p>
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Pension</p>
+          <OdometerNumber id="pensionAmount" value={initialCalculation.pension} duration={800} class="mt-2 text-2xl font-bold text-slate-900" />
+          <p id="pensionPercent" class="mt-1 text-sm text-slate-500">0% of gross</p>
+        </article>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <h2 class="text-lg font-semibold text-slate-900">Where your money goes</h2>
+          <p id="grossSummary" class="text-sm text-slate-500">Of £0 gross salary</p>
+        </div>
+
+        <div class="h-4 overflow-hidden rounded-full bg-slate-200" aria-label="Salary breakdown chart">
+          <div id="takeHomeSegment" class="h-full bg-emerald-500" style="width: 0%"></div>
+          <div id="taxSegment" class="h-full bg-rose-500" style="width: 0%"></div>
+          <div id="niSegment" class="h-full bg-sky-500" style="width: 0%"></div>
+          <div id="studentLoanSegment" class="h-full bg-amber-400" style="width: 0%"></div>
+          <div id="pensionSegment" class="h-full bg-slate-300" style="width: 0%"></div>
+        </div>
+
+        <div class="mt-4 grid gap-3 text-sm text-slate-600 sm:grid-cols-2 xl:grid-cols-5">
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
+            <span>Take-home</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-rose-500"></span>
+            <span>Tax</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-sky-500"></span>
+            <span>NI</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+            <span>Student loan</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="h-3 w-3 rounded-full bg-slate-300"></span>
+            <span>Pension</span>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            id="shareTakeHomeButton"
+            type="button"
+            class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+          >
+            Share this result
+          </button>
+          <p class="text-xs text-slate-500">Copies a summary of your take-home estimate to the clipboard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const calculatorForm = document.getElementById('take-home-calculator');
+  const resultsPanel = document.getElementById('resultsPanel');
+  const grossSalaryInput = document.getElementById('grossSalary');
+  const pensionInput = document.getElementById('pensionContribution');
+  const pensionValue = document.getElementById('pensionContributionValue');
+  const studentLoanPlanInput = document.getElementById('studentLoanPlan');
+
+  const annualTakeHome = document.getElementById('annualTakeHome');
+  const monthlyTakeHome = document.getElementById('monthlyTakeHome');
+  const incomeTaxAmount = document.getElementById('incomeTaxAmount');
+  const incomeTaxPercent = document.getElementById('incomeTaxPercent');
+  const niAmount = document.getElementById('niAmount');
+  const niPercent = document.getElementById('niPercent');
+  const studentLoanAmount = document.getElementById('studentLoanAmount');
+  const studentLoanPercent = document.getElementById('studentLoanPercent');
+  const pensionAmount = document.getElementById('pensionAmount');
+  const pensionPercent = document.getElementById('pensionPercent');
+  const grossSummary = document.getElementById('grossSummary');
+
+  const takeHomeSegment = document.getElementById('takeHomeSegment');
+  const taxSegment = document.getElementById('taxSegment');
+  const niSegment = document.getElementById('niSegment');
+  const studentLoanSegment = document.getElementById('studentLoanSegment');
+  const pensionSegment = document.getElementById('pensionSegment');
+  const calculateButton = document.getElementById('calculateButton');
+  const calculateSpinner = document.getElementById('calculateSpinner');
+  const calculateIcon = document.getElementById('calculateIcon');
+  const calculateButtonText = document.getElementById('calculateButtonText');
+  const calculationStatus = document.getElementById('calculationStatus');
+  const shareTakeHomeButton = document.getElementById('shareTakeHomeButton');
+  let lastCalculatedValues = null;
+  let debounceTimer = null;
+  let loadingTimer = null;
+
+  const currencyFormatter = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    maximumFractionDigits: 0,
+  });
+
+  const percentageFormatter = new Intl.NumberFormat('en-GB', {
+    maximumFractionDigits: 1,
+  });
+
+  const studentLoanThresholds = {
+    none: null,
+    plan1: 24990,
+    plan2: 27295,
+    plan4: 31395,
+    postgraduate: 21000,
+  };
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function formatCurrency(value) {
+    return currencyFormatter.format(Math.round(value));
+  }
+
+  function formatPercent(value) {
+    return `${percentageFormatter.format(value)}%`;
+  }
+
+  function calculatePersonalAllowance(taxableGross) {
+    if (taxableGross <= 100000) return 12570;
+
+    const reduction = (taxableGross - 100000) / 2;
+    return clamp(12570 - reduction, 0, 12570);
+  }
+
+  function calculateProgressiveTax(taxableIncome) {
+    const basicBand = 37700;
+    const higherBand = 74870;
+
+    const basicTax = Math.min(taxableIncome, basicBand) * 0.2;
+    const higherTax = Math.max(Math.min(taxableIncome - basicBand, higherBand), 0) * 0.4;
+    const additionalTax = Math.max(taxableIncome - basicBand - higherBand, 0) * 0.45;
+
+    return basicTax + higherTax + additionalTax;
+  }
+
+  function calculateNationalInsurance(income) {
+    const lowerLimit = 12570;
+    const upperLimit = 50270;
+
+    const mainRate = Math.max(Math.min(income - lowerLimit, upperLimit - lowerLimit), 0) * 0.08;
+    const additionalRate = Math.max(income - upperLimit, 0) * 0.02;
+
+    return mainRate + additionalRate;
+  }
+
+  function calculateStudentLoan(income, plan) {
+    if (plan === 'none') return 0;
+
+    const threshold = studentLoanThresholds[plan];
+    const rate = plan === 'postgraduate' ? 0.06 : 0.09;
+
+    return Math.max(income - threshold, 0) * rate;
+  }
+
+  function getCurrentValues() {
+    const gross = Math.max(Number.parseFloat(grossSalaryInput.value || '0'), 0);
+    const pensionRate = clamp(Number.parseFloat(pensionInput.value || '0'), 0, 20);
+    const studentPlan = studentLoanPlanInput.value;
+
+    const pension = gross * (pensionRate / 100);
+    const salaryAfterPension = Math.max(gross - pension, 0);
+    const personalAllowance = calculatePersonalAllowance(salaryAfterPension);
+    const taxableIncome = Math.max(salaryAfterPension - personalAllowance, 0);
+    const incomeTax = calculateProgressiveTax(taxableIncome);
+    const ni = calculateNationalInsurance(salaryAfterPension);
+    const studentLoan = calculateStudentLoan(salaryAfterPension, studentPlan);
+    const annualTakeHome = Math.max(salaryAfterPension - incomeTax - ni - studentLoan, 0);
+    const monthlyTakeHome = annualTakeHome / 12;
+
+    return {
+      gross,
+      pension,
+      incomeTax,
+      ni,
+      studentLoan,
+      annualTakeHome,
+      monthlyTakeHome,
+      takeHomePercent: gross > 0 ? (annualTakeHome / gross) * 100 : 0,
+      incomeTaxPercent: gross > 0 ? (incomeTax / gross) * 100 : 0,
+      niPercent: gross > 0 ? (ni / gross) * 100 : 0,
+      studentLoanPercent: gross > 0 ? (studentLoan / gross) * 100 : 0,
+      pensionPercent: gross > 0 ? (pension / gross) * 100 : 0,
+    };
+  }
+
+  function setLoadingState(isLoading) {
+    if (!calculateButton || !calculateSpinner || !calculateIcon || !calculateButtonText) {
+      return;
+    }
+
+    calculateButton.disabled = isLoading;
+    calculateButton.classList.toggle('opacity-80', isLoading);
+    calculateSpinner.classList.toggle('hidden', !isLoading);
+    calculateIcon.classList.toggle('hidden', isLoading);
+    calculateButtonText.textContent = isLoading ? 'Calculating...' : 'Calculate';
+  }
+
+  function setStatusVisible(isVisible) {
+    if (!calculationStatus) return;
+
+    calculationStatus.classList.toggle('hidden', !isVisible);
+  }
+
+  function buildShareText(values) {
+    return `My take-home pay on ${formatCurrency(values.gross)}: ${formatCurrency(values.monthlyTakeHome)}/month. Calculated with wagecheck.co.uk`;
+  }
+
+  async function copyShareText(values) {
+    const text = buildShareText(values);
+    await navigator.clipboard.writeText(text);
+  }
+
+  function renderResults(values) {
+    const setOdometerValue = (elementId, target) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.dataset.value = String(target);
+      }
+    };
+
+    setOdometerValue('annualTakeHome', values.annualTakeHome);
+    setOdometerValue('monthlyTakeHome', values.monthlyTakeHome);
+    setOdometerValue('incomeTaxAmount', values.incomeTax);
+    setOdometerValue('niAmount', values.nationalInsurance || values.ni);
+    setOdometerValue('studentLoanAmount', values.studentLoan);
+    setOdometerValue('pensionAmount', values.pension);
+
+    incomeTaxPercent.textContent = `${formatPercent(values.incomeTaxPercent)} of gross`;
+    niPercent.textContent = `${formatPercent(values.niPercent)} of gross`;
+    studentLoanPercent.textContent = `${formatPercent(values.studentLoanPercent)} of gross`;
+    pensionPercent.textContent = `${formatPercent(values.pensionPercent)} of gross`;
+    grossSummary.textContent = `Of ${formatCurrency(values.gross)} gross salary`;
+
+    annualTakeHome.dataset.animatedValue = String(values.annualTakeHome);
+    monthlyTakeHome.dataset.animatedValue = String(values.monthlyTakeHome);
+    incomeTaxAmount.dataset.animatedValue = String(values.incomeTax);
+    niAmount.dataset.animatedValue = String(values.ni);
+    studentLoanAmount.dataset.animatedValue = String(values.studentLoan);
+    pensionAmount.dataset.animatedValue = String(values.pension);
+
+    takeHomeSegment.style.width = `${values.takeHomePercent}%`;
+    taxSegment.style.width = `${values.incomeTaxPercent}%`;
+    niSegment.style.width = `${values.niPercent}%`;
+    studentLoanSegment.style.width = `${values.studentLoanPercent}%`;
+    pensionSegment.style.width = `${values.pensionPercent}%`;
+
+    resultsPanel.classList.remove('hidden');
+  }
+
+  function performCalculation() {
+    const values = getCurrentValues();
+    lastCalculatedValues = values;
+
+    if (loadingTimer) {
+      window.clearTimeout(loadingTimer);
+    }
+
+    loadingTimer = window.setTimeout(() => {
+      setLoadingState(true);
+      setStatusVisible(true);
+    }, 200);
+
+    renderResults(values);
+
+    window.clearTimeout(loadingTimer);
+    loadingTimer = null;
+    setLoadingState(false);
+    setStatusVisible(false);
+
+    return values;
+  }
+
+  function scheduleCalculation() {
+    if (debounceTimer) {
+      window.clearTimeout(debounceTimer);
+    }
+
+    debounceTimer = window.setTimeout(() => {
+      performCalculation();
+    }, 150);
+  }
+
+  if (pensionInput && pensionValue) {
+    const syncPensionValue = () => {
+      pensionValue.textContent = `${pensionInput.value}%`;
+    };
+
+    syncPensionValue();
+    pensionInput.addEventListener('input', syncPensionValue);
+  }
+
+  calculatorForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+  });
+
+  grossSalaryInput?.addEventListener('input', scheduleCalculation);
+  pensionInput?.addEventListener('input', scheduleCalculation);
+  studentLoanPlanInput?.addEventListener('change', scheduleCalculation);
+
+  if (calculateButton) {
+    calculateButton.addEventListener('click', performCalculation);
+  }
+
+  shareTakeHomeButton?.addEventListener('click', async () => {
+    const values = lastCalculatedValues || getCurrentValues();
+
+    try {
+      await copyShareText(values);
+      shareTakeHomeButton.textContent = 'Copied';
+      window.setTimeout(() => {
+        shareTakeHomeButton.textContent = 'Share this result';
+      }, 1500);
+    } catch {
+      shareTakeHomeButton.textContent = 'Copy failed';
+      window.setTimeout(() => {
+        shareTakeHomeButton.textContent = 'Share this result';
+      }, 1500);
+    }
+  });
+
+  performCalculation();
+</script>

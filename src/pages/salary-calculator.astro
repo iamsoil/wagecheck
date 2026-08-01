@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TakeHomeCalculator from '../components/TakeHomeCalculator.astro';
+---
+
+<Layout
+  title="Take-Home Pay Calculator 2026/27 | wagecheck"
+  description="Calculate your exact monthly and annual income after tax, National Insurance, student loans and pension."
+>
+  <section class="bg-gradient-to-br from-emerald-50 via-white to-lime-50">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div class="max-w-3xl">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">Salary calculator</p>
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Take-Home Pay Calculator 2026/27</h1>
+        <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
+          Calculate your exact monthly and annual income after tax, National Insurance, student loans and pension.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <TakeHomeCalculator />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is the personal allowance 2026/27?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The standard personal allowance is £12,570. It tapers by £1 for every £2 of income above £100,000 and reaches zero at £125,140.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How much is National Insurance?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'For this calculator, employee National Insurance is 8% between £12,570 and £50,270, then 2% above £50,270.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is Plan 2 student loan threshold?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Plan 2 student loan repayments start above £27,295 at a rate of 9% on earnings over the threshold.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Does pension reduce my tax?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Pension contributions are deducted before tax is calculated in this tool, which reduces taxable income.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is this calculator accurate?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'It provides a close estimate based on the 2026/27 rules used in the calculator, but it is not financial advice.',
+        },
+      },
+    ],
+  })} />
+</Layout>

@@ -1,0 +1,46 @@
+<---
+type Props = {
+  name: 'calculator' | 'document' | 'home';
+  class?: string;
+};
+const { name, class: className = '' } = Astro.props as Props;
+--->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  fill="none"
+  viewBox="0 0 24 24"
+  stroke="currentColor"
+  stroke-width="1.5"
+  class={className}
+>
+  {(() => {
+    switch (name) {
+      case 'calculator':
+        return (
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 3h18v18H3V3zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z"
+          />
+        );
+      case 'document':
+        return (
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M4 4h16v16H4V4zm4 4h8v2H8V8zm0 4h8v2H8v-2zm0 4h8v2H8v-2z"
+          />
+        );
+      case 'home':
+        return (
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 12l9-9 9 9M9 21V12h6v9"
+          />
+        );
+      default:
+        return null;
+    }
+  })()}
+</svg>

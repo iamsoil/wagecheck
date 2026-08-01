@@ -1,0 +1,57 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+type Props = {
+  title?: string;
+  description?: string;
+};
+
+const {
+  title = 'wagecheck',
+  description = 'Free UK salary, tax and stamp duty calculators for take-home pay estimates.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      // Google Analytics placeholder: replace with your measurement ID when ready.
+    </script>
+  </head>
+  <body class="min-h-screen bg-white text-slate-900 antialiased" style="font-family: 'Inter', sans-serif;">
+    <div class="flex min-h-screen flex-col bg-white">
+      <Navbar />
+      <main id="main-content" class="flex-1">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+
+    <div
+      id="cookie-consent-banner"
+      class="fixed inset-x-4 bottom-4 z-50 mx-auto hidden max-w-4xl rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-lg shadow-slate-200/60"
+      aria-hidden="true"
+    >
+      <p class="text-sm text-slate-600">Cookie consent banner placeholder.</p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,414 @@
+---
+import OdometerNumber from './OdometerNumber.astro';
+import { calculateStampDuty } from '../lib/calculations';
+
+type Props = {
+  initialPropertyPrice?: number;
+  initialLocation?: 'england' | 'wales' | 'scotland';
+  initialBuyerType?: 'first-time-buyer' | 'standard' | 'buy-to-let' | 'non-uk-resident';
+};
+
+const {
+  initialPropertyPrice = 500000,
+  initialLocation = 'england',
+  initialBuyerType = 'standard',
+} = Astro.props as Props;
+
+const currencyFormatter = new Intl.NumberFormat('en-GB', {
+  style: 'currency',
+  currency: 'GBP',
+  maximumFractionDigits: 0,
+});
+
+const percentageFormatter = new Intl.NumberFormat('en-GB', {
+  maximumFractionDigits: 1,
+});
+
+const initialCalculation = calculateStampDuty(initialPropertyPrice, initialLocation, initialBuyerType);
+---
+
+<section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+  <div class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <form id="stamp-duty-calculator" class="space-y-6">
+        <div>
+          <label for="propertyPrice" class="mb-2 block text-sm font-medium text-slate-600">Property price</label>
+          <div class="flex items-center gap-3 border-b-2 border-slate-200 pb-2 focus-within:border-emerald-500">
+            <span class="text-slate-500">£</span>
+            <input
+              id="propertyPrice"
+              name="propertyPrice"
+              type="number"
+              min="0"
+              step="1000"
+              value={initialPropertyPrice}
+              inputmode="numeric"
+              class="w-full border-0 bg-transparent p-0 text-lg font-medium text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0"
+              aria-describedby="propertyPriceHelp"
+            />
+          </div>
+          <p id="propertyPriceHelp" class="mt-2 text-xs text-slate-500">Enter the purchase price before any fees.</p>
+        </div>
+
+        <div>
+          <label for="location" class="mb-2 block text-sm font-medium text-slate-600">Location</label>
+          <select
+            id="location"
+            name="location"
+            class="w-full border-b-2 border-slate-200 bg-transparent px-0 py-2 text-base font-medium text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-0"
+          >
+            <option value="england" selected={initialLocation === 'england'}>England &amp; Northern Ireland</option>
+            <option value="wales" selected={initialLocation === 'wales'}>Wales</option>
+            <option value="scotland" selected={initialLocation === 'scotland'}>Scotland</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="buyerType" class="mb-2 block text-sm font-medium text-slate-600">Buyer type</label>
+          <select
+            id="buyerType"
+            name="buyerType"
+            class="w-full border-b-2 border-slate-200 bg-transparent px-0 py-2 text-base font-medium text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-0"
+          >
+            <option value="first-time-buyer" selected={initialBuyerType === 'first-time-buyer'}>First-time buyer</option>
+            <option value="standard" selected={initialBuyerType === 'standard'}>Standard home mover</option>
+            <option value="buy-to-let" selected={initialBuyerType === 'buy-to-let'}>Buy-to-let / second home</option>
+            <option value="non-uk-resident" selected={initialBuyerType === 'non-uk-resident'}>Non-UK resident</option>
+          </select>
+        </div>
+
+        <button
+          id="calculateStampDutyButton"
+          type="button"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+        >
+          <svg id="calculateStampSpinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4Zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 2.842 1.056 5.438 2.793 7.431l3.207-2.14Z"></path>
+          </svg>
+          <svg id="calculateStampIcon" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M4 2.75A1.75 1.75 0 0 1 5.75 1h8.5A1.75 1.75 0 0 1 16 2.75v14.5A1.75 1.75 0 0 1 14.25 19h-8.5A1.75 1.75 0 0 1 4 17.25V2.75ZM6 4.5h8V3.25a.25.25 0 0 0-.25-.25h-7.5a.25.25 0 0 0-.25.25V4.5Zm1 3A1.25 1.25 0 1 0 7 5a1.25 1.25 0 0 0 0 2.5Zm2.75-.75a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm-.75 4.75a.75.75 0 0 0 0 1.5h3.25a.75.75 0 0 0 0-1.5H9Zm-2-1.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z" />
+          </svg>
+          <span id="calculateStampButtonText">Calculate</span>
+        </button>
+      </form>
+    </div>
+
+    <div id="stampDutyResults" class="hidden space-y-6" aria-live="polite">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Total stamp duty</p>
+          <OdometerNumber id="totalStampDuty" value={initialCalculation.total} duration={1200} class="mt-3 text-5xl font-bold text-emerald-600" />
+        </article>
+        <article class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p class="text-sm font-medium text-slate-500">Effective tax rate</p>
+          <OdometerNumber id="effectiveTaxRate" value={initialCalculation.effectiveRate} prefix="" duration={800} class="mt-3 text-3xl font-bold text-slate-900" />
+        </article>
+      </div>
+
+      <div class="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="mb-4 flex items-center justify-between gap-4">
+            <h2 class="text-lg font-semibold text-slate-900">Stamp duty breakdown</h2>
+            <p id="selectedContext" class="text-sm text-slate-500">Standard home mover, England &amp; Northern Ireland</p>
+          </div>
+
+          <div class="overflow-hidden rounded-xl border border-slate-200">
+            <div class="grid grid-cols-[1.2fr_0.7fr_0.9fr] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <span>Band</span>
+              <span>Rate</span>
+              <span class="text-right">Tax</span>
+            </div>
+            <div id="bandRows" class="divide-y divide-slate-200 bg-white"></div>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-lg font-semibold text-slate-900">Property price vs stamp duty</h2>
+            <div class="mt-6 flex items-center justify-center">
+              <div class="relative h-52 w-52 rounded-full" id="stampDutyChart" style="background: conic-gradient(rgb(16 185 129) 0deg, rgb(16 185 129) 0deg, rgb(226 232 240) 0deg 360deg);">
+                <div class="absolute inset-7 rounded-full bg-white shadow-inner"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-center">
+                  <div>
+                    <p class="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">Duty share</p>
+                    <p id="chartPercent" class="mt-2 text-3xl font-bold text-slate-900">0%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+              <div class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-emerald-500"></span>
+                <span>Stamp duty</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="h-3 w-3 rounded-full bg-slate-200"></span>
+                <span>Property price</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              id="shareStampDutyButton"
+              type="button"
+              class="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+            >
+              Share this result
+            </button>
+            <p class="text-xs text-slate-500">Copies a summary of your stamp duty estimate to the clipboard.</p>
+          </div>
+
+          <p class="text-sm text-slate-600">Based on 2026/27 rates. Verify with HMRC before completing your purchase.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+  const form = document.getElementById('stamp-duty-calculator');
+  const resultsPanel = document.getElementById('stampDutyResults');
+  const propertyPriceInput = document.getElementById('propertyPrice');
+  const locationInput = document.getElementById('location');
+  const buyerTypeInput = document.getElementById('buyerType');
+
+  const bandRows = document.getElementById('bandRows');
+  const selectedContext = document.getElementById('selectedContext');
+  const stampDutyChart = document.getElementById('stampDutyChart');
+  const chartPercent = document.getElementById('chartPercent');
+  const calculateButton = document.getElementById('calculateStampDutyButton');
+  const calculateSpinner = document.getElementById('calculateStampSpinner');
+  const calculateIcon = document.getElementById('calculateStampIcon');
+  const calculateButtonText = document.getElementById('calculateStampButtonText');
+  const shareStampDutyButton = document.getElementById('shareStampDutyButton');
+  let debounceTimer = null;
+
+  const currencyFormatter = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    maximumFractionDigits: 0,
+  });
+
+  const percentageFormatter = new Intl.NumberFormat('en-GB', {
+    maximumFractionDigits: 1,
+  });
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
+
+  function formatCurrency(value) {
+    return currencyFormatter.format(Math.round(value));
+  }
+
+  function formatPercent(value) {
+    return `${percentageFormatter.format(value)}%`;
+  }
+
+  function setLoadingState(isLoading) {
+    if (!calculateButton || !calculateSpinner || !calculateIcon || !calculateButtonText) {
+      return;
+    }
+
+    calculateButton.disabled = isLoading;
+    calculateButton.classList.toggle('opacity-80', isLoading);
+    calculateSpinner.classList.toggle('hidden', !isLoading);
+    calculateIcon.classList.toggle('hidden', isLoading);
+    calculateButtonText.textContent = isLoading ? 'Calculating...' : 'Calculate';
+  }
+
+  function buildShareText(price, total) {
+    return `Stamp duty on ${formatCurrency(price)}: ${formatCurrency(total)}. Calculated with wagecheck.co.uk`;
+  }
+
+  async function copyShareText(price, total) {
+    await navigator.clipboard.writeText(buildShareText(price, total));
+  }
+
+  function getLocationLabel(location) {
+    if (location === 'wales') return 'Wales';
+    if (location === 'scotland') return 'Scotland';
+    return 'England & Northern Ireland';
+  }
+
+  function getBuyerLabel(buyerType) {
+    if (buyerType === 'first-time-buyer') return 'First-time buyer';
+    if (buyerType === 'buy-to-let') return 'Buy-to-let / second home';
+    if (buyerType === 'non-uk-resident') return 'Non-UK resident';
+    return 'Standard home mover';
+  }
+
+  function computeBands(price, bands) {
+    return bands.map((band) => {
+      const taxableAmount = Math.max(Math.min(price, band.upper) - band.lower, 0);
+      const tax = taxableAmount * band.rate;
+
+      return {
+        label: band.label,
+        rate: band.rate,
+        taxableAmount,
+        tax,
+      };
+    });
+  }
+
+  function calculateBaseBands(price, location, buyerType) {
+    if (location === 'wales') {
+      return computeBands(price, [
+        { lower: 0, upper: 225000, rate: 0, label: 'Up to £225,000' },
+        { lower: 225000, upper: 400000, rate: 0.06, label: '£225,001 - £400,000' },
+        { lower: 400000, upper: 750000, rate: 0.075, label: '£400,001 - £750,000' },
+        { lower: 750000, upper: 1500000, rate: 0.1, label: '£750,001 - £1.5m' },
+        { lower: 1500000, upper: Infinity, rate: 0.12, label: 'Above £1.5m' },
+      ]);
+    }
+
+    if (location === 'scotland') {
+      const firstTimeBuyer = buyerType === 'first-time-buyer';
+      return computeBands(price, [
+        { lower: 0, upper: firstTimeBuyer ? 175000 : 145000, rate: 0, label: firstTimeBuyer ? 'Up to £175,000' : 'Up to £145,000' },
+        { lower: firstTimeBuyer ? 175000 : 145000, upper: 250000, rate: 0.02, label: firstTimeBuyer ? '£175,001 - £250,000' : '£145,001 - £250,000' },
+        { lower: 250000, upper: 325000, rate: 0.05, label: '£250,001 - £325,000' },
+        { lower: 325000, upper: 750000, rate: 0.1, label: '£325,001 - £750,000' },
+        { lower: 750000, upper: Infinity, rate: 0.12, label: 'Above £750,000' },
+      ]);
+    }
+
+    const firstTimeBuyer = buyerType === 'first-time-buyer';
+    return computeBands(price, [
+      { lower: 0, upper: firstTimeBuyer ? 425000 : 250000, rate: 0, label: firstTimeBuyer ? 'Up to £425,000' : 'Up to £250,000' },
+      { lower: firstTimeBuyer ? 425000 : 250000, upper: 925000, rate: 0.05, label: firstTimeBuyer ? '£425,001 - £925,000' : '£250,001 - £925,000' },
+      { lower: 925000, upper: 1500000, rate: 0.1, label: '£925,001 - £1.5m' },
+      { lower: 1500000, upper: Infinity, rate: 0.12, label: 'Above £1.5m' },
+    ]);
+  }
+
+  function calculateSurcharge(price, location, buyerType) {
+    if (location === 'england' && buyerType === 'buy-to-let') {
+      return { label: 'Buy-to-let / second home surcharge', rate: 0.03, tax: price * 0.03 };
+    }
+
+    if (location === 'england' && buyerType === 'non-uk-resident') {
+      return { label: 'Non-UK resident surcharge', rate: 0.02, tax: price * 0.02 };
+    }
+
+    if (location === 'scotland' && buyerType === 'buy-to-let') {
+      return { label: 'Additional Dwelling Supplement', rate: 0.06, tax: price * 0.06 };
+    }
+
+    return null;
+  }
+
+  function calculateTax(price, location, buyerType) {
+    const baseBands = calculateBaseBands(price, location, buyerType);
+    const surcharge = calculateSurcharge(price, location, buyerType);
+    const surchargeTax = surcharge ? surcharge.tax : 0;
+    const baseTax = baseBands.reduce((sum, band) => sum + band.tax, 0);
+
+    return {
+      bands: surcharge ? [...baseBands, { label: surcharge.label, rate: surcharge.rate, taxableAmount: price, tax: surchargeTax }] : baseBands,
+      total: baseTax + surchargeTax,
+    };
+  }
+
+  function buildBandRows(bands) {
+    bandRows.innerHTML = bands
+      .map(
+        (band) => `
+          <div class="grid grid-cols-[1.2fr_0.7fr_0.9fr] gap-3 px-4 py-4 text-sm text-slate-600">
+            <div>
+              <p class="font-medium text-slate-900">${band.label}</p>
+              <p class="mt-1 text-xs text-slate-500">${formatCurrency(band.taxableAmount)} taxed in this band</p>
+            </div>
+            <div class="font-medium text-slate-700">${formatPercent(band.rate * 100)}</div>
+            <div class="text-right font-semibold text-slate-900">${formatCurrency(band.tax)}</div>
+          </div>
+        `,
+      )
+      .join('');
+  }
+
+  function renderResults(price, location, buyerType, total, bands) {
+    const effectiveRate = price > 0 ? (total / price) * 100 : 0;
+
+    const setOdometerValue = (elementId, target) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.dataset.value = String(target);
+      }
+    };
+
+    setOdometerValue('totalStampDuty', total);
+    setOdometerValue('effectiveTaxRate', effectiveRate);
+    selectedContext.textContent = `${getBuyerLabel(buyerType)}, ${getLocationLabel(location)}`;
+    chartPercent.textContent = formatPercent(effectiveRate);
+    stampDutyChart.style.background = `conic-gradient(rgb(16 185 129) 0deg ${clamp(effectiveRate, 0, 100) * 3.6}deg, rgb(226 232 240) ${clamp(effectiveRate, 0, 100) * 3.6}deg 360deg)`;
+
+    buildBandRows(bands);
+    resultsPanel.classList.remove('hidden');
+  }
+
+  function calculate() {
+    const price = Math.max(Number.parseFloat(propertyPriceInput.value || '0'), 0);
+    const location = locationInput.value;
+    const buyerType = buyerTypeInput.value;
+
+    const { bands, total } = calculateTax(price, location, buyerType);
+    setLoadingState(true);
+    resultsPanel.classList.add('hidden');
+
+    window.setTimeout(() => {
+      renderResults(price, location, buyerType, total, bands);
+      setLoadingState(false);
+    }, 150);
+
+    return { price, total };
+  }
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    calculate();
+  });
+
+  calculateButton?.addEventListener('click', calculate);
+
+  const scheduleCalculation = () => {
+    if (debounceTimer) {
+      window.clearTimeout(debounceTimer);
+    }
+
+    debounceTimer = window.setTimeout(() => {
+      calculate();
+    }, 150);
+  };
+
+  propertyPriceInput?.addEventListener('input', scheduleCalculation);
+  locationInput?.addEventListener('change', scheduleCalculation);
+  buyerTypeInput?.addEventListener('change', scheduleCalculation);
+
+  shareStampDutyButton?.addEventListener('click', async () => {
+    const price = Math.max(Number.parseFloat(propertyPriceInput.value || '0'), 0);
+    const { total } = calculateTax(price, locationInput.value, buyerTypeInput.value);
+
+    try {
+      await copyShareText(price, total);
+      shareStampDutyButton.textContent = 'Copied';
+      window.setTimeout(() => {
+        shareStampDutyButton.textContent = 'Share this result';
+      }, 1500);
+    } catch {
+      shareStampDutyButton.textContent = 'Copy failed';
+      window.setTimeout(() => {
+        shareStampDutyButton.textContent = 'Share this result';
+      }, 1500);
+    }
+  });
+
+  if (propertyPriceInput && Number.parseFloat(propertyPriceInput.value || '0') > 0) {
+    calculate();
+  }
+</script>

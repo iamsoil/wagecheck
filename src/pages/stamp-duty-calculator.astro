@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StampDutyCalculator from '../components/StampDutyCalculator.astro';
+---
+
+<Layout
+  title="Stamp Duty Calculator 2026/27 | wagecheck"
+  description="Calculate UK stamp duty, LBTT and LTT using 2026/27 rates."
+>
+  <section class="bg-gradient-to-br from-emerald-50 via-white to-lime-50">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div class="max-w-3xl">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">Stamp duty calculator</p>
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Stamp Duty Calculator 2026/27</h1>
+        <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
+          Estimate the tax due on your purchase across England, Wales or Scotland with clear band-by-band results.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <StampDutyCalculator />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is stamp duty?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Stamp duty is a property transaction tax applied when buying property in England and Northern Ireland, while Wales and Scotland use their own land transaction taxes.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do first-time buyers pay stamp duty?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'First-time buyers can receive relief in England and Northern Ireland, and in Scotland, depending on the purchase price.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the non-resident surcharge?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Non-UK resident buyers may pay an additional surcharge on qualifying purchases in England and Northern Ireland.',
+        },
+      },
+    ],
+  })} />
+</Layout>
