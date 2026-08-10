@@ -1,4 +1,201 @@
-body {
-  color: red;
-  background-color: blue;
+@import "tailwindcss";
+
+@theme {
+	--font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Playfair Display', 'Georgia', serif;
+}
+
+@layer base {
+	body {
+		font-family: var(--font-sans);
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+}
+
+/* ── Scroll-triggered entrance animations ── */
+.animate-on-scroll {
+	opacity: 0;
+	transform: translateY(24px);
+	transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* Stagger delays for children */
+.animate-on-scroll > *:nth-child(1) { transition-delay: 0ms; }
+.animate-on-scroll > *:nth-child(2) { transition-delay: 100ms; }
+.animate-on-scroll > *:nth-child(3) { transition-delay: 200ms; }
+.animate-on-scroll > *:nth-child(4) { transition-delay: 50ms; }
+.animate-on-scroll > *:nth-child(5) { transition-delay: 100ms; }
+.animate-on-scroll > *:nth-child(6) { transition-delay: 150ms; }
+.animate-on-scroll > *:nth-child(7) { transition-delay: 200ms; }
+.animate-on-scroll > *:nth-child(8) { transition-delay: 250ms; }
+.animate-on-scroll > *:nth-child(9) { transition-delay: 300ms; }
+.animate-on-scroll > *:nth-child(10) { transition-delay: 350ms; }
+.animate-on-scroll > *:nth-child(11) { transition-delay: 400ms; }
+.animate-on-scroll > *:nth-child(12) { transition-delay: 450ms; }
+.animate-on-scroll > *:nth-child(13) { transition-delay: 500ms; }
+
+/* Children also need to animate individually */
+.animate-on-scroll > * {
+	opacity: 0;
+	transform: translateY(16px);
+	transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.animate-on-scroll.is-visible > * {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* ── Featured card — green-to-white fade + edge glow ── */
+.featured-card {
+	position: relative;
+	background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #ffffff 100%);
+	border: 1px solid #d1fae5;
+	border-radius: 1.5rem;
+	z-index: 1;
+	overflow: hidden;
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+	will-change: transform;
+}
+
+/* Conic gradient glow layer — behind content via z-index */
+.featured-card::before {
+	content: '';
+	position: absolute;
+	inset: -2px;
+	border-radius: inherit;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0%,
+		#059669 8%,
+		#ffffff 25%,
+		transparent 40%
+	);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	z-index: -2;
+}
+
+/* Inner mask — creates the "border-only" glow illusion */
+.featured-card::after {
+	content: '';
+	position: absolute;
+	inset: 2px;
+	border-radius: inherit;
+	background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 50%, #ffffff 100%);
+	z-index: -1;
+}
+
+.featured-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 0 20px rgba(5, 150, 105, 0.15), 0 0 40px rgba(5, 150, 105, 0.08);
+	border-color: #059669;
+}
+
+.featured-card:hover::before {
+	opacity: 1;
+	animation: rotate-glow 2.5s linear infinite;
+}
+
+@keyframes rotate-glow {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/* Badge slow pulse */
+.badge-pulse {
+	animation: badge-breathe 2s ease-in-out infinite;
+}
+
+@keyframes badge-breathe {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.75; }
+}
+
+/* ── Calculator grid card hover ── */
+.calc-card {
+	transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.calc-card:hover {
+	border-color: #059669;
+	transform: translateY(-3px);
+	box-shadow: 0 12px 24px -8px rgba(5, 150, 105, 0.15);
+}
+
+/* ── Q&A card hover ── */
+.qa-card {
+	transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qa-card:hover {
+	background-color: #ffffff;
+	border-color: #d1fae5;
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* ── FAQ accordion smooth open/close ── */
+.faq-item summary {
+	transition: background-color 0.2s ease;
+}
+
+.faq-answer {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.3s ease-out;
+}
+
+.faq-item[open] .faq-answer {
+	grid-template-rows: 1fr;
+}
+
+.faq-answer-inner {
+	overflow: hidden;
+}
+
+/* ── Hero CTA pulse shadow ── */
+@keyframes pulse-shadow {
+	0%, 100% { box-shadow: 0 1px 3px 0 rgba(5, 150, 105, 0.1), 0 1px 2px -1px rgba(5, 150, 105, 0.1); }
+	50% { box-shadow: 0 4px 12px 0 rgba(5, 150, 105, 0.25), 0 2px 6px -2px rgba(5, 150, 105, 0.15); }
+}
+
+.cta-pulse {
+	animation: pulse-shadow 3s ease-in-out infinite;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+	.animate-on-scroll,
+	.animate-on-scroll > * {
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+		transition-delay: 0ms !important;
+	}
+
+	.featured-card:hover,
+	.calc-card:hover {
+		transform: none;
+	}
+
+	.featured-card:hover::before {
+		animation: none;
+	}
+
+	.cta-pulse,
+	.badge-pulse {
+		animation: none;
+	}
+
+	.faq-answer {
+		transition: none;
+	}
 }

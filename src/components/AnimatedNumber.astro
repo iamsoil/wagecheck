@@ -1,0 +1,104 @@
+---
+type Props = {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  duration?: number;
+  autoScale?: boolean;
+  class?: string;
+};
+
+const {
+  value,
+  prefix = '£',
+  suffix = '',
+  decimals = 0,
+  duration = 800,
+  autoScale = false,
+  class: className = '',
+} = Astro.props as Props;
+
+const intDigits = Math.abs(Math.round(value)).toString().length;
+const sizeClass = !autoScale ? '' : intDigits <= 6 ? 'text-4xl' : intDigits <= 8 ? 'text-3xl' : 'text-2xl';
+
+const format = (v: number) =>
+  `${prefix}${v.toLocaleString('en-GB', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  })}${suffix}`;
+---
+
+<span
+  class:list={['inline-block whitespace-nowrap font-bold tabular-nums', sizeClass, className]}
+  data-animated-number={value}
+  data-prefix={prefix}
+  data-suffix={suffix}
+  data-decimals={decimals}
+  data-duration={duration}
+  aria-live="polite"
+>{format(value)}</span>
+
+<script>
+  const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+
+  document.querySelectorAll<HTMLSpanElement>('[data-animated-number]').forEach((el) => {
+    const readTarget = () => parseFloat(el.dataset.animatedNumber ?? '0');
+    const prefix = el.dataset.prefix ?? '£';
+    const suffix = el.dataset.suffix ?? '';
+    const decimals = parseInt(el.dataset.decimals ?? '0', 10);
+    const duration = parseInt(el.dataset.duration ?? '800', 10);
+
+    const format = (value: number) =>
+      `${prefix}${value.toLocaleString('en-GB', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}${suffix}`;
+
+    let current = 0;
+    let lastTarget = 0;
+    let raf: number | undefined;
+
+    const animate = (from: number, to: number) => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = undefined;
+      }
+      if (to === from) {
+        el.textContent = format(to);
+        return;
+      }
+      const start = performance.now();
+      const step = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = easeOutQuart(progress);
+        current = from + (to - from) * eased;
+        el.textContent = format(current);
+        if (progress < 1) {
+          raf = requestAnimationFrame(step);
+        } else {
+          raf = undefined;
+          el.dataset.current = String(to);
+        }
+      };
+      raf = requestAnimationFrame(step);
+    };
+
+    const initial = readTarget();
+    el.dataset.current = String(0);
+    lastTarget = initial;
+    animate(0, initial);
+
+    const observer = new MutationObserver(() => {
+      const next = readTarget();
+      if (next === lastTarget) {
+        return;
+      }
+      const from = parseFloat(el.dataset.current ?? '0');
+      lastTarget = next;
+      animate(from, next);
+    });
+
+    observer.observe(el, { attributes: true, attributeFilter: ['data-animated-number'] });
+  });
+</script>

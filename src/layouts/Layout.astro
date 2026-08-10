@@ -1,4 +1,5 @@
 ---
+import '../styles/global.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
@@ -11,6 +12,8 @@ const {
   title = 'wagecheck',
   description = 'Free UK salary, tax and stamp duty calculators for take-home pay estimates.',
 } = Astro.props;
+
+const canonicalURL = Astro.url.href;
 ---
 
 <!doctype html>
@@ -19,23 +22,32 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#059669" />
     <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="wagecheck" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
       rel="stylesheet"
     />
     <title>{title}</title>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        window.dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      // Google Analytics placeholder: replace with your measurement ID when ready.
-    </script>
   </head>
   <body class="min-h-screen bg-white text-slate-900 antialiased" style="font-family: 'Inter', sans-serif;">
     <div class="flex min-h-screen flex-col bg-white">
@@ -48,10 +60,183 @@ const {
 
     <div
       id="cookie-consent-banner"
-      class="fixed inset-x-4 bottom-4 z-50 mx-auto hidden max-w-4xl rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-lg shadow-slate-200/60"
-      aria-hidden="true"
+      class="fixed inset-x-0 bottom-0 z-50 hidden border-t border-slate-200 bg-white p-4 shadow-lg"
     >
-      <p class="text-sm text-slate-600">Cookie consent banner placeholder.</p>
+      <div class="mx-auto flex max-w-7xl flex-col items-center gap-3 sm:flex-row sm:justify-between">
+        <p class="max-w-2xl text-sm text-slate-600">
+          We use cookies for analytics and to support our site. By continuing, you accept our use of cookies.
+          <a href="/privacy-policy" class="font-semibold text-emerald-600 hover:text-emerald-700">Learn more</a>
+        </p>
+        <div class="flex shrink-0 gap-2">
+          <button
+            id="cookie-manage-btn"
+            type="button"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-600"
+          >
+            Manage
+          </button>
+          <button
+            id="cookie-accept-btn"
+            type="button"
+            class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+          >
+            Accept All
+          </button>
+        </div>
+      </div>
     </div>
+
+    <div
+      id="cookie-manage-modal"
+      class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/40"
+    >
+      <div class="mx-4 w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-xl">
+        <h3 class="text-lg font-bold text-slate-900">Cookie Preferences</h3>
+        <div class="mt-4 space-y-4">
+          <label class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Analytics</p>
+              <p class="text-xs text-slate-500">Google Analytics — helps us understand site usage</p>
+            </div>
+            <input
+              id="cookie-analytics-toggle"
+              type="checkbox"
+              checked
+              class="h-5 w-5 rounded border-slate-300 accent-emerald-600"
+            />
+          </label>
+          <label class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Advertising</p>
+              <p class="text-xs text-slate-500">Google AdSense — personalised ads</p>
+            </div>
+            <input
+              id="cookie-advertising-toggle"
+              type="checkbox"
+              checked
+              class="h-5 w-5 rounded border-slate-300 accent-emerald-600"
+            />
+          </label>
+        </div>
+        <div class="mt-6 flex justify-end gap-2">
+          <button
+            id="cookie-save-btn"
+            type="button"
+            class="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+          >
+            Save Preferences
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      /* ── Scroll-triggered entrance animations ── */
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var targets = document.querySelectorAll('.animate-on-scroll');
+        if (!targets.length) return;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        targets.forEach(function (el) { observer.observe(el); });
+      })();
+    </script>
+
+    <script is:inline>
+      (function () {
+        var banner = document.getElementById('cookie-consent-banner');
+        var modal = document.getElementById('cookie-manage-modal');
+        var acceptBtn = document.getElementById('cookie-accept-btn');
+        var manageBtn = document.getElementById('cookie-manage-btn');
+        var saveBtn = document.getElementById('cookie-save-btn');
+        var analyticsToggle = document.getElementById('cookie-analytics-toggle');
+        var advertisingToggle = document.getElementById('cookie-advertising-toggle');
+
+        function getConsent() {
+          try { return JSON.parse(localStorage.getItem('cookieConsent')); } catch (e) { return null; }
+        }
+
+        function setConsent(val) {
+          localStorage.setItem('cookieConsent', JSON.stringify(val));
+        }
+
+        function hideBanner() {
+          if (banner) banner.classList.add('hidden');
+        }
+
+        function showBanner() {
+          if (banner) banner.classList.remove('hidden');
+        }
+
+        function showModal() {
+          if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        }
+
+        function hideModal() {
+          if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        }
+
+        var consent = getConsent();
+        if (!consent) {
+          showBanner();
+        } else if (consent.analytics) {
+          loadGA4();
+        }
+
+        if (acceptBtn) {
+          acceptBtn.addEventListener('click', function () {
+            setConsent({ analytics: true, advertising: true });
+            hideBanner();
+            loadGA4();
+          });
+        }
+
+        if (manageBtn) {
+          manageBtn.addEventListener('click', function () {
+            var c = getConsent() || { analytics: true, advertising: true };
+            if (analyticsToggle) analyticsToggle.checked = c.analytics;
+            if (advertisingToggle) advertisingToggle.checked = c.advertising;
+            showModal();
+          });
+        }
+
+        if (saveBtn) {
+          saveBtn.addEventListener('click', function () {
+            var prefs = {
+              analytics: analyticsToggle ? analyticsToggle.checked : false,
+              advertising: advertisingToggle ? advertisingToggle.checked : false,
+            };
+            setConsent(prefs);
+            hideModal();
+            if (prefs.analytics) loadGA4();
+          });
+        }
+
+        if (modal) {
+          modal.addEventListener('click', function (e) {
+            if (e.target === modal) hideModal();
+          });
+        }
+
+        function loadGA4() {
+          if (document.getElementById('ga4-script')) return;
+          var s = document.createElement('script');
+          s.id = 'ga4-script';
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { window.dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', 'G-XXXXXXXXXX');
+        }
+      })();
+    </script>
   </body>
 </html>

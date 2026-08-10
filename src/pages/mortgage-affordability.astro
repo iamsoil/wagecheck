@@ -1,0 +1,433 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import Accordion from '../components/Accordion.astro';
+import AnimatedNumber from '../components/AnimatedNumber.astro';
+
+const defaultSalary = 35000;
+const defaultPartnerSalary = 0;
+const defaultDeposit = 50000;
+const defaultInterestRate = 5.0;
+const defaultTerm = 25;
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+
+const inputClasses =
+  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+
+const termOptions = [
+  { value: 25, label: '25 years' },
+  { value: 30, label: '30 years' },
+  { value: 35, label: '35 years' },
+];
+
+const combinedSalary = defaultSalary + defaultPartnerSalary;
+const maxBorrowing = combinedSalary * 4.5;
+const maxPropertyPrice = maxBorrowing + defaultDeposit;
+const monthlyRate = defaultInterestRate / 100 / 12;
+const numPayments = defaultTerm * 12;
+const monthlyPayment = monthlyRate > 0
+  ? maxBorrowing * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1)
+  : maxBorrowing / numPayments;
+const estimateNetMonthly = (combinedSalary * 0.75) / 12;
+const ratio = estimateNetMonthly > 0 ? (monthlyPayment / estimateNetMonthly) * 100 : 0;
+const depositPct = maxPropertyPrice > 0 ? (defaultDeposit / maxPropertyPrice) * 100 : 0;
+---
+
+<Layout
+  title="Mortgage Affordability Calculator | wagecheck"
+  description="Find out how much you could borrow for a mortgage based on your combined salary. Free UK mortgage affordability calculator with monthly payment estimates and affordability gauge."
+>
+  <CalculatorHero
+    category="Mortgage affordability calculator"
+    titleHtml='Mortgage Affordability <span class="font-display italic text-emerald-600">Calculator</span>'
+    description="Enter your salary and deposit to see how much you could borrow for a mortgage, what your monthly payments would be and how affordable it really is."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="mortgage-affordability"
+      data-mortgage-affordability
+      data-initial-salary={defaultSalary}
+      data-initial-partner={defaultPartnerSalary}
+      data-initial-deposit={defaultDeposit}
+      data-initial-rate={defaultInterestRate}
+      data-initial-term={defaultTerm}
+      class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8"
+    >
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <CalculatorInput label="Your salary (£)" hint="Your gross annual salary before tax.">
+            <input type="number" min="0" step="1000" value={defaultSalary} data-salary class={inputClasses} />
+          </CalculatorInput>
+        </div>
+
+        <div class="sm:col-span-2">
+          <CalculatorInput label="Partner's salary (£)" hint="Optional. Add a partner's income to increase your borrowing power.">
+            <input type="number" min="0" step="1000" value={defaultPartnerSalary} data-partner class={inputClasses} placeholder="Optional" />
+          </CalculatorInput>
+        </div>
+
+        <div data-partner-note class="hidden sm:col-span-2">
+          <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <p class="text-sm text-emerald-700">Partner's salary is included in the combined income calculation.</p>
+          </div>
+        </div>
+
+        <div class="sm:col-span-2">
+          <CalculatorInput label="Deposit (£)" hint="The amount you have saved to put towards the property.">
+            <input type="number" min="0" step="1000" value={defaultDeposit} data-deposit class={inputClasses} />
+          </CalculatorInput>
+        </div>
+
+        <div class="sm:col-span-2">
+          <CalculatorInput label="Interest rate (%)" hint="The expected annual mortgage interest rate.">
+            <input type="number" min="0" step="0.1" value={defaultInterestRate} data-rate class={inputClasses} />
+          </CalculatorInput>
+        </div>
+
+        <div class="sm:col-span-2">
+          <CalculatorInput label="Mortgage term">
+            <select data-term class={inputClasses}>
+              {termOptions.map((o) => <option value={o.value} selected={o.value === defaultTerm}>{o.label}</option>)}
+            </select>
+          </CalculatorInput>
+        </div>
+      </div>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
+          <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Max you can borrow</p>
+          <span data-var="maxBorrowing" class="mt-2 block break-words">
+            <AnimatedNumber value={maxBorrowing} autoScale class="text-emerald-700" />
+          </span>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Max property price</p>
+          <span data-var="maxProperty" class="mt-2 block break-words">
+            <AnimatedNumber value={maxPropertyPrice} autoScale class="text-slate-900" />
+          </span>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Monthly payment</p>
+          <span data-var="monthlyPayment" class="mt-2 block break-words">
+            <AnimatedNumber value={monthlyPayment} autoScale class="text-slate-900" />
+          </span>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Deposit %</p>
+          <span data-var="depositPct" class="mt-2 block break-words">
+            <AnimatedNumber value={depositPct} suffix="%" autoScale class="text-slate-900" />
+          </span>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
+        <p class="text-sm font-semibold text-slate-900">Affordability gauge</p>
+        <p class="mt-1 text-xs text-slate-500">Based on an estimated net monthly income of <span data-var="netMonthly" class="tabular-nums font-semibold text-slate-700">{money(estimateNetMonthly)}</span> (75% of combined salary)</p>
+        <div class="mt-4 flex h-4 w-full overflow-hidden rounded-full bg-slate-100">
+          <div class="bg-emerald-500" style="width:33.33%"></div>
+          <div class="bg-amber-500" style="width:33.34%"></div>
+          <div class="bg-rose-500" style="width:33.33%"></div>
+        </div>
+        <div data-gauge-fill class="relative -mt-4 h-4 w-0 rounded-full transition-all duration-500" style="width:0%"></div>
+        <div class="mt-2 flex items-center justify-between text-[11px]">
+          <span class="text-emerald-600">0–30% Safe</span>
+          <span class="text-amber-600">30–40% Stretch</span>
+          <span class="text-rose-600">40%+ Risky</span>
+        </div>
+        <div class="mt-3">
+          <p class="text-xs text-slate-500">Your ratio: <span data-var="ratio" class="tabular-nums font-bold text-slate-900">{gb(ratio)}%</span> of net monthly income goes to your mortgage</p>
+        </div>
+      </div>
+
+      <p class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-500">
+        Lenders typically allow you to borrow <span class="font-semibold text-slate-700">4 to 4.5 times</span> your combined annual salary. This calculator uses a 4.5× multiplier. Your actual offer may differ based on credit score, existing debts and lender policy.
+      </p>
+
+      <button
+        data-download-pdf
+        class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Download PDF Report
+      </button>
+
+      <div class="mt-6">
+        <a href="/stamp-duty-calculator" class="group flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+          <div>
+            <p class="text-base font-semibold text-slate-900">Buying a property?</p>
+            <p class="mt-1 text-sm leading-6 text-slate-600">Calculate your Stamp Duty</p>
+          </div>
+          <svg class="h-5 w-5 text-emerald-500 transition group-hover:translate-x-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How lenders calculate affordability</h2>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">1</div>
+          <h3 class="mt-4 text-sm font-semibold text-slate-900">Income multiple</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Most UK lenders offer between 4 and 4.5 times your combined annual salary. Some may offer more with specialist products.</p>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">2</div>
+          <h3 class="mt-4 text-sm font-semibold text-slate-900">Deposit size</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">A larger deposit reduces the loan-to-value ratio, which can unlock better interest rates and make your application more attractive.</p>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">3</div>
+          <h3 class="mt-4 text-sm font-semibold text-slate-900">Outgoings &amp; debts</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">Lenders assess your monthly commitments — credit cards, loans, childcare — and calculate a stress-tested payment to ensure you can still afford repayments if rates rise.</p>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">4</div>
+          <h3 class="mt-4 text-sm font-semibold text-slate-900">Credit score</h3>
+          <p class="mt-2 text-sm leading-6 text-slate-600">A strong credit history gives you access to the best deals. Missed payments or a thin credit file may limit your options or reduce how much you can borrow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="How much can I borrow for a mortgage in the UK?">
+          <p>
+            Most UK lenders will offer you between 4 and 4.5 times your combined annual salary. Some lenders may offer more through specialist products, but a typical mortgage on a £50,000 deposit and £35,000 salary would allow you to borrow around £157,500, giving a maximum property price of £207,500.
+          </p>
+        </Accordion>
+        <Accordion title="What is a good mortgage affordability ratio?">
+          <p>
+            A ratio below 30% of your net monthly income is considered safe and comfortable. Between 30% and 40% is a stretch but manageable for many borrowers. Above 40% is generally considered risky as it leaves little room for unexpected expenses or rate increases.
+          </p>
+        </Accordion>
+        <Accordion title="Does my partner's salary count towards mortgage affordability?">
+          <p>
+            Yes. If you apply for a joint mortgage, both salaries are combined and multiplied by the lender's income multiple. Even if your partner is not on the mortgage, some lenders may consider household income if it supports the application.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/stamp-duty-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Stamp Duty Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Estimate the tax due when buying a property across the UK.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter an annual salary and see your full take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/rental-yield" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Rental Yield Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Calculate the rental yield on a buy-to-let property investment.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/required-salary" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Required Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Find out what salary you need for a target take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <p class="text-sm font-semibold text-amber-800">Important note</p>
+      <p class="mt-1 text-sm leading-6 text-amber-700">
+        This calculator provides an estimate only. Actual mortgage offers depend on your credit score, lender criteria, existing debts and other factors. Always consult a mortgage adviser before making financial decisions.
+      </p>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Mortgage Affordability Calculator',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'Any',
+    description: 'Find out how much you could borrow for a mortgage based on your combined salary. Free UK mortgage affordability calculator with monthly payment estimates.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'GBP',
+    },
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How much can I borrow for a mortgage in the UK?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Most UK lenders offer between 4 and 4.5 times your combined annual salary. A typical mortgage on a £50,000 deposit and £35,000 salary would allow you to borrow around £157,500.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is a good mortgage affordability ratio?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'A ratio below 30% of your net monthly income is considered safe. Between 30% and 40% is a stretch. Above 40% is generally considered risky.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Does my partner\'s salary count towards mortgage affordability?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Joint mortgage applications combine both salaries. Some lenders may also consider household income even if your partner is not on the mortgage.',
+        },
+      },
+    ],
+  })} />
+
+  <script>
+    document.querySelectorAll<HTMLElement>('[data-mortgage-affordability]').forEach((root) => {
+      const state = {
+        salary: parseFloat(root.dataset.initialSalary || '35000'),
+        partner: parseFloat(root.dataset.initialPartner || '0'),
+        deposit: parseFloat(root.dataset.initialDeposit || '50000'),
+        rate: parseFloat(root.dataset.initialRate || '5.0'),
+        term: parseInt(root.dataset.initialTerm || '25', 10),
+      };
+
+      function setNum(panel: HTMLElement, key: string, value: number) {
+        const wrapper = panel.querySelector<HTMLElement>(`[data-var="${key}"]`);
+        const el = wrapper?.querySelector<HTMLElement>('[data-animated-number]');
+        if (el) {
+          el.dataset.animatedNumber = String(value);
+        }
+      }
+
+      function recompute() {
+        const combined = state.salary + state.partner;
+        const maxBorrowing = combined * 4.5;
+        const maxProperty = maxBorrowing + state.deposit;
+        const r = state.rate / 100 / 12;
+        const n = state.term * 12;
+        const monthlyPayment = r > 0
+          ? maxBorrowing * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+          : n > 0 ? maxBorrowing / n : 0;
+        const netMonthly = (combined * 0.75) / 12;
+        const ratio = netMonthly > 0 ? (monthlyPayment / netMonthly) * 100 : 0;
+        const depositPct = maxProperty > 0 ? (state.deposit / maxProperty) * 100 : 0;
+
+        setNum(root, 'maxBorrowing', maxBorrowing);
+        setNum(root, 'maxProperty', maxProperty);
+        setNum(root, 'monthlyPayment', monthlyPayment);
+        setNum(root, 'depositPct', depositPct);
+
+        const netEl = root.querySelector<HTMLElement>('[data-var="netMonthly"]');
+        if (netEl) netEl.textContent = `£${Math.round(netMonthly).toLocaleString('en-GB')}`;
+
+        const ratioEl = root.querySelector<HTMLElement>('[data-var="ratio"]');
+        if (ratioEl) ratioEl.textContent = `${ratio.toLocaleString('en-GB', { maximumFractionDigits: 1 })}%`;
+
+        const gaugeFill = root.querySelector<HTMLElement>('[data-gauge-fill]');
+        if (gaugeFill) {
+          const pct = Math.min(ratio, 100);
+          gaugeFill.style.width = `${pct}%`;
+          gaugeFill.classList.remove('bg-emerald-500', 'bg-amber-500', 'bg-rose-500');
+          if (ratio <= 30) {
+            gaugeFill.classList.add('bg-emerald-500');
+          } else if (ratio <= 40) {
+            gaugeFill.classList.add('bg-amber-500');
+          } else {
+            gaugeFill.classList.add('bg-rose-500');
+          }
+        }
+
+        const partnerNote = root.querySelector<HTMLElement>('[data-partner-note]');
+        if (partnerNote) {
+          partnerNote.classList.toggle('hidden', state.partner <= 0);
+        }
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      const salaryInput = root.querySelector<HTMLInputElement>('[data-salary]');
+      salaryInput?.addEventListener('input', () => {
+        const raw = parseFloat(salaryInput.value);
+        state.salary = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const partnerInput = root.querySelector<HTMLInputElement>('[data-partner]');
+      partnerInput?.addEventListener('input', () => {
+        const raw = parseFloat(partnerInput.value);
+        state.partner = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const depositInput = root.querySelector<HTMLInputElement>('[data-deposit]');
+      depositInput?.addEventListener('input', () => {
+        const raw = parseFloat(depositInput.value);
+        state.deposit = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const rateInput = root.querySelector<HTMLInputElement>('[data-rate]');
+      rateInput?.addEventListener('input', () => {
+        const raw = parseFloat(rateInput.value);
+        state.rate = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const termSelect = root.querySelector<HTMLSelectElement>('[data-term]');
+      termSelect?.addEventListener('change', () => {
+        state.term = parseInt(termSelect.value, 10);
+        schedule();
+      });
+
+      recompute();
+
+      // PDF download wiring
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generateMortgagePDF } = await import('../utils/pdfExport.js');
+        const combined = state.salary + state.partner;
+        const maxBorrowing = combined * 4.5;
+        const maxProperty = maxBorrowing + state.deposit;
+        const r = state.rate / 100 / 12;
+        const n = state.term * 12;
+        const monthlyPayment = r > 0 ? maxBorrowing * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : n > 0 ? maxBorrowing / n : 0;
+        const netMonthly = (combined * 0.75) / 12;
+        const ratio = netMonthly > 0 ? (monthlyPayment / netMonthly) * 100 : 0;
+        const depositPct = maxProperty > 0 ? (state.deposit / maxProperty) * 100 : 0;
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        generateMortgagePDF({
+          yourSalary: f(state.salary), partnerSalary: state.partner > 0 ? f(state.partner) : null,
+          deposit: f(state.deposit), interestRate: state.rate + '%', term: state.term + ' years',
+          maxBorrowing: f(maxBorrowing), maxPropertyPrice: f(maxProperty),
+          monthlyPayment: f(monthlyPayment), depositPercent: depositPct.toFixed(1) + '%',
+          affordability: ratio.toFixed(1) + '%', yourSalaryRaw: state.salary,
+        });
+      });
+    });
+  </script>
+</Layout>

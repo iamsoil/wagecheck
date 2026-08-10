@@ -1,0 +1,509 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import AnimatedNumber from '../components/AnimatedNumber.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import ShareResults from '../components/ShareResults.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay, findRequiredGross } from '../utils/tax';
+
+const defaultDesiredAnnual = 30000;
+const defaultPension = 5;
+const defaultLoan = 'none';
+const defaultRegion = 'rest-of-uk';
+
+const requiredGross = findRequiredGross(defaultDesiredAnnual, {
+  pensionContributionPercent: defaultPension,
+  studentLoanPlan: defaultLoan,
+  region: defaultRegion,
+  taxCode: '1257L',
+});
+
+const defaultResult = calculateTakeHomePay({
+  grossAnnualSalary: requiredGross,
+  pensionContributionPercent: defaultPension,
+  studentLoanPlan: defaultLoan,
+  region: defaultRegion,
+  taxCode: '1257L',
+});
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+const pct1 = (n: number) => `${gb(n)}%`;
+
+const loanOptions = [
+  { value: 'none', label: 'No student loan' },
+  { value: 'plan1', label: 'Plan 1' },
+  { value: 'plan2', label: 'Plan 2' },
+  { value: 'plan4', label: 'Plan 4' },
+  { value: 'plan5', label: 'Plan 5' },
+  { value: 'postgraduate', label: 'Postgraduate' },
+];
+
+const inputClasses = 'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const toggleActive = 'bg-emerald-600 text-white';
+const toggleInactive = 'text-slate-600 hover:text-emerald-600';
+const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
+
+const initialStack = [
+  { label: 'Take-home', value: defaultResult.annualTakeHome, colorClass: 'bg-emerald-500' },
+  { label: 'Income Tax', value: defaultResult.incomeTax + defaultResult.bonusTax, colorClass: 'bg-rose-500' },
+  { label: 'National Insurance', value: defaultResult.nationalInsurance, colorClass: 'bg-blue-500' },
+  { label: 'Student Loan', value: defaultResult.studentLoan, colorClass: 'bg-amber-500' },
+  { label: 'Pension', value: defaultResult.pension, colorClass: 'bg-slate-400' },
+];
+const initialStackTotal = initialStack.reduce((sum, seg) => sum + seg.value, 0);
+
+const initialShareRows = [
+  { label: 'Desired take-home', value: money(defaultDesiredAnnual) },
+  { label: 'Required gross salary', value: money(requiredGross) },
+  { label: 'Income Tax', value: money(defaultResult.incomeTax) },
+  { label: 'National Insurance', value: money(defaultResult.nationalInsurance) },
+  { label: 'Student Loan', value: money(defaultResult.studentLoan) },
+  { label: 'Pension', value: money(defaultResult.pension) },
+  { label: 'Annual take-home', value: money(defaultResult.annualTakeHome) },
+  { label: 'Monthly take-home', value: money(defaultResult.monthlyTakeHome) },
+];
+---
+
+<Layout
+  title="Required Salary Calculator 2026/27 | wagecheck"
+  description="Work backwards from your desired take-home pay to find the gross salary you need. Free UK reverse salary calculator for 2026/27."
+>
+  <CalculatorHero
+    category="Required salary calculator"
+    titleHtml='Required Salary <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Work backwards from your desired take-home pay to find the gross salary you need."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="required-salary"
+      data-required-salary
+      data-initial-desired={defaultDesiredAnnual}
+      data-initial-pension={defaultPension}
+      data-initial-loan={defaultLoan}
+      data-initial-region={defaultRegion}
+      class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]"
+    >
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your target</h2>
+        <div class="mt-5 space-y-5">
+          <CalculatorInput label="Desired annual take-home (£)">
+            <input type="number" min="0" step="1000" value={defaultDesiredAnnual} data-desired-annual class={inputClasses} />
+          </CalculatorInput>
+          <CalculatorInput label="Or desired monthly take-home (£)" hint="If entered, this overrides the annual figure above.">
+            <input type="number" min="0" step="100" value="" data-desired-monthly class={inputClasses} />
+          </CalculatorInput>
+
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-700">Pension contribution</span>
+              <span data-pension-value class="text-sm font-bold text-emerald-600">{defaultPension}%</span>
+            </div>
+            <input type="range" min="0" max="20" step="1" value={defaultPension} data-pension class="w-full accent-emerald-600" />
+          </div>
+
+          <CalculatorInput label="Student loan">
+            <select data-loan class={inputClasses}>
+              {loanOptions.map((o) => <option value={o.value} selected={o.value === defaultLoan}>{o.label}</option>)}
+            </select>
+          </CalculatorInput>
+
+          <div>
+            <span class="mb-1.5 block text-sm font-semibold text-slate-700">Region</span>
+            <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+              <button type="button" data-region="rest-of-uk" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'rest-of-uk' ? toggleActive : toggleInactive]}>Rest of UK</button>
+              <button type="button" data-region="scotland" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'scotland' ? toggleActive : toggleInactive]}>Scotland</button>
+            </div>
+          </div>
+
+          <details class="rounded-2xl border border-slate-200 bg-white p-5">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-left text-sm font-semibold text-slate-900 [&::-webkit-details-marker]:hidden">
+              Advanced options
+              <svg class="h-4 w-4 shrink-0 text-emerald-600 transition-transform duration-200 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </summary>
+            <div class="mt-4 space-y-3">
+              <CalculatorInput label="Tax code" hint="Leading digits × 10 set your personal allowance.">
+                <input type="text" value="1257L" data-tax-code class={inputClasses} />
+              </CalculatorInput>
+              <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" data-blind class="h-4 w-4 rounded border-slate-300 accent-emerald-600" />
+                Blind Person's Allowance (+£3,070)
+              </label>
+              <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" data-marriage class="h-4 w-4 rounded border-slate-300 accent-emerald-600" />
+                Marriage Allowance (+£1,260)
+              </label>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your result</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">You need a gross salary of</p>
+            <span data-var="grossAnnual" class="mt-2 block break-words">
+              <AnimatedNumber value={requiredGross} autoScale class="text-emerald-700" />
+            </span>
+            <p data-description class="mt-1 text-sm text-emerald-600/80">To take home £{money(defaultDesiredAnnual)}, you need to earn £{money(requiredGross)} before tax</p>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Monthly gross</p>
+            <span data-var="grossMonthly" class="mt-2 block break-words">
+              <AnimatedNumber value={requiredGross / 12} autoScale class="text-slate-900" />
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Weekly gross</p>
+            <span data-var="grossWeekly" class="mt-2 block break-words">
+              <AnimatedNumber value={requiredGross / 52} autoScale class="text-slate-900" />
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+          <div data-ded-tax-card class="rounded-2xl border border-rose-100 bg-rose-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Income Tax</p>
+            <span data-var="dedTax" class="mt-1 block"><AnimatedNumber value={defaultResult.incomeTax} duration={500} class="text-lg text-rose-700" /></span>
+          </div>
+          <div data-ded-ni-card class="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-blue-600">National Insurance</p>
+            <span data-var="dedNi" class="mt-1 block"><AnimatedNumber value={defaultResult.nationalInsurance} duration={500} class="text-lg text-blue-700" /></span>
+          </div>
+          <div data-ded-loan-card class:list={['rounded-2xl border border-amber-100 bg-amber-50/60 p-4', defaultResult.studentLoan === 0 && 'hidden']}>
+            <p class="text-[11px] font-medium uppercase tracking-wider text-amber-600">Student Loan</p>
+            <span data-var="dedLoan" class="mt-1 block"><AnimatedNumber value={defaultResult.studentLoan} duration={500} class="text-lg text-amber-700" /></span>
+          </div>
+          <div data-ded-pension-card class="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-slate-500">Pension</p>
+            <span data-var="dedPension" class="mt-1 block"><AnimatedNumber value={defaultResult.pension} duration={500} class="text-lg text-slate-700" /></span>
+          </div>
+          <div data-ded-bonus-card class:list={['rounded-2xl border border-rose-100 bg-rose-50/60 p-4', defaultResult.bonusTax === 0 && 'hidden']}>
+            <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Bonus Tax</p>
+            <span data-var="dedBonus" class="mt-1 block"><AnimatedNumber value={defaultResult.bonusTax} duration={500} class="text-lg text-rose-700" /></span>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">Where your money goes</p>
+          <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full">
+            <div data-var="barTakehome" class="bg-emerald-500" style={`width:${initialStackTotal > 0 ? (initialStack[0].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barTax" class="bg-rose-500" style={`width:${initialStackTotal > 0 ? (initialStack[1].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barNi" class="bg-blue-500" style={`width:${initialStackTotal > 0 ? (initialStack[2].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barLoan" class:list={['bg-amber-500', defaultResult.studentLoan === 0 && 'hidden']} style={`width:${initialStackTotal > 0 ? (initialStack[3].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barPension" class="bg-slate-400" style={`width:${initialStackTotal > 0 ? (initialStack[4].value / initialStackTotal) * 100 : 0}%;`}></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>Take-home · <span data-var="legTakehome" class="tabular-nums">{money(initialStack[0].value)} · {initialStackTotal > 0 ? Math.round((initialStack[0].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span>Income Tax · <span data-var="legTax" class="tabular-nums">{money(initialStack[1].value)} · {initialStackTotal > 0 ? Math.round((initialStack[1].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>NI · <span data-var="legNi" class="tabular-nums">{money(initialStack[2].value)} · {initialStackTotal > 0 ? Math.round((initialStack[2].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span data-leg-loan class:list={['flex items-center gap-1.5 text-xs text-slate-600', defaultResult.studentLoan === 0 && 'hidden']}><span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>Student Loan · <span data-var="legLoan" class="tabular-nums">{money(initialStack[3].value)} · {initialStackTotal > 0 ? Math.round((initialStack[3].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span>Pension · <span data-var="legPension" class="tabular-nums">{money(initialStack[4].value)} · {initialStackTotal > 0 ? Math.round((initialStack[4].value / initialStackTotal) * 100) : 0}%</span></span>
+          </div>
+        </div>
+
+        <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-3">Band</th>
+                <th class="px-4 py-3 text-right">Yearly</th>
+                <th class="px-4 py-3 text-right">Monthly</th>
+                <th class="px-4 py-3 text-right">Weekly</th>
+                <th class="px-4 py-3 text-right">% of Gross</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-table-row="tax" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Income Tax</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.incomeTax / Math.max(requiredGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="ni" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">National Insurance</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.nationalInsurance / Math.max(requiredGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="loan" class:list={['border-b border-slate-100', defaultResult.studentLoan === 0 && 'hidden']}>
+                <td class="px-4 py-3 font-medium text-slate-900">Student Loan</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.studentLoan / Math.max(requiredGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="pension" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Pension</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.pension / Math.max(requiredGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="takehome" class="bg-emerald-50">
+                <td class="px-4 py-3 font-bold text-emerald-700">Take-home pay</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.annualTakeHome)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.monthlyTakeHome)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.weeklyTakeHome)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{pct1(defaultResult.percentageTakenHome)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6">
+          <ShareResults product="Wagecheck Required Salary Calculator (2026/27)" rows={initialShareRows} markdownHeaders={['Item', 'Amount']} markdownRows={initialShareRows} modalTitle="Your required salary" modalValue={money(requiredGross)} modalSub={`to take home ${money(defaultDesiredAnnual)} per year`} stack={initialStack} source="#required-salary" />
+        </div>
+
+        <button
+          data-download-pdf
+          class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF Report
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How Required Salary Works</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>Because UK income tax is progressive — different rates apply to different portions of your salary — there is no simple formula to convert a desired take-home figure into a gross salary. Instead, this calculator uses a binary search: it starts with a range of possible salaries, tests the middle value, and narrows down until it finds the gross salary that produces your exact take-home amount.</p>
+        <p>The search runs up to 50 iterations, each cutting the possible range in half. After 50 iterations the result is precise to within £1. The same 2026/27 income tax, National Insurance, pension and student loan rules used by our main salary calculator are applied at each step.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="Why can't I just multiply take-home by 1.2 or something?">
+          <p>UK income tax is progressive — you pay 20% on the first chunk, 40% on the next, and 45% above £125,140. National Insurance has its own bands. A simple multiplier gets increasingly wrong as salary rises, because marginal rates change. The binary search handles this correctly at every income level.</p>
+        </Accordion>
+        <Accordion title="What if I want to include a bonus in my take-home target?">
+          <p>Enter the annual take-home you want after all deductions, including any bonus. The calculator finds the gross salary that produces that figure. If you also have a bonus paid through payroll, use the main salary calculator with the bonus field to check the combined result.</p>
+        </Accordion>
+        <Accordion title="Does this work for Scottish tax rates?">
+          <p>Yes. Switch the region toggle to Scotland and the calculator applies the Scottish starter, basic, intermediate, higher, advanced and top rates instead of the rest-of-UK 20/40/45% bands.</p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter a gross salary and see your take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/compare-salaries" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Compare Salaries</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Side-by-side take-home comparison for two job offers.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Convert your hourly rate into annual take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/pro-rata-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Pro-Rata Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Scale a full-time salary to your part-time hours.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <script>
+    import { calculateTakeHomePay, findRequiredGross } from '../utils/tax';
+    import { renderTakeHomeResults, setNum, money as moneyFmt } from '../lib/takeHomeResults';
+
+    document.querySelectorAll<HTMLElement>('[data-required-salary]').forEach((root) => {
+      const state = {
+        annual: parseFloat(root.dataset.initialDesired || '30000'),
+        monthly: 0,
+        pension: parseFloat(root.dataset.initialPension || '5'),
+        loan: (root.dataset.initialLoan || 'none') as 'none' | 'plan1' | 'plan2' | 'plan4' | 'plan5' | 'postgraduate',
+        region: (root.dataset.initialRegion || 'rest-of-uk') as 'rest-of-uk' | 'scotland',
+        taxCode: '1257L',
+        blind: false,
+        marriage: false,
+      };
+
+      const setToggle = (attribute: string, value: string) => {
+        root.querySelectorAll<HTMLButtonElement>(`[${attribute}]`).forEach((btn) => {
+          const isActive = btn.getAttribute(attribute) === value;
+          btn.classList.toggle('bg-emerald-600', isActive);
+          btn.classList.toggle('text-white', isActive);
+          btn.classList.toggle('text-slate-600', !isActive);
+          btn.classList.toggle('hover:text-emerald-600', !isActive);
+        });
+      };
+
+      function recompute() {
+        const desiredNet = state.monthly > 0 ? state.monthly * 12 : state.annual;
+        const gross = findRequiredGross(desiredNet, {
+          pensionContributionPercent: state.pension,
+          studentLoanPlan: state.loan,
+          region: state.region,
+          taxCode: state.taxCode,
+          blindAllowance: state.blind,
+          marriageAllowance: state.marriage,
+        });
+        const result = calculateTakeHomePay({
+          grossAnnualSalary: gross,
+          pensionContributionPercent: state.pension,
+          studentLoanPlan: state.loan,
+          region: state.region,
+          taxCode: state.taxCode,
+          blindAllowance: state.blind,
+          marriageAllowance: state.marriage,
+        });
+
+        setNum(root, 'grossMonthly', gross / 12);
+        setNum(root, 'grossWeekly', gross / 52);
+
+        const desc = root.querySelector<HTMLElement>('[data-description]');
+        if (desc) desc.textContent = `To take home £${moneyFmt(desiredNet)}, you need to earn £${moneyFmt(gross)} before tax`;
+
+        renderTakeHomeResults(root, result, 'Wagecheck Required Salary Calculator (2026/27)', [
+          { label: 'Desired take-home', value: moneyFmt(desiredNet) },
+        ]);
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      const annualInput = root.querySelector<HTMLInputElement>('[data-desired-annual]');
+      annualInput?.addEventListener('input', () => {
+        const raw = parseFloat(annualInput.value);
+        state.annual = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const monthlyInput = root.querySelector<HTMLInputElement>('[data-desired-monthly]');
+      monthlyInput?.addEventListener('input', () => {
+        const raw = parseFloat(monthlyInput.value);
+        state.monthly = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const pensionSlider = root.querySelector<HTMLInputElement>('[data-pension]');
+      const pensionValue = root.querySelector<HTMLElement>('[data-pension-value]');
+      pensionSlider?.addEventListener('input', () => {
+        const raw = parseFloat(pensionSlider.value);
+        state.pension = Number.isFinite(raw) ? raw : 0;
+        if (pensionValue) pensionValue.textContent = `${state.pension}%`;
+        schedule();
+      });
+
+      const loanSelect = root.querySelector<HTMLSelectElement>('[data-loan]');
+      loanSelect?.addEventListener('change', () => {
+        state.loan = loanSelect.value as typeof state.loan;
+        schedule();
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('[data-region]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.region = btn.dataset.region as 'rest-of-uk' | 'scotland';
+          setToggle('data-region', state.region);
+          schedule();
+        });
+      });
+
+      const taxCode = root.querySelector<HTMLInputElement>('[data-tax-code]');
+      taxCode?.addEventListener('input', () => {
+        state.taxCode = taxCode.value || '1257L';
+        schedule();
+      });
+
+      const blindCheck = root.querySelector<HTMLInputElement>('[data-blind]');
+      blindCheck?.addEventListener('change', () => {
+        state.blind = blindCheck.checked;
+        schedule();
+      });
+
+      const marriageCheck = root.querySelector<HTMLInputElement>('[data-marriage]');
+      marriageCheck?.addEventListener('change', () => {
+        state.marriage = marriageCheck.checked;
+        schedule();
+      });
+
+      recompute();
+
+      // PDF download wiring
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generateRequiredSalaryPDF } = await import('../utils/pdfExport.js');
+        const desiredNet = state.monthly > 0 ? state.monthly * 12 : state.annual;
+        const gross = findRequiredGross(desiredNet, { pensionContributionPercent: state.pension, studentLoanPlan: state.loan, region: state.region, taxCode: state.taxCode, blindAllowance: state.blind, marriageAllowance: state.marriage });
+        const result = calculateTakeHomePay({ grossAnnualSalary: gross, pensionContributionPercent: state.pension, studentLoanPlan: state.loan, region: state.region, taxCode: state.taxCode, blindAllowance: state.blind, marriageAllowance: state.marriage });
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        generateRequiredSalaryPDF({
+          desiredTakeHome: f(desiredNet), pension: state.pension + '%',
+          studentLoan: state.loan === 'none' ? 'None' : state.loan, region: state.region,
+          requiredGross: f(gross), annualNet: f(result.annualTakeHome), monthlyNet: f(result.monthlyTakeHome),
+          annualTax: f(result.incomeTax), annualNI: f(result.nationalInsurance),
+          annualPension: f(result.pension), annualSL: f(result.studentLoan),
+        });
+      });
+    });
+  </script>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Required Salary Calculator",
+    "description": "Work backwards from your target take-home pay to find the gross salary you need.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+    "url": "https://wagecheck.co.uk/required-salary"
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I calculate the salary I need for a specific take-home pay?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Enter your desired monthly or annual take-home pay into our Required Salary Calculator. It reverse-calculates the gross salary needed, accounting for income tax, National Insurance, pension contributions, and student loan repayments based on 2026/27 HMRC rates."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does pension affect my required salary?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Pension contributions are deducted from your gross salary before tax, so a higher pension percentage means you need a higher gross salary to achieve the same take-home pay."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What tax code should I use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use 1257L if you're entitled to the standard personal allowance. If you have a different code (e.g., BR, D0, K), enter it for a more accurate calculation."
+        }
+      }
+    ]
+  })} />
+</Layout>

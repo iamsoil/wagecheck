@@ -1,0 +1,389 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../utils/tax';
+
+const defaultHourlyRate = 15;
+const defaultOvertimeHours = 10;
+const defaultMultiplier = 1.5;
+const defaultTaxCode = '1257L';
+const defaultAnnualSalary = 0;
+
+const defaultGross = defaultHourlyRate * defaultMultiplier * defaultOvertimeHours;
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+const pct1 = (n: number) => `${gb(n)}%`;
+
+const inputClasses =
+  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
+---
+
+<Layout
+  title="Overtime Pay Calculator 2026/27 | wagecheck"
+  description="Calculate your overtime pay after tax for 2026/27. Free UK overtime pay calculator with income tax, National Insurance and marginal rate estimation."
+>
+  <CalculatorHero
+    category="Overtime calculator"
+    titleHtml='Overtime Pay <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Enter your hourly rate and overtime hours to see exactly how much you'll take home after income tax and National Insurance — with marginal rate estimation based on your salary."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="overtime-calculator"
+      data-overtime-calculator
+      data-initial-rate={defaultHourlyRate}
+      data-initial-hours={defaultOvertimeHours}
+      data-initial-multiplier={defaultMultiplier}
+      data-initial-tax-code={defaultTaxCode}
+      data-initial-salary={defaultAnnualSalary}
+      class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]"
+    >
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your details</h2>
+        <div class="mt-5 space-y-5">
+          <CalculatorInput label="Hourly rate (£)" hint="Your normal hourly pay rate.">
+            <input type="number" min="0" step="0.5" value={defaultHourlyRate} data-rate class={inputClasses} />
+          </CalculatorInput>
+
+          <CalculatorInput label="Overtime hours" hint="Number of overtime hours in this period.">
+            <input type="number" min="0" step="0.5" value={defaultOvertimeHours} data-hours class={inputClasses} />
+          </CalculatorInput>
+
+          <CalculatorInput label="Rate multiplier">
+            <select data-multiplier class={inputClasses}>
+              <option value="1.25">1.25x (time and a quarter)</option>
+              <option value="1.5" selected>1.5x (time and a half)</option>
+              <option value="2">2.0x (double time)</option>
+              <option value="custom">Custom</option>
+            </select>
+          </CalculatorInput>
+
+          <div data-custom-multiplier-wrapper class="hidden">
+            <CalculatorInput label="Custom multiplier" hint="Enter your own overtime rate multiplier.">
+              <input type="number" min="1" step="0.25" value={defaultMultiplier} data-custom-multiplier class={inputClasses} />
+            </CalculatorInput>
+          </div>
+
+          <div>
+            <label class="flex items-center gap-3">
+              <input type="checkbox" data-salary-check class="h-4 w-4 rounded border-slate-300 accent-emerald-600" />
+              <span class="text-sm font-semibold text-slate-700">I know my annual salary</span>
+            </label>
+            <p class="mt-1 text-xs text-slate-500">Enter your salary to estimate marginal tax rates on overtime.</p>
+          </div>
+
+          <div data-salary-wrapper class="hidden">
+            <CalculatorInput label="Annual salary (£)" hint="Your base annual salary before overtime.">
+              <input type="number" min="0" step="1000" value={defaultAnnualSalary} data-salary class={inputClasses} />
+            </CalculatorInput>
+          </div>
+
+          <CalculatorInput label="Tax code" hint="Check your payslip for your code.">
+            <input type="text" value={defaultTaxCode} data-tax-code class={inputClasses} />
+          </CalculatorInput>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your results</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Gross overtime pay</p>
+            <span data-var="gross" class="mt-2 block text-3xl font-bold text-emerald-700">{money(defaultGross)}</span>
+            <p data-gross-formula class="mt-1 text-xs text-emerald-600/80">£{gb(defaultHourlyRate)} &times; {defaultMultiplier}x &times; {defaultOvertimeHours} hrs</p>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Tax deduction</p>
+            <span data-var="tax" class="mt-2 block text-lg font-bold text-slate-900">—</span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">NI deduction</p>
+            <span data-var="ni" class="mt-2 block text-lg font-bold text-slate-900">—</span>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50 p-5">
+          <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Net overtime pay</p>
+          <span data-var="net" class="mt-2 block text-3xl font-bold text-emerald-600">—</span>
+          <p data-var="net-hint" class="mt-1 text-xs text-emerald-600/80"></p>
+        </div>
+
+        <button
+          data-download-pdf
+          class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF Report
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How Overtime Is Taxed</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>
+          Overtime pay is treated as part of your taxable income by HMRC. It is not taxed at a special "overtime rate" — instead, it is added to your total earnings and taxed at your marginal rate, which is the income tax band your highest pound of earnings falls into.
+        </p>
+        <p>
+          If your overtime pushes you into a higher tax band (for example, from the 20% basic rate into the 40% higher rate), only the portion that crosses the threshold is taxed at the higher rate. This is why knowing your annual salary helps produce a more accurate estimate.
+        </p>
+        <p>
+          National Insurance on overtime is calculated the same way as on your normal salary — at 8% on earnings between £12,570 and £50,270, then 2% on anything above £50,270 for 2026/27.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="Is overtime always taxed at a higher rate?">
+          <p>
+            No. Overtime is taxed at your marginal rate — the rate your total income falls into. If you're well within the basic rate band, overtime is simply taxed at 20%. Only when total earnings cross into a higher band does the rate increase, and only on the amount above the threshold.
+          </p>
+        </Accordion>
+        <Accordion title="How do I find my marginal tax rate?">
+          <p>
+            Check your total annual income (salary plus any regular bonuses). In the UK for 2026/27, the basic rate (20%) applies up to £50,270, the higher rate (40%) applies from £50,271 to £125,140, and the additional rate (45%) applies above that. If you enter your salary in this calculator, it will estimate your marginal rate automatically.
+          </p>
+        </Accordion>
+        <Accordion title="Does overtime count towards National Insurance?">
+          <p>
+            Yes. All earnings including overtime count towards your National Insurance contributions. Class 1 NI is charged at 8% on qualifying earnings between £12,570 and £50,270, then 2% above £50,270 for the 2026/27 tax year.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Convert your hourly rate into an annual salary and take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter an annual salary and see your full take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/pay-rise-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Pay Rise Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">See how a pay rise affects your take-home pay after tax.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/pro-rata-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Pro-Rata Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Scale a full-time salary to your part-time hours or days.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Overtime Pay Calculator 2026/27',
+    url: 'https://wagecheck.co.uk/overtime-calculator',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    description: 'Calculate your overtime pay after tax for 2026/27. Free UK overtime pay calculator with income tax, National Insurance and marginal rate estimation.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'GBP',
+    },
+  })} />
+
+  <script>
+    document.querySelectorAll<HTMLElement>('[data-overtime-calculator]').forEach((root) => {
+      const state = {
+        rate: parseFloat(root.dataset.initialRate || '15'),
+        hours: parseFloat(root.dataset.initialHours || '10'),
+        multiplier: parseFloat(root.dataset.initialMultiplier || '1.5'),
+        multiplierMode: '1.5' as string,
+        taxCode: root.dataset.initialTaxCode || '1257L',
+        salary: parseFloat(root.dataset.initialSalary || '0'),
+        salaryEnabled: false,
+      };
+
+      const customWrapper = root.querySelector<HTMLElement>('[data-custom-multiplier-wrapper]');
+      const salaryWrapper = root.querySelector<HTMLElement>('[data-salary-wrapper]');
+      const salaryCheck = root.querySelector<HTMLInputElement>('[data-salary-check]');
+      const multiplierSelect = root.querySelector<HTMLSelectElement>('[data-multiplier]');
+      const customMultiplierInput = root.querySelector<HTMLInputElement>('[data-custom-multiplier]');
+      const salaryInput = root.querySelector<HTMLInputElement>('[data-salary]');
+      const rateInput = root.querySelector<HTMLInputElement>('[data-rate]');
+      const hoursInput = root.querySelector<HTMLInputElement>('[data-hours]');
+      const taxCodeInput = root.querySelector<HTMLInputElement>('[data-tax-code]');
+
+      const grossEl = root.querySelector<HTMLElement>('[data-var="gross"]');
+      const taxEl = root.querySelector<HTMLElement>('[data-var="tax"]');
+      const niEl = root.querySelector<HTMLElement>('[data-var="ni"]');
+      const netEl = root.querySelector<HTMLElement>('[data-var="net"]');
+      const netHint = root.querySelector<HTMLElement>('[data-var="net-hint"]');
+      const formulaEl = root.querySelector<HTMLElement>('[data-gross-formula]');
+
+      const gbFmt = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+      const moneyFmt = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+
+      function getEffectiveMultiplier(): number {
+        if (state.multiplierMode === 'custom') {
+          const customVal = parseFloat(customMultiplierInput?.value || '0');
+          return Number.isFinite(customVal) && customVal > 0 ? customVal : 1;
+        }
+        return state.multiplier;
+      }
+
+      function parseTaxCode(code: string): number {
+        const match = code.match(/(\d+)/);
+        if (!match) return 12570;
+        return Math.min(parseInt(match[1], 10) * 10, 125140);
+      }
+
+      function getMarginalRates(annualSalary: number, taxCode: string) {
+        if (annualSalary <= 0) {
+          return { taxRate: 0.2, niRate: 0.08 };
+        }
+
+        const personalAllowance = parseTaxCode(taxCode);
+        const taxableIncome = Math.max(annualSalary - personalAllowance, 0);
+
+        let taxRate = 0.2;
+        if (annualSalary > 125140) {
+          taxRate = 0.45;
+        } else if (annualSalary > 50270) {
+          taxRate = 0.4;
+        }
+
+        let niRate = 0.08;
+        if (annualSalary > 50270) {
+          niRate = 0.02;
+        } else if (annualSalary <= 12570) {
+          niRate = 0;
+        }
+
+        return { taxRate, niRate };
+      }
+
+      function recompute() {
+        const multiplier = getEffectiveMultiplier();
+        const gross = state.rate * multiplier * state.hours;
+        const { taxRate, niRate } = getMarginalRates(state.salary, state.taxCode);
+        const tax = gross * taxRate;
+        const ni = gross * niRate;
+        const net = gross - tax - ni;
+
+        if (grossEl) grossEl.textContent = moneyFmt(gross);
+        if (taxEl) taxEl.textContent = moneyFmt(tax);
+        if (niEl) niEl.textContent = moneyFmt(ni);
+        if (netEl) netEl.textContent = moneyFmt(net);
+
+        if (netHint) {
+          if (state.salary > 0) {
+            netHint.textContent = `Based on ${gbFmt(taxRate * 100)}% tax + ${gbFmt(niRate * 100)}% NI marginal rates`;
+          } else {
+            netHint.textContent = 'Using default 20% tax + 8% NI (enter salary for marginal rates)';
+          }
+        }
+
+        if (formulaEl) {
+          formulaEl.innerHTML = `£${gbFmt(state.rate)} &times; ${multiplier}x &times; ${state.hours} hrs`;
+        }
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      rateInput?.addEventListener('input', () => {
+        const raw = parseFloat(rateInput.value);
+        state.rate = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      hoursInput?.addEventListener('input', () => {
+        const raw = parseFloat(hoursInput.value);
+        state.hours = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      multiplierSelect?.addEventListener('change', () => {
+        const val = multiplierSelect.value;
+        state.multiplierMode = val;
+        if (val === 'custom') {
+          state.multiplier = parseFloat(customMultiplierInput?.value || '1.5');
+          customWrapper?.classList.remove('hidden');
+        } else {
+          state.multiplier = parseFloat(val);
+          customWrapper?.classList.add('hidden');
+        }
+        schedule();
+      });
+
+      customMultiplierInput?.addEventListener('input', () => {
+        const raw = parseFloat(customMultiplierInput.value);
+        state.multiplier = Number.isFinite(raw) && raw > 0 ? raw : 1;
+        schedule();
+      });
+
+      salaryCheck?.addEventListener('change', () => {
+        state.salaryEnabled = salaryCheck.checked;
+        if (state.salaryEnabled) {
+          salaryWrapper?.classList.remove('hidden');
+          const raw = parseFloat(salaryInput?.value || '0');
+          state.salary = Number.isFinite(raw) ? raw : 0;
+        } else {
+          salaryWrapper?.classList.add('hidden');
+          state.salary = 0;
+        }
+        schedule();
+      });
+
+      salaryInput?.addEventListener('input', () => {
+        const raw = parseFloat(salaryInput.value);
+        state.salary = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      taxCodeInput?.addEventListener('input', () => {
+        state.taxCode = taxCodeInput.value;
+        schedule();
+      });
+
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      recompute();
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generateOvertimePDF } = await import('../utils/pdfExport.js');
+        const multiplier = getEffectiveMultiplier();
+        const gross = state.rate * multiplier * state.hours;
+        const { taxRate, niRate } = getMarginalRates(state.salary, state.taxCode);
+        const tax = gross * taxRate;
+        const ni = gross * niRate;
+        const net = gross - tax - ni;
+        const gbFmt = (n: number) => `${(n * 100).toFixed(0)}%`;
+        const f = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+        generateOvertimePDF({
+          hourlyRate: `£${state.rate}`, multiplier: `${multiplier}x`,
+          overtimeHours: state.hours.toString(), salary: state.salary > 0 ? `£${state.salary.toLocaleString('en-GB')}` : '',
+          taxCode: state.taxCode, gross: f(gross), tax: f(tax), ni: f(ni), net: f(net),
+          marginalRate: state.salary > 0 ? `${gbFmt(taxRate)} tax + ${gbFmt(niRate)} NI` : 'Default 20% + 8%',
+        });
+      });
+    });
+  </script>
+</Layout>

@@ -1,0 +1,512 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import AnimatedNumber from '../components/AnimatedNumber.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import ShareResults from '../components/ShareResults.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../lib/calculations';
+
+const defaultRate = 15;
+const defaultHours = 37.5;
+const defaultPension = 5;
+const defaultLoan = 'none';
+const defaultRegion = 'rest-of-uk';
+
+const defaultGross = defaultRate * defaultHours * 52;
+const defaultResult = calculateTakeHomePay({
+  grossAnnualSalary: defaultGross,
+  pensionContributionPercent: defaultPension,
+  studentLoanPlan: defaultLoan,
+  region: defaultRegion,
+  taxCode: '1257L',
+});
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+const pct1 = (n: number) => `${gb(n)}%`;
+
+const loanOptions = [
+  { value: 'none', label: 'No student loan' },
+  { value: 'plan1', label: 'Plan 1' },
+  { value: 'plan2', label: 'Plan 2' },
+  { value: 'plan4', label: 'Plan 4' },
+  { value: 'plan5', label: 'Plan 5' },
+  { value: 'postgraduate', label: 'Postgraduate' },
+];
+
+const inputClasses =
+  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const toggleActive = 'bg-emerald-600 text-white';
+const toggleInactive = 'text-slate-600 hover:text-emerald-600';
+const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
+
+const initialStack = [
+  { label: 'Take-home', value: defaultResult.annualTakeHome, colorClass: 'bg-emerald-500' },
+  { label: 'Income Tax', value: defaultResult.incomeTax + defaultResult.bonusTax, colorClass: 'bg-rose-500' },
+  { label: 'National Insurance', value: defaultResult.nationalInsurance, colorClass: 'bg-blue-500' },
+  { label: 'Student Loan', value: defaultResult.studentLoan, colorClass: 'bg-amber-500' },
+  { label: 'Pension', value: defaultResult.pension, colorClass: 'bg-slate-400' },
+];
+const initialStackTotal = initialStack.reduce((sum, seg) => sum + seg.value, 0);
+
+const initialShareRows = [
+  { label: 'Hourly rate', value: `£${gb(defaultRate)}` },
+  { label: 'Hours per week', value: `${defaultHours}` },
+  { label: 'Gross annual salary', value: money(defaultGross) },
+  { label: 'Income Tax', value: money(defaultResult.incomeTax) },
+  { label: 'National Insurance', value: money(defaultResult.nationalInsurance) },
+  { label: 'Student Loan', value: money(defaultResult.studentLoan) },
+  { label: 'Pension', value: money(defaultResult.pension) },
+  { label: 'Bonus tax', value: money(defaultResult.bonusTax) },
+  { label: 'Annual take-home pay', value: money(defaultResult.annualTakeHome) },
+  { label: 'Monthly take-home pay', value: money(defaultResult.monthlyTakeHome) },
+  { label: 'Weekly take-home pay', value: money(defaultResult.weeklyTakeHome) },
+];
+---
+
+<Layout
+  title="Hourly Wage Calculator 2026/27 | wagecheck"
+  description="Convert your hourly rate into an annual salary and see take-home pay for 2026/27. Free UK hourly wage calculator with income tax, National Insurance, student loans and pension."
+>
+  <CalculatorHero
+    category="Hourly wage calculator"
+    titleHtml='Hourly Wage <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Enter your hourly rate and hours per week to see your gross annual salary and exactly how much you take home after income tax, National Insurance, student loans and pension."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="hourly-calculator"
+      data-hourly-calculator
+      data-initial-rate={defaultRate}
+      data-initial-hours={defaultHours}
+      data-initial-pension={defaultPension}
+      data-initial-loan={defaultLoan}
+      data-initial-region={defaultRegion}
+      class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]"
+    >
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your details</h2>
+        <div class="mt-5 space-y-5">
+          <CalculatorInput label="Hourly rate (£)" hint="What you earn for each hour worked.">
+            <input type="number" min="0" step="0.5" value={defaultRate} data-rate class={inputClasses} />
+          </CalculatorInput>
+          <CalculatorInput label="Hours per week" hint="Typical full-time is 37.5.">
+            <input type="number" min="1" max="80" step="0.5" value={defaultHours} data-hours class={inputClasses} />
+          </CalculatorInput>
+
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-700">Pension contribution</span>
+              <span data-pension-value class="text-sm font-bold text-emerald-600">{defaultPension}%</span>
+            </div>
+            <input type="range" min="0" max="20" step="1" value={defaultPension} data-pension class="w-full accent-emerald-600" />
+          </div>
+
+          <CalculatorInput label="Student loan">
+            <select data-loan class={inputClasses}>
+              {loanOptions.map((o) => <option value={o.value} selected={o.value === defaultLoan}>{o.label}</option>)}
+            </select>
+          </CalculatorInput>
+
+          <div>
+            <span class="mb-1.5 block text-sm font-semibold text-slate-700">Region</span>
+            <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+              <button type="button" data-region="rest-of-uk" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'rest-of-uk' ? toggleActive : toggleInactive]}>Rest of UK</button>
+              <button type="button" data-region="scotland" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'scotland' ? toggleActive : toggleInactive]}>Scotland</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your results</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-3">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Gross annual salary</p>
+            <span data-var="grossAnnual" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.gross} autoScale class="text-emerald-700" />
+            </span>
+            <p data-gross-formula class="mt-1 text-xs text-emerald-600/80">£{gb(defaultRate)} × {defaultHours} hrs × 52 weeks</p>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Annual take-home</p>
+            <span data-var="annual" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.annualTakeHome} autoScale class="text-slate-900" />
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Monthly take-home</p>
+            <span data-var="monthly" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.monthlyTakeHome} autoScale class="text-slate-900" />
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Weekly take-home</p>
+            <span data-var="weekly" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.weeklyTakeHome} autoScale class="text-slate-900" />
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+          <div data-ded-tax-card class="rounded-2xl border border-rose-100 bg-rose-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Income Tax</p>
+            <span data-var="dedTax" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.incomeTax} duration={500} class="text-lg text-rose-700" />
+            </span>
+          </div>
+          <div data-ded-ni-card class="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-blue-600">National Insurance</p>
+            <span data-var="dedNi" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.nationalInsurance} duration={500} class="text-lg text-blue-700" />
+            </span>
+          </div>
+          <div data-ded-loan-card class:list={['rounded-2xl border border-amber-100 bg-amber-50/60 p-4', defaultResult.studentLoan === 0 && 'hidden']}>
+            <p class="text-[11px] font-medium uppercase tracking-wider text-amber-600">Student Loan</p>
+            <span data-var="dedLoan" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.studentLoan} duration={500} class="text-lg text-amber-700" />
+            </span>
+          </div>
+          <div data-ded-pension-card class="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-slate-500">Pension</p>
+            <span data-var="dedPension" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.pension} duration={500} class="text-lg text-slate-700" />
+            </span>
+          </div>
+          <div data-ded-bonus-card class:list={['rounded-2xl border border-rose-100 bg-rose-50/60 p-4', defaultResult.bonusTax === 0 && 'hidden']}>
+            <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Bonus Tax</p>
+            <span data-var="dedBonus" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.bonusTax} duration={500} class="text-lg text-rose-700" />
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">Where your money goes</p>
+          <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full">
+            <div data-var="barTakehome" class="bg-emerald-500" style={`width:${initialStackTotal > 0 ? (initialStack[0].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barTax" class="bg-rose-500" style={`width:${initialStackTotal > 0 ? (initialStack[1].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barNi" class="bg-blue-500" style={`width:${initialStackTotal > 0 ? (initialStack[2].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barLoan" class:list={['bg-amber-500', defaultResult.studentLoan === 0 && 'hidden']} style={`width:${initialStackTotal > 0 ? (initialStack[3].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barPension" class="bg-slate-400" style={`width:${initialStackTotal > 0 ? (initialStack[4].value / initialStackTotal) * 100 : 0}%;`}></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>Take-home · <span data-var="legTakehome" class="tabular-nums">{money(initialStack[0].value)} · {initialStackTotal > 0 ? Math.round((initialStack[0].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span>Income Tax · <span data-var="legTax" class="tabular-nums">{money(initialStack[1].value)} · {initialStackTotal > 0 ? Math.round((initialStack[1].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>National Insurance · <span data-var="legNi" class="tabular-nums">{money(initialStack[2].value)} · {initialStackTotal > 0 ? Math.round((initialStack[2].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span data-leg-loan class:list={['flex items-center gap-1.5 text-xs text-slate-600', defaultResult.studentLoan === 0 && 'hidden']}><span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>Student Loan · <span data-var="legLoan" class="tabular-nums">{money(initialStack[3].value)} · {initialStackTotal > 0 ? Math.round((initialStack[3].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span>Pension · <span data-var="legPension" class="tabular-nums">{money(initialStack[4].value)} · {initialStackTotal > 0 ? Math.round((initialStack[4].value / initialStackTotal) * 100) : 0}%</span></span>
+          </div>
+        </div>
+
+        <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-3">Band</th>
+                <th class="px-4 py-3 text-right">Yearly</th>
+                <th class="px-4 py-3 text-right">Monthly</th>
+                <th class="px-4 py-3 text-right">Weekly</th>
+                <th class="px-4 py-3 text-right">% of Gross</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-table-row="tax" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Income Tax</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.incomeTax / Math.max(defaultGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="ni" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">National Insurance</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.nationalInsurance / Math.max(defaultGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="loan" class:list={['border-b border-slate-100', defaultResult.studentLoan === 0 && 'hidden']}>
+                <td class="px-4 py-3 font-medium text-slate-900">Student Loan</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.studentLoan / Math.max(defaultGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="pension" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Pension</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.pension / Math.max(defaultGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="bonus" class:list={['border-b border-slate-100', defaultResult.bonusTax === 0 && 'hidden']}>
+                <td class="px-4 py-3 font-medium text-slate-900">Bonus Tax</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.bonusTax)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.bonusTax / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.bonusTax / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.bonusTax / Math.max(defaultGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="takehome" class="bg-emerald-50">
+                <td class="px-4 py-3 font-bold text-emerald-700">Take-home pay</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.annualTakeHome)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.monthlyTakeHome)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.weeklyTakeHome)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{pct1(defaultResult.percentageTakenHome)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6">
+          <ShareResults
+            product="Wagecheck Hourly Wage Calculator (2026/27)"
+            rows={initialShareRows}
+            markdownHeaders={['Item', 'Amount']}
+            markdownRows={initialShareRows}
+            modalTitle="Your take-home pay"
+            modalValue={money(defaultResult.monthlyTakeHome)}
+            modalSub="per month after tax, National Insurance, pension and student loan"
+            stack={initialStack}
+            source="#hourly-calculator"
+          />
+        </div>
+
+        <button
+          data-download-pdf
+          class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF Report
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">How the UK Hourly Wage Calculator Works</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">1</div>
+        <h3 class="mt-4 text-sm font-semibold text-slate-900">Enter your rate and hours</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Tell us your hourly rate and how many hours you work each week.</p>
+      </div>
+      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">2</div>
+        <h3 class="mt-4 text-sm font-semibold text-slate-900">We compute your annual gross</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Your gross annual salary is hourly rate × hours per week × 52 weeks.</p>
+      </div>
+      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">3</div>
+        <h3 class="mt-4 text-sm font-semibold text-slate-900">2026/27 tax rules are applied</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Income tax, National Insurance, pension and student loan are deducted using the same rules as the salary calculator.</p>
+      </div>
+      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">4</div>
+        <h3 class="mt-4 text-sm font-semibold text-slate-900">See your take-home pay</h3>
+        <p class="mt-2 text-sm leading-6 text-slate-600">View your gross, annual, monthly and weekly take-home, plus a full breakdown of every deduction.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="How do I work out my hourly rate from an annual salary?">
+          <p>
+            Divide your annual gross salary by the number of hours you work in a year. For a full-time role that is usually hours per week × 52 — so a £30,000 salary on 37.5 hours a week works out at about £15.38 an hour.
+          </p>
+        </Accordion>
+        <Accordion title="Does being paid hourly change how much tax I pay?">
+          <p>
+            No. HMRC taxes your total annual income, so whether you are salaried or paid by the hour, the same 2026/27 income tax, National Insurance and student loan rules apply to your gross annual salary.
+          </p>
+        </Accordion>
+        <Accordion title="Is overtime taxed more than my normal hours?">
+          <p>
+            Overtime is added to your annual gross and taxed at your marginal rate — the rate your highest earnings fall into. You never pay 100% tax on extra hours, but extra earnings can push you into a higher tax band.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter an annual salary and see your full take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/pro-rata-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Pro-Rata Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Scale a full-time salary to your part-time hours or days.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/stamp-duty-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Stamp Duty Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Estimate the tax due when buying a property across the UK.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/compare-salaries" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Compare Salaries</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Put two salaries side by side and compare take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': 'Hourly Wage Calculator',
+    'description': 'Convert your hourly rate to annual, monthly, and weekly salary with tax deductions.',
+    'applicationCategory': 'FinanceApplication',
+    'operatingSystem': 'Any',
+    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'GBP' },
+    'url': 'https://wagecheck.co.uk/hourly-wage-calculator'
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How do I work out my hourly rate from an annual salary?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Divide your annual gross salary by your hours per week multiplied by 52 weeks.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Does being paid hourly change how much tax I pay?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. HMRC taxes your total annual income using the same 2026/27 rules whether you are salaried or paid by the hour.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is overtime taxed more than my normal hours?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Overtime is added to your annual gross and taxed at your marginal rate, so it can push you into a higher tax band but is never taxed at 100%.',
+        },
+      },
+    ],
+  })} />
+
+  <script>
+    import { calculateTakeHomePay } from '../lib/calculations';
+    import { renderTakeHomeResults } from '../lib/takeHomeResults';
+
+    document.querySelectorAll<HTMLElement>('[data-hourly-calculator]').forEach((root) => {
+      const state = {
+        rate: parseFloat(root.dataset.initialRate || '15'),
+        hours: parseFloat(root.dataset.initialHours || '37.5'),
+        pension: parseFloat(root.dataset.initialPension || '5'),
+        loan: (root.dataset.initialLoan || 'none') as 'none' | 'plan1' | 'plan2' | 'plan4' | 'plan5' | 'postgraduate',
+        region: (root.dataset.initialRegion || 'rest-of-uk') as 'rest-of-uk' | 'scotland',
+      };
+
+      const setToggle = (attribute: string, value: string) => {
+        root.querySelectorAll<HTMLButtonElement>(`[${attribute}]`).forEach((btn) => {
+          const isActive = btn.getAttribute(attribute) === value;
+          btn.classList.toggle('bg-emerald-600', isActive);
+          btn.classList.toggle('text-white', isActive);
+          btn.classList.toggle('text-slate-600', !isActive);
+          btn.classList.toggle('hover:text-emerald-600', !isActive);
+        });
+      };
+
+      function recompute() {
+        const gross = state.rate * state.hours * 52;
+        const result = calculateTakeHomePay({
+          grossAnnualSalary: gross,
+          pensionContributionPercent: state.pension,
+          studentLoanPlan: state.loan,
+          region: state.region,
+          taxCode: '1257L',
+        });
+
+        const formula = root.querySelector<HTMLElement>('[data-gross-formula]');
+        if (formula) {
+          formula.textContent = `£${state.rate.toLocaleString('en-GB', { maximumFractionDigits: 2 })} × ${state.hours} hrs × 52 weeks`;
+        }
+
+        renderTakeHomeResults(root, result, 'Wagecheck Hourly Wage Calculator (2026/27)', [
+          { label: 'Hourly rate', value: `£${state.rate.toLocaleString('en-GB', { maximumFractionDigits: 2 })}` },
+          { label: 'Hours per week', value: `${state.hours}` },
+        ]);
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      const rateInput = root.querySelector<HTMLInputElement>('[data-rate]');
+      rateInput?.addEventListener('input', () => {
+        const raw = parseFloat(rateInput.value);
+        state.rate = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const hoursInput = root.querySelector<HTMLInputElement>('[data-hours]');
+      hoursInput?.addEventListener('input', () => {
+        const raw = parseFloat(hoursInput.value);
+        state.hours = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const pensionSlider = root.querySelector<HTMLInputElement>('[data-pension]');
+      const pensionValue = root.querySelector<HTMLElement>('[data-pension-value]');
+      pensionSlider?.addEventListener('input', () => {
+        const raw = parseFloat(pensionSlider.value);
+        state.pension = Number.isFinite(raw) ? raw : 0;
+        if (pensionValue) pensionValue.textContent = `${state.pension}%`;
+        schedule();
+      });
+
+      const loanSelect = root.querySelector<HTMLSelectElement>('[data-loan]');
+      loanSelect?.addEventListener('change', () => {
+        state.loan = loanSelect.value as typeof state.loan;
+        schedule();
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('[data-region]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.region = btn.dataset.region as 'rest-of-uk' | 'scotland';
+          setToggle('data-region', state.region);
+          schedule();
+        });
+      });
+
+      recompute();
+
+      // PDF download wiring
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generateHourlyWagePDF } = await import('../utils/pdfExport.js');
+        const gross = state.rate * state.hours * 52;
+        const result = calculateTakeHomePay({ grossAnnualSalary: gross, pensionContributionPercent: state.pension, studentLoanPlan: state.loan, region: state.region, taxCode: '1257L' });
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        generateHourlyWagePDF({
+          hourlyRate: `£${state.rate}`, hoursPerWeek: String(state.hours), weeksPerYear: '52',
+          annualGross: f(result.gross), annualTax: f(result.incomeTax), annualNI: f(result.nationalInsurance), annualNet: f(result.annualTakeHome),
+          monthlyGross: f(result.gross / 12), monthlyTax: f(result.incomeTax / 12), monthlyNI: f(result.nationalInsurance / 12), monthlyNet: f(result.monthlyTakeHome),
+          weeklyGross: f(result.gross / 52), weeklyTax: f(result.incomeTax / 52), weeklyNI: f(result.nationalInsurance / 52), weeklyNet: f(result.weeklyTakeHome),
+          hourlyRateRaw: state.rate,
+        });
+      });
+    });
+  </script>
+</Layout>

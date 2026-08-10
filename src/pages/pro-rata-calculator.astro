@@ -1,0 +1,605 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import AnimatedNumber from '../components/AnimatedNumber.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import ShareResults from '../components/ShareResults.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../lib/calculations';
+
+const defaultFtSalary = 30000;
+const defaultFt = 37.5;
+const defaultActual = 20;
+const defaultPension = 5;
+const defaultLoan = 'none';
+const defaultRegion = 'rest-of-uk';
+
+const defaultProRataGross = (defaultFtSalary / defaultFt) * defaultActual;
+const defaultHoliday = (defaultActual / defaultFt) * 28;
+const defaultResult = calculateTakeHomePay({
+  grossAnnualSalary: defaultProRataGross,
+  pensionContributionPercent: defaultPension,
+  studentLoanPlan: defaultLoan,
+  region: defaultRegion,
+  taxCode: '1257L',
+});
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+const pct1 = (n: number) => `${gb(n)}%`;
+
+const loanOptions = [
+  { value: 'none', label: 'No student loan' },
+  { value: 'plan1', label: 'Plan 1' },
+  { value: 'plan2', label: 'Plan 2' },
+  { value: 'plan4', label: 'Plan 4' },
+  { value: 'plan5', label: 'Plan 5' },
+  { value: 'postgraduate', label: 'Postgraduate' },
+];
+
+const inputClasses =
+  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const toggleActive = 'bg-emerald-600 text-white';
+const toggleInactive = 'text-slate-600 hover:text-emerald-600';
+const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
+
+const initialStack = [
+  { label: 'Take-home', value: defaultResult.annualTakeHome, colorClass: 'bg-emerald-500' },
+  { label: 'Income Tax', value: defaultResult.incomeTax + defaultResult.bonusTax, colorClass: 'bg-rose-500' },
+  { label: 'National Insurance', value: defaultResult.nationalInsurance, colorClass: 'bg-blue-500' },
+  { label: 'Student Loan', value: defaultResult.studentLoan, colorClass: 'bg-amber-500' },
+  { label: 'Pension', value: defaultResult.pension, colorClass: 'bg-slate-400' },
+];
+const initialStackTotal = initialStack.reduce((sum, seg) => sum + seg.value, 0);
+
+const initialShareRows = [
+  { label: 'Full-time salary', value: money(defaultFtSalary) },
+  { label: 'Full-time hours', value: `${defaultFt}` },
+  { label: 'Your hours', value: `${defaultActual}` },
+  { label: 'Pro-rata gross salary', value: money(defaultProRataGross) },
+  { label: 'Holiday entitlement', value: `${defaultHoliday.toFixed(1)} days` },
+  { label: 'Income Tax', value: money(defaultResult.incomeTax) },
+  { label: 'National Insurance', value: money(defaultResult.nationalInsurance) },
+  { label: 'Student Loan', value: money(defaultResult.studentLoan) },
+  { label: 'Pension', value: money(defaultResult.pension) },
+  { label: 'Annual take-home pay', value: money(defaultResult.annualTakeHome) },
+  { label: 'Monthly take-home pay', value: money(defaultResult.monthlyTakeHome) },
+];
+---
+
+<Layout
+  title="Pro-Rata Salary Calculator 2026/27 | wagecheck"
+  description="Work out your pro-rata salary and take-home pay for 2026/27. Free UK pro-rata calculator for part-time hours or days, with holiday entitlement and full tax breakdown."
+>
+  <CalculatorHero
+    category="Pro-rata calculator"
+    titleHtml='Pro-Rata <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Scale a full-time salary to your part-time hours or days, see your take-home pay after tax for 2026/27, and find out your pro-rata holiday entitlement."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="pro-rata-calculator"
+      data-pro-rata-calculator
+      data-initial-ft-salary={defaultFtSalary}
+      data-initial-ft={defaultFt}
+      data-initial-actual={defaultActual}
+      data-initial-pension={defaultPension}
+      data-initial-loan={defaultLoan}
+      data-initial-region={defaultRegion}
+      class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]"
+    >
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your details</h2>
+        <div class="mt-5 space-y-5">
+          <div>
+            <span class="mb-1.5 block text-sm font-semibold text-slate-700">Calculate by</span>
+            <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+              <button type="button" data-mode="hours" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', toggleActive]}>Hours per Week</button>
+              <button type="button" data-mode="days" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', toggleInactive]}>Days per Week</button>
+            </div>
+          </div>
+
+          <CalculatorInput label="Full-time equivalent annual salary (£)" hint="The full-time salary the role pays.">
+            <input type="number" min="0" step="1000" value={defaultFtSalary} data-ft-salary class={inputClasses} />
+          </CalculatorInput>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700"><span data-ft-label>Full-time hours per week</span></label>
+            <input type="number" min="1" step="0.5" value={defaultFt} data-ft class={inputClasses} />
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700"><span data-actual-label>Your hours per week</span></label>
+            <input type="number" min="1" step="0.5" value={defaultActual} data-actual class={inputClasses} />
+          </div>
+
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-700">Pension contribution</span>
+              <span data-pension-value class="text-sm font-bold text-emerald-600">{defaultPension}%</span>
+            </div>
+            <input type="range" min="0" max="20" step="1" value={defaultPension} data-pension class="w-full accent-emerald-600" />
+          </div>
+
+          <CalculatorInput label="Student loan">
+            <select data-loan class={inputClasses}>
+              {loanOptions.map((o) => <option value={o.value} selected={o.value === defaultLoan}>{o.label}</option>)}
+            </select>
+          </CalculatorInput>
+
+          <div>
+            <span class="mb-1.5 block text-sm font-semibold text-slate-700">Region</span>
+            <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+              <button type="button" data-region="rest-of-uk" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'rest-of-uk' ? toggleActive : toggleInactive]}>Rest of UK</button>
+              <button type="button" data-region="scotland" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'scotland' ? toggleActive : toggleInactive]}>Scotland</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your results</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Pro-rata gross salary</p>
+            <span data-var="grossAnnual" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.gross} autoScale class="text-emerald-700" />
+            </span>
+            <p data-prorata-formula class="mt-1 text-xs text-emerald-600/80">(£{money(defaultFtSalary)} ÷ {defaultFt} hrs) × {defaultActual} hrs</p>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Annual take-home</p>
+            <span data-var="annual" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.annualTakeHome} autoScale class="text-slate-900" />
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Monthly take-home</p>
+            <span data-var="monthly" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultResult.monthlyTakeHome} autoScale class="text-slate-900" />
+            </span>
+          </div>
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Holiday entitlement</p>
+            <span data-var="holiday" class="mt-2 block break-words">
+              <AnimatedNumber value={defaultHoliday} prefix="" suffix=" days" decimals={1} autoScale class="text-emerald-700" />
+            </span>
+            <p class="mt-1 text-xs text-emerald-600/80">pro-rata of 28 statutory days</p>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+          <div data-ded-tax-card class="rounded-2xl border border-rose-100 bg-rose-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Income Tax</p>
+            <span data-var="dedTax" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.incomeTax} duration={500} class="text-lg text-rose-700" />
+            </span>
+          </div>
+          <div data-ded-ni-card class="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-blue-600">National Insurance</p>
+            <span data-var="dedNi" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.nationalInsurance} duration={500} class="text-lg text-blue-700" />
+            </span>
+          </div>
+          <div data-ded-loan-card class:list={['rounded-2xl border border-amber-100 bg-amber-50/60 p-4', defaultResult.studentLoan === 0 && 'hidden']}>
+            <p class="text-[11px] font-medium uppercase tracking-wider text-amber-600">Student Loan</p>
+            <span data-var="dedLoan" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.studentLoan} duration={500} class="text-lg text-amber-700" />
+            </span>
+          </div>
+          <div data-ded-pension-card class="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+            <p class="text-[11px] font-medium uppercase tracking-wider text-slate-500">Pension</p>
+            <span data-var="dedPension" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.pension} duration={500} class="text-lg text-slate-700" />
+            </span>
+          </div>
+          <div data-ded-bonus-card class:list={['rounded-2xl border border-rose-100 bg-rose-50/60 p-4', defaultResult.bonusTax === 0 && 'hidden']}>
+            <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Bonus Tax</p>
+            <span data-var="dedBonus" class="mt-1 block">
+              <AnimatedNumber value={defaultResult.bonusTax} duration={500} class="text-lg text-rose-700" />
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">Where your money goes</p>
+          <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full">
+            <div data-var="barTakehome" class="bg-emerald-500" style={`width:${initialStackTotal > 0 ? (initialStack[0].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barTax" class="bg-rose-500" style={`width:${initialStackTotal > 0 ? (initialStack[1].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barNi" class="bg-blue-500" style={`width:${initialStackTotal > 0 ? (initialStack[2].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barLoan" class:list={['bg-amber-500', defaultResult.studentLoan === 0 && 'hidden']} style={`width:${initialStackTotal > 0 ? (initialStack[3].value / initialStackTotal) * 100 : 0}%;`}></div>
+            <div data-var="barPension" class="bg-slate-400" style={`width:${initialStackTotal > 0 ? (initialStack[4].value / initialStackTotal) * 100 : 0}%;`}></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2">
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>Take-home · <span data-var="legTakehome" class="tabular-nums">{money(initialStack[0].value)} · {initialStackTotal > 0 ? Math.round((initialStack[0].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-rose-500"></span>Income Tax · <span data-var="legTax" class="tabular-nums">{money(initialStack[1].value)} · {initialStackTotal > 0 ? Math.round((initialStack[1].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-blue-500"></span>National Insurance · <span data-var="legNi" class="tabular-nums">{money(initialStack[2].value)} · {initialStackTotal > 0 ? Math.round((initialStack[2].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span data-leg-loan class:list={['flex items-center gap-1.5 text-xs text-slate-600', defaultResult.studentLoan === 0 && 'hidden']}><span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span>Student Loan · <span data-var="legLoan" class="tabular-nums">{money(initialStack[3].value)} · {initialStackTotal > 0 ? Math.round((initialStack[3].value / initialStackTotal) * 100) : 0}%</span></span>
+            <span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span>Pension · <span data-var="legPension" class="tabular-nums">{money(initialStack[4].value)} · {initialStackTotal > 0 ? Math.round((initialStack[4].value / initialStackTotal) * 100) : 0}%</span></span>
+          </div>
+        </div>
+
+        <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-3">Band</th>
+                <th class="px-4 py-3 text-right">Yearly</th>
+                <th class="px-4 py-3 text-right">Monthly</th>
+                <th class="px-4 py-3 text-right">Weekly</th>
+                <th class="px-4 py-3 text-right">% of Gross</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-table-row="tax" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Income Tax</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.incomeTax / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.incomeTax / Math.max(defaultProRataGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="ni" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">National Insurance</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.nationalInsurance / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.nationalInsurance / Math.max(defaultProRataGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="loan" class:list={['border-b border-slate-100', defaultResult.studentLoan === 0 && 'hidden']}>
+                <td class="px-4 py-3 font-medium text-slate-900">Student Loan</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.studentLoan / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.studentLoan / Math.max(defaultProRataGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="pension" class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Pension</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.pension / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.pension / Math.max(defaultProRataGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="bonus" class:list={['border-b border-slate-100', defaultResult.bonusTax === 0 && 'hidden']}>
+                <td class="px-4 py-3 font-medium text-slate-900">Bonus Tax</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.bonusTax)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.bonusTax / 12)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right tabular-nums text-slate-600">{money(defaultResult.bonusTax / 52)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right tabular-nums text-slate-600">{pct1(defaultResult.bonusTax / Math.max(defaultProRataGross, 1) * 100)}</td>
+              </tr>
+              <tr data-table-row="takehome" class="bg-emerald-50">
+                <td class="px-4 py-3 font-bold text-emerald-700">Take-home pay</td>
+                <td data-cell="yearly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.annualTakeHome)}</td>
+                <td data-cell="monthly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.monthlyTakeHome)}</td>
+                <td data-cell="weekly" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{money(defaultResult.weeklyTakeHome)}</td>
+                <td data-cell="pct" class="px-4 py-3 text-right font-bold tabular-nums text-emerald-700">{pct1(defaultResult.percentageTakenHome)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6">
+          <ShareResults
+            product="Wagecheck Pro-Rata Calculator (2026/27)"
+            rows={initialShareRows}
+            markdownHeaders={['Item', 'Amount']}
+            markdownRows={initialShareRows}
+            modalTitle="Your take-home pay"
+            modalValue={money(defaultResult.monthlyTakeHome)}
+            modalSub="per month after tax, National Insurance, pension and student loan"
+            stack={initialStack}
+            source="#pro-rata-calculator"
+          />
+        </div>
+
+        <button
+          data-download-pdf
+          class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF Report
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">What is a Pro-Rata Salary?</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>
+          Pro-rata is Latin for "in proportion". Employers use it to scale a full-time salary to match the hours or days you actually work. If a full-time role pays £30,000 for 37.5 hours a week and you work 20 hours, your salary is scaled by the same ratio — around £16,000 a year.
+        </p>
+        <p>
+          This calculator applies the exact same 2026/27 tax rules to your pro-rata gross salary, so you get an accurate take-home figure for your part-time contract — including income tax, National Insurance, pension and student loan repayments.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">The Pro-Rata Formula</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <h3 class="text-base font-semibold text-slate-900">Hours per week</h3>
+        <p class="mt-2 font-mono text-sm font-semibold text-emerald-700">pro-rata = (full-time salary &divide; full-time hours) &times; your hours</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Example: (£30,000 &divide; 37.5) &times; 20 = <span class="font-semibold text-slate-900">£16,000</span></p>
+      </div>
+      <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <h3 class="text-base font-semibold text-slate-900">Days per week</h3>
+        <p class="mt-2 font-mono text-sm font-semibold text-emerald-700">pro-rata = (full-time salary &divide; full-time days) &times; your days</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">Example: (£30,000 &divide; 5) &times; 3 = <span class="font-semibold text-slate-900">£18,000</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-xl font-bold tracking-tight text-slate-900">2026/27 Income Tax Bands</h2>
+      <p class="mt-2 text-sm text-slate-600">The same bands apply to your pro-rata salary. Scotland uses its own rates.</p>
+      <div class="mt-5 overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <th class="px-4 py-3">Taxable income band</th>
+              <th class="px-4 py-3 text-right">Rest of UK</th>
+              <th class="px-4 py-3 text-right">Scotland</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">Up to £12,570 (personal allowance)</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">0%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">0%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">£12,571 – £15,629</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">20%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">19%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">£15,630 – £27,491</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">20%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">20%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">£27,492 – £43,662</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">20%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">21%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">£43,663 – £50,270</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">20%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">42%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">£50,271 – £75,000</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">40%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">42%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">£75,001 – £125,140</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">40%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">45%</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium text-slate-900">Above £125,140</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">45%</td><td class="px-4 py-2.5 text-right tabular-nums text-slate-600">48%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="What does pro-rata mean?">
+          <p>
+            Pro-rata means "in proportion". Your salary is scaled in line with the hours or days you work compared with a full-time equivalent role, so part-time staff earn a fair share of the full-time salary.
+          </p>
+        </Accordion>
+        <Accordion title="How do I calculate my pro-rata salary?">
+          <p>
+            Divide the full-time salary by the full-time hours (or days) per week, then multiply by your actual hours (or days) per week. For example: (£30,000 ÷ 37.5) × 20 = £16,000.
+          </p>
+        </Accordion>
+        <Accordion title="Do part-time workers get the same annual leave as full-time staff?">
+          <p>
+            Part-time workers are entitled to a pro-rated version of the 28 statutory days (including bank holidays). Use the same ratio — your hours divided by full-time hours, multiplied by 28 — as this calculator does.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter an annual salary and see your full take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Convert your hourly rate into an annual salary and take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/stamp-duty-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Stamp Duty Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Estimate the tax due when buying a property across the UK.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/compare-salaries" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Compare Salaries</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Put two salaries side by side and compare take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': 'Pro-Rata Salary Calculator',
+    'description': 'Calculate part-time and pro-rata salaries based on full-time equivalent hours.',
+    'applicationCategory': 'FinanceApplication',
+    'operatingSystem': 'Any',
+    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'GBP' },
+    'url': 'https://wagecheck.co.uk/pro-rata-calculator'
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What does pro-rata mean?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Pro-rata means in proportion. Your salary is scaled in line with the hours or days you work compared with a full-time equivalent role.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How do I calculate my pro-rata salary?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Divide the full-time salary by full-time hours (or days), then multiply by your actual hours (or days) per week.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do part-time workers get the same annual leave as full-time staff?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Part-time workers get a pro-rated version of the 28 statutory days based on their working hours or days.',
+        },
+      },
+    ],
+  })} />
+
+  <script>
+    import { calculateTakeHomePay } from '../lib/calculations';
+    import { renderTakeHomeResults, setNum, money as moneyFmt } from '../lib/takeHomeResults';
+
+    const STATUTORY_HOLIDAY_DAYS = 28;
+
+    document.querySelectorAll<HTMLElement>('[data-pro-rata-calculator]').forEach((root) => {
+      const state = {
+        mode: 'hours' as 'hours' | 'days',
+        ftSalary: parseFloat(root.dataset.initialFtSalary || '30000'),
+        ft: parseFloat(root.dataset.initialFt || '37.5'),
+        actual: parseFloat(root.dataset.initialActual || '20'),
+        pension: parseFloat(root.dataset.initialPension || '5'),
+        loan: (root.dataset.initialLoan || 'none') as 'none' | 'plan1' | 'plan2' | 'plan4' | 'plan5' | 'postgraduate',
+        region: (root.dataset.initialRegion || 'rest-of-uk') as 'rest-of-uk' | 'scotland',
+      };
+
+      const setToggle = (attribute: string, value: string) => {
+        root.querySelectorAll<HTMLButtonElement>(`[${attribute}]`).forEach((btn) => {
+          const isActive = btn.getAttribute(attribute) === value;
+          btn.classList.toggle('bg-emerald-600', isActive);
+          btn.classList.toggle('text-white', isActive);
+          btn.classList.toggle('text-slate-600', !isActive);
+          btn.classList.toggle('hover:text-emerald-600', !isActive);
+        });
+      };
+
+      function recompute() {
+        const gross = (state.ftSalary / state.ft) * state.actual;
+        const holiday = (state.actual / state.ft) * STATUTORY_HOLIDAY_DAYS;
+        const result = calculateTakeHomePay({
+          grossAnnualSalary: gross,
+          pensionContributionPercent: state.pension,
+          studentLoanPlan: state.loan,
+          region: state.region,
+          taxCode: '1257L',
+        });
+
+        const formula = root.querySelector<HTMLElement>('[data-prorata-formula]');
+        if (formula) {
+          const unit = state.mode === 'hours' ? 'hrs' : 'days';
+          formula.textContent = `(£${moneyFmt(state.ftSalary)} ÷ ${state.ft} ${unit}) × ${state.actual} ${unit}`;
+        }
+
+        setNum(root, 'holiday', holiday);
+        renderTakeHomeResults(root, result, 'Wagecheck Pro-Rata Calculator (2026/27)', [
+          { label: 'Full-time salary', value: moneyFmt(state.ftSalary) },
+          { label: state.mode === 'hours' ? 'Full-time hours' : 'Full-time days', value: `${state.ft}` },
+          { label: state.mode === 'hours' ? 'Your hours' : 'Your days', value: `${state.actual}` },
+          { label: 'Holiday entitlement', value: `${holiday.toFixed(1)} days` },
+        ]);
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      function setMode(mode: 'hours' | 'days') {
+        state.mode = mode;
+        const ftLabel = root.querySelector<HTMLElement>('[data-ft-label]');
+        const actualLabel = root.querySelector<HTMLElement>('[data-actual-label]');
+        if (ftLabel) ftLabel.textContent = mode === 'hours' ? 'Full-time hours per week' : 'Full-time days per week';
+        if (actualLabel) actualLabel.textContent = mode === 'hours' ? 'Your hours per week' : 'Your days per week';
+
+        const ftDefault = mode === 'hours' ? 37.5 : 5;
+        const actualDefault = mode === 'hours' ? 20 : 3;
+        state.ft = ftDefault;
+        state.actual = actualDefault;
+        const ftInput = root.querySelector<HTMLInputElement>('[data-ft]');
+        if (ftInput) ftInput.value = String(ftDefault);
+        const actualInput = root.querySelector<HTMLInputElement>('[data-actual]');
+        if (actualInput) actualInput.value = String(actualDefault);
+
+        setToggle('data-mode', mode);
+        recompute();
+      }
+
+      root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          setMode((btn.dataset.mode ?? 'hours') as 'hours' | 'days');
+        });
+      });
+
+      const ftSalaryInput = root.querySelector<HTMLInputElement>('[data-ft-salary]');
+      ftSalaryInput?.addEventListener('input', () => {
+        const raw = parseFloat(ftSalaryInput.value);
+        state.ftSalary = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const ftInput = root.querySelector<HTMLInputElement>('[data-ft]');
+      ftInput?.addEventListener('input', () => {
+        const raw = parseFloat(ftInput.value);
+        state.ft = Number.isFinite(raw) && raw > 0 ? raw : 1;
+        schedule();
+      });
+
+      const actualInput = root.querySelector<HTMLInputElement>('[data-actual]');
+      actualInput?.addEventListener('input', () => {
+        const raw = parseFloat(actualInput.value);
+        state.actual = Number.isFinite(raw) ? raw : 0;
+        schedule();
+      });
+
+      const pensionSlider = root.querySelector<HTMLInputElement>('[data-pension]');
+      const pensionValue = root.querySelector<HTMLElement>('[data-pension-value]');
+      pensionSlider?.addEventListener('input', () => {
+        const raw = parseFloat(pensionSlider.value);
+        state.pension = Number.isFinite(raw) ? raw : 0;
+        if (pensionValue) pensionValue.textContent = `${state.pension}%`;
+        schedule();
+      });
+
+      const loanSelect = root.querySelector<HTMLSelectElement>('[data-loan]');
+      loanSelect?.addEventListener('change', () => {
+        state.loan = loanSelect.value as typeof state.loan;
+        schedule();
+      });
+
+      root.querySelectorAll<HTMLButtonElement>('[data-region]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.region = btn.dataset.region as 'rest-of-uk' | 'scotland';
+          setToggle('data-region', state.region);
+          schedule();
+        });
+      });
+
+      recompute();
+
+      // PDF download wiring
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generateProRataPDF } = await import('../utils/pdfExport.js');
+        const gross = (state.ftSalary / state.ft) * state.actual;
+        const result = calculateTakeHomePay({ grossAnnualSalary: gross, pensionContributionPercent: state.pension, studentLoanPlan: state.loan, region: state.region, taxCode: '1257L' });
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        generateProRataPDF({
+          fullTimeSalary: f(state.ftSalary), fullTimeHours: String(state.ft), yourHours: String(state.actual), weeksPerYear: '52',
+          annualGross: f(result.gross), annualTax: f(result.incomeTax), annualNI: f(result.nationalInsurance), annualNet: f(result.annualTakeHome),
+          monthlyGross: f(result.gross / 12), monthlyTax: f(result.incomeTax / 12), monthlyNI: f(result.nationalInsurance / 12), monthlyNet: f(result.monthlyTakeHome),
+          weeklyGross: f(result.gross / 52), weeklyTax: f(result.incomeTax / 52), weeklyNI: f(result.nationalInsurance / 52), weeklyNet: f(result.weeklyTakeHome),
+          hourlyRate: f(gross / (state.ft * 52)), fullTimeSalaryRaw: state.ftSalary,
+        });
+      });
+    });
+  </script>
+</Layout>

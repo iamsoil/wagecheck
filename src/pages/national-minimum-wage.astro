@@ -1,0 +1,211 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import Accordion from '../components/Accordion.astro';
+
+const nmwRates = [
+  { age: '21 and over (National Living Wage)', rate: 12.71, annual: 24785 },
+  { age: '18 to 20', rate: 10.85, annual: 21158 },
+  { age: 'Under 18', rate: 8.00, annual: 15600 },
+  { age: 'Apprentice', rate: 8.00, annual: 15600 },
+];
+
+const gb = (n: number) => `�${n.toLocaleString('en-GB')}`;
+---
+
+<Layout title="National Minimum Wage 2026/27 | wagecheck" description="UK National Minimum Wage and National Living Wage rates for 2026/27. Hourly and annual figures for all age groups.">
+  <CalculatorHero
+    category="National Minimum Wage"
+    titleHtml='National Minimum Wage <span class="font-display italic text-emerald-600">2026/27</span>'
+    description="Current NMW and NLW hourly rates, annual salary equivalents, and eligibility rules."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">2026/27 rates</h2>
+      <p class="mt-2 text-sm text-slate-600">Rates effective from April 2026. Annual figure based on 37.5 hours per week x 52 weeks.</p>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="sticky top-0 bg-emerald-600 text-left text-xs font-semibold uppercase tracking-wider text-white">
+              <th class="rounded-tl-lg px-4 py-3">Age group</th>
+              <th class="px-4 py-3 text-right">Hourly rate</th>
+              <th class="rounded-tr-lg px-4 py-3 text-right">Annual (37.5h/wk)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {nmwRates.map((row, i) => (
+              <tr class:list={['border-b border-slate-100 transition hover:bg-emerald-50', i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50']}>
+                <td class="px-4 py-3 font-medium text-slate-900">{row.age}</td>
+                <td class="px-4 py-3 text-right tabular-nums font-semibold text-emerald-700">�{row.rate.toFixed(2)}</td>
+                <td class="px-4 py-3 text-right tabular-nums text-slate-700">{gb(row.annual)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <button
+        data-download-pdf
+        class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Download PDF Report
+      </button>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-xl font-bold tracking-tight text-slate-900">Who is eligible?</h2>
+        <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+          <p>The National Minimum Wage applies to all workers aged under 21. The National Living Wage applies to workers aged 21 and over. Both are set by the government and reviewed annually.</p>
+          <p>You are entitled to the NMW/NLW if you are of compulsory school age or older, work in the UK, and are not self-employed. It applies whether you work full-time, part-time or on a zero-hours contract.</p>
+        </div>
+      </div>
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-xl font-bold tracking-tight text-slate-900">What counts as minimum wage pay?</h2>
+        <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+          <p>Your employer must pay at least the NMW/NLW for your age group for every hour you work. This includes overtime, but not overtime at a premium rate that is already above the minimum.</p>
+          <p>Salary sacrifice arrangements (e.g. pension, cycle-to-work) can reduce your effective pay below the minimum. Your employer must ensure the net pay after any salary sacrifice does not fall below the NMW/NLW for your age.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">NMW vs the Real Living Wage</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>The government-set NMW/NLW is a legal minimum. The <strong>Real Living Wage</strong> is calculated by the Living Wage Foundation based on the actual cost of living and is higher. Many employers voluntarily pay the Real Living Wage.</p>
+        <p>Use the <a href="/hourly-wage-calculator" class="font-semibold text-emerald-600 hover:text-emerald-700">Hourly Wage Calculator</a> to see what you actually take home after tax, pension and National Insurance from any hourly rate.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="Does the minimum wage include pension contributions?">
+          <p>Your employer must pay at least the NMW/NLW in gross pay before any pension contribution is deducted. However, if you salary sacrifice into a pension, the reduced pay after sacrifice must still be at or above the NMW/NLW.</p>
+        </Accordion>
+        <Accordion title="Can my employer pay me less than the minimum wage for apprentices?">
+          <p>Apprentices under 19, or aged 19+ in their first year of an apprenticeship, are entitled to the apprentice rate of �8.00/hr. After the first year and once aged 19+, the age-appropriate rate applies.</p>
+        </Accordion>
+        <Accordion title="What happens if my employer pays below the minimum wage?">
+          <p>HMRC can issue penalty notices, name and shame employers publicly, and require arrears to be paid at 200% of the shortfall. Workers can also make a complaint to an employment tribunal.</p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Convert any hourly rate into annual take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Full take-home breakdown for any salary.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/salary-tables" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Tables</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Take-home pay for every �1,000 salary increment.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/compare-salaries" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Compare Salaries</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Side-by-side comparison for two job offers.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-download-pdf]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const { jsPDF } = await import('jspdf');
+      const autoTable = (await import('jspdf-autotable')).default;
+      const doc = new jsPDF();
+      const w = doc.internal.pageSize.getWidth();
+      doc.setFillColor(5, 150, 105);
+      doc.rect(0, 0, w, 36, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.text('Wagecheck', 16, 22);
+      doc.setFontSize(10);
+      doc.text('National Minimum Wage 2026/27', 16, 30);
+      doc.setTextColor(71, 85, 105);
+      doc.setFontSize(9);
+      doc.text(`Generated: ${new Date().toLocaleDateString('en-GB')}`, w - 16, 30, { align: 'right' });
+      autoTable(doc, {
+        startY: 44,
+        head: [['Age Group', 'Hourly Rate', 'Annual (37.5h/wk)']],
+        body: [
+          ['21 and over (NLW)', '\u00a312.71', '\u00a324,785'],
+          ['18 to 20', '\u00a310.85', '\u00a321,158'],
+          ['Under 18', '\u00a38.00', '\u00a315,600'],
+          ['Apprentice', '\u00a38.00', '\u00a315,600'],
+        ],
+        headStyles: { fillColor: [5, 150, 105], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 10, cellPadding: 3 },
+        margin: { left: 16, right: 16 },
+        theme: 'grid',
+      });
+      doc.setTextColor(71, 85, 105);
+      doc.setFontSize(8);
+      doc.text('wagecheck.co.uk | Rates effective from April 2026.', w / 2, 285, { align: 'center' });
+      doc.save('wagecheck-nmw-rates.pdf');
+    });
+  });
+</script>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "National Minimum Wage Calculator",
+  "description": "Check the UK National Living Wage and National Minimum Wage rates for 2026/27 by age group.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+  "url": "https://wagecheck.co.uk/national-minimum-wage"
+})} />
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the National Living Wage for 2026?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "From April 2026, the National Living Wage for workers aged 21 and over is £12.71 per hour."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the minimum wage for 18-20 year olds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For 2026/27, workers aged 18–20 are entitled to £10.85 per hour."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do apprentices get minimum wage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Apprentices under 19 or in their first year get £8.00 per hour from April 2026."
+      }
+    }
+  ]
+})} />
+
+</Layout>

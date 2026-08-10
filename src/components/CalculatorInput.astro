@@ -1,0 +1,17 @@
+---
+type Props = {
+  label: string;
+  hint?: string;
+  class?: string;
+};
+
+const { label, hint, class: className = '' } = Astro.props as Props;
+---
+
+<div class={className}>
+  <label class="block">
+    <span class="mb-1.5 block text-sm font-semibold text-slate-700">{label}</span>
+    <slot />
+  </label>
+  {hint && <p class="mt-1 text-xs leading-5 text-slate-500">{hint}</p>}
+</div>

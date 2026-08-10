@@ -1,0 +1,455 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import ShareResults from '../components/ShareResults.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../utils/tax';
+
+const defaultA = { gross: 30000, pension: 5, loan: 'none' as const, region: 'rest-of-uk' as const, bonus: 0, hours: 37.5 };
+const defaultB = { gross: 40000, pension: 5, loan: 'none' as const, region: 'rest-of-uk' as const, bonus: 0, hours: 37.5 };
+
+const resultA = calculateTakeHomePay({ grossAnnualSalary: defaultA.gross, pensionContributionPercent: defaultA.pension, studentLoanPlan: defaultA.loan, region: defaultA.region, annualBonus: defaultA.bonus, hoursPerWeek: defaultA.hours, taxCode: '1257L' });
+const resultB = calculateTakeHomePay({ grossAnnualSalary: defaultB.gross, pensionContributionPercent: defaultB.pension, studentLoanPlan: defaultB.loan, region: defaultB.region, annualBonus: defaultB.bonus, hoursPerWeek: defaultB.hours, taxCode: '1257L' });
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+const diffA = resultB.annualTakeHome - resultA.annualTakeHome;
+
+const loanOptions = [
+  { value: 'none', label: 'No student loan' }, { value: 'plan1', label: 'Plan 1' }, { value: 'plan2', label: 'Plan 2' },
+  { value: 'plan4', label: 'Plan 4' }, { value: 'plan5', label: 'Plan 5' }, { value: 'postgraduate', label: 'Postgraduate' },
+];
+const inputClasses = 'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const toggleActive = 'bg-emerald-600 text-white';
+const toggleInactive = 'text-slate-600 hover:text-emerald-600';
+
+const initialShareRows = [
+  { label: 'Job A gross', value: money(resultA.gross) },
+  { label: 'Job A take-home', value: money(resultA.annualTakeHome) },
+  { label: 'Job B gross', value: money(resultB.gross) },
+  { label: 'Job B take-home', value: money(resultB.annualTakeHome) },
+  { label: 'Difference', value: `${diffA >= 0 ? '+' : ''}${money(diffA)} per year` },
+];
+
+function buildPanel(panel: string, defaults: typeof defaultA) {
+  return `
+    <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8" data-panel="${panel}">
+      <h3 class="text-lg font-bold tracking-tight text-slate-900">${panel === 'a' ? 'Job A' : 'Job B'}</h3>
+      <div class="mt-5 space-y-4">
+        <div>
+          <label class="mb-1.5 block text-sm font-semibold text-slate-700">Gross annual salary (£)</label>
+          <input type="number" min="0" step="1000" value="${defaults.gross}" data-gross class="${inputClasses}" />
+        </div>
+        <div>
+          <div class="mb-1.5 flex items-center justify-between">
+            <span class="text-sm font-semibold text-slate-700">Pension %</span>
+            <span data-pension-value class="text-sm font-bold text-emerald-600">${defaults.pension}%</span>
+          </div>
+          <input type="range" min="0" max="20" step="1" value="${defaults.pension}" data-pension class="w-full accent-emerald-600" />
+        </div>
+        <div>
+          <label class="mb-1.5 block text-sm font-semibold text-slate-700">Student loan</label>
+          <select data-loan class="${inputClasses}">
+            ${loanOptions.map((o) => `<option value="${o.value}" ${o.value === defaults.loan ? 'selected' : ''}>${o.label}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <span class="mb-1.5 block text-sm font-semibold text-slate-700">Region</span>
+          <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+            <button type="button" data-region="rest-of-uk" class="rounded-lg px-4 py-2 text-sm font-semibold transition ${defaults.region === 'rest-of-uk' ? toggleActive : toggleInactive}">Rest of UK</button>
+            <button type="button" data-region="scotland" class="rounded-lg px-4 py-2 text-sm font-semibold transition ${defaults.region === 'scotland' ? toggleActive : toggleInactive}">Scotland</button>
+          </div>
+        </div>
+        <div>
+          <label class="mb-1.5 block text-sm font-semibold text-slate-700">Annual bonus (£)</label>
+          <input type="number" min="0" step="500" value="${defaults.bonus}" data-bonus class="${inputClasses}" />
+        </div>
+        <div>
+          <label class="mb-1.5 block text-sm font-semibold text-slate-700">Hours per week</label>
+          <input type="number" min="1" max="80" step="0.5" value="${defaults.hours}" data-hours class="${inputClasses}" />
+        </div>
+      </div>
+    </div>`;
+}
+---
+
+<Layout title="Compare Two Salaries 2026/27 | wagecheck" description="Compare take-home pay for two salaries side by side. Free UK salary comparison calculator for job offers, raises, or relocations.">
+  <CalculatorHero
+    category="Compare salaries"
+    titleHtml='Compare Two <span class="font-display italic text-emerald-600">Salaries</span> 2026/27'
+    description="Side-by-side take-home pay comparison for job offers, raises, or relocations."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div id="compare-salaries" data-compare-root>
+      <div class="relative grid gap-6 lg:grid-cols-2">
+        <span class="pointer-events-none absolute left-1/2 top-5 z-10 hidden -translate-x-1/2 rounded-full bg-slate-900 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-md lg:block">vs</span>
+        <Fragment set:html={buildPanel('a', defaultA)} />
+        <Fragment set:html={buildPanel('b', defaultB)} />
+      </div>
+
+      <div data-winner-banner class="mt-6 hidden rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center">
+        <span data-winner-text class="text-sm font-semibold text-emerald-700"></span>
+      </div>
+
+      <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <th class="px-4 py-3">Metric</th>
+              <th class="px-4 py-3 text-right">Job A</th>
+              <th class="px-4 py-3 text-right">Job B</th>
+              <th class="px-4 py-3 text-right">Difference</th>
+            </tr>
+          </thead>
+          <tbody data-comparison-body></tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 grid gap-6 lg:grid-cols-2">
+        <div class="rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">Job A — Where your money goes</p>
+          <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full" data-bar-a-bar></div>
+          <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" data-bar-a-legend></div>
+        </div>
+        <div class="rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">Job B — Where your money goes</p>
+          <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full" data-bar-b-bar></div>
+          <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" data-bar-b-legend></div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <ShareResults product="Wagecheck Salary Comparison (2026/27)" rows={initialShareRows} markdownHeaders={['Metric', 'Value']} markdownRows={initialShareRows} modalTitle="Salary comparison" modalValue={`${diffA >= 0 ? '+' : ''}${money(diffA)}`} modalSub="per year difference in take-home pay" stack={[{ label: 'Job A take-home', value: resultA.annualTakeHome, colorClass: 'bg-emerald-500' }, { label: 'Job B take-home', value: resultB.annualTakeHome, colorClass: 'bg-teal-500' }]} source="#compare-salaries" />
+      </div>
+
+      <button
+        data-download-pdf
+        class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Download PDF Report
+      </button>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How to Compare Job Offers</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>Don't just compare gross salaries — two offers with similar headline figures can produce very different take-home pay if the pension schemes, student loan deductions, bonus structures, or regional tax rates differ.</p>
+        <p>Enter each offer's details in the panels above. The comparison table shows you exactly where they differ, row by row. Green values are the better outcome for each metric. The stacked bars give you a quick visual of where each salary goes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="Should I include pension contributions in the comparison?">
+          <p>Yes. Employer pension contributions are a form of compensation. If one offer contributes 5% to your pension and the other contributes nothing, the first offer is worth more even if the gross salary is the same. This calculator includes pension in the breakdown so you can see the full picture.</p>
+        </Accordion>
+        <Accordion title="Why does a higher salary sometimes mean less take-home?">
+          <p>It generally won't, but different student loan plans, pension types (qualifying earnings vs on-gross), or salary sacrifice schemes can change the effective deductions. If one offer has heavy salary sacrifice for benefits, the net cash take-home may differ from what the gross suggests.</p>
+        </Accordion>
+        <Accordion title="Does this compare employer NI costs too?">
+          <p>No — this calculator shows employee-side deductions only. Employer NI (15% above £5,000 from April 2025) is a cost to the employer, not the employee. Some tools include it for total employment cost, but here we focus on what you actually receive.</p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter a gross salary and see your take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/required-salary" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Required Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Work backwards from a desired take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Convert your hourly rate into annual take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+      <a href="/stamp-duty-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Stamp Duty Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Estimate the tax when buying a property.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <script>
+    import { calculateTakeHomePay } from '../utils/tax';
+    import { barSegments, money as moneyFmt, gb } from '../lib/takeHomeResults';
+
+    const CIRCUMFERENCE = 326.73;
+    const loanOptions = ['none', 'plan1', 'plan2', 'plan4', 'plan5', 'postgraduate'];
+
+    const rowDefs = [
+      { label: 'Gross salary', getA: (r: any) => r.gross, getB: (r: any) => r.gross, betterHigher: true, money: true },
+      { label: 'Annual take-home', getA: (r: any) => r.annualTakeHome, getB: (r: any) => r.annualTakeHome, betterHigher: true, money: true },
+      { label: 'Monthly take-home', getA: (r: any) => r.monthlyTakeHome, getB: (r: any) => r.monthlyTakeHome, betterHigher: true, money: true },
+      { label: 'Weekly take-home', getA: (r: any) => r.weeklyTakeHome, getB: (r: any) => r.weeklyTakeHome, betterHigher: true, money: true },
+      { label: 'Hourly rate', getA: (r: any) => r.hourlyTakeHome, getB: (r: any) => r.hourlyTakeHome, betterHigher: true, money: true },
+      { label: 'Income tax', getA: (r: any) => r.incomeTax, getB: (r: any) => r.incomeTax, betterHigher: false, money: true },
+      { label: 'National Insurance', getA: (r: any) => r.nationalInsurance, getB: (r: any) => r.nationalInsurance, betterHigher: false, money: true },
+      { label: 'Pension', getA: (r: any) => r.pension, getB: (r: any) => r.pension, betterHigher: false, money: true },
+      { label: 'You keep', getA: (r: any) => r.percentageTakenHome, getB: (r: any) => r.percentageTakenHome, betterHigher: true, money: false },
+    ];
+
+    function formatVal(v: number, isMoney: boolean) {
+      return isMoney ? moneyFmt(v) : `${gb(v)}%`;
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-compare-root]').forEach((root) => {
+      const panels = ['a', 'b'] as const;
+      const states: Record<string, any> = {};
+
+      panels.forEach((p) => {
+        const el = root.querySelector<HTMLElement>(`[data-panel="${p}"]`);
+        states[p] = {
+          gross: parseFloat((el?.querySelector<HTMLInputElement>('[data-gross]')?.value) || '30000'),
+          pension: parseFloat((el?.querySelector<HTMLInputElement>('[data-pension]')?.value) || '5'),
+          loan: (el?.querySelector<HTMLSelectElement>('[data-loan]')?.value || 'none') as any,
+          region: (el?.querySelector<HTMLSelectElement>('[data-region]')?.getAttribute('data-region') || 'rest-of-uk') as any,
+          bonus: parseFloat((el?.querySelector<HTMLInputElement>('[data-bonus]')?.value) || '0'),
+          hours: parseFloat((el?.querySelector<HTMLInputElement>('[data-hours]')?.value) || '37.5'),
+        };
+      });
+
+      const results: Record<string, any> = {};
+
+      function computeResult(p: string) {
+        const s = states[p];
+        return calculateTakeHomePay({
+          grossAnnualSalary: s.gross,
+          pensionContributionPercent: s.pension,
+          studentLoanPlan: s.loan,
+          region: s.region,
+          annualBonus: s.bonus,
+          hoursPerWeek: s.hours,
+          taxCode: '1257L',
+        });
+      }
+
+      function renderBar(container: HTMLElement, result: any) {
+        const segs = barSegments(result);
+        const total = segs.reduce((s: number, seg: any) => s + seg.value, 0);
+        const bar = segs.map((s: any) =>
+          `<div style="width:${total > 0 ? (s.value / total) * 100 : 0}%" class="${s.colorClass} ${s.value === 0 ? 'hidden' : ''}"></div>`
+        ).join('');
+        const legend = segs.map((s: any) =>
+          `<span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full ${s.colorClass}"></span>${s.label} · ${total > 0 ? Math.round((s.value / total) * 100) : 0}%</span>`
+        ).join('');
+        const barEl = container.querySelector<HTMLElement>('[data-bar]');
+        const legEl = container.querySelector<HTMLElement>('[data-legend]');
+        if (barEl) barEl.innerHTML = bar;
+        if (legEl) legEl.innerHTML = legend;
+      }
+
+      function renderComparison() {
+        results.a = computeResult('a');
+        results.b = computeResult('b');
+
+        const tbody = root.querySelector<HTMLElement>('[data-comparison-body]');
+        if (tbody) {
+          tbody.innerHTML = rowDefs.map((def) => {
+            const vA = def.getA(results.a);
+            const vB = def.getB(results.b);
+            const diff = vB - vA;
+            const absDiff = Math.abs(diff);
+            const aBetter = def.betterHigher ? vA >= vB : vA <= vB;
+            const bBetter = def.betterHigher ? vB >= vA : vB <= vA;
+            const aCls = aBetter && absDiff >= 0.5 ? 'font-semibold text-emerald-600' : 'text-slate-600';
+            const bCls = bBetter && absDiff >= 0.5 ? 'font-semibold text-emerald-600' : 'text-slate-600';
+            const diffSign = diff >= 0 ? '+' : '−';
+            const diffCls = absDiff < 0.5 ? 'text-slate-400' : (def.betterHigher ? (diff > 0 ? 'text-emerald-600' : 'text-rose-500') : (diff < 0 ? 'text-emerald-600' : 'text-rose-500'));
+            return `<tr class="border-b border-slate-100 last:border-0">
+              <td class="px-4 py-2.5 font-medium text-slate-900">${def.label}</td>
+              <td class="px-4 py-2.5 text-right tabular-nums ${aCls}">${formatVal(vA, def.money)}</td>
+              <td class="px-4 py-2.5 text-right tabular-nums ${bCls}">${formatVal(vB, def.money)}</td>
+              <td class="px-4 py-2.5 text-right tabular-nums ${diffCls}">${absDiff < 0.5 ? '—' : `${diffSign}${formatVal(absDiff, def.money)}`}</td>
+            </tr>`;
+          }).join('');
+        }
+
+        const diffAnnual = results.b.annualTakeHome - results.a.annualTakeHome;
+        const banner = root.querySelector<HTMLElement>('[data-winner-banner]');
+        const bannerText = root.querySelector<HTMLElement>('[data-winner-text]');
+        if (banner && bannerText) {
+          if (Math.abs(diffAnnual) < 250) {
+            bannerText.textContent = 'Both offers are very similar — within £250 a year in take-home pay.';
+            banner.classList.remove('hidden');
+          } else {
+            const winner = diffAnnual > 0 ? 'Job B' : 'Job A';
+            bannerText.textContent = `${winner} pays £${Math.abs(Math.round(diffAnnual)).toLocaleString('en-GB')} more per year in take-home pay.`;
+            banner.classList.remove('hidden');
+          }
+        }
+
+        renderBar(root.querySelector<HTMLElement>('[data-panel="a"]')!, results.a);
+        renderBar(root.querySelector<HTMLElement>('[data-panel="b"]')!, results.b);
+
+        const sharePayload = {
+          product: 'Wagecheck Salary Comparison (2026/27)',
+          rows: [
+            { label: 'Job A gross', value: moneyFmt(results.a.gross) },
+            { label: 'Job A take-home', value: moneyFmt(results.a.annualTakeHome) },
+            { label: 'Job B gross', value: moneyFmt(results.b.gross) },
+            { label: 'Job B take-home', value: moneyFmt(results.b.annualTakeHome) },
+            { label: 'Difference', value: `${diffAnnual >= 0 ? '+' : ''}${moneyFmt(diffAnnual)} per year` },
+          ],
+          markdown: { headers: ['Metric', 'Value'], rows: [] },
+          modal: {
+            title: 'Salary comparison',
+            value: `${diffAnnual >= 0 ? '+' : ''}${moneyFmt(diffAnnual)}`,
+            sub: 'per year difference in take-home pay',
+            stack: [
+              { label: 'Job A take-home', value: results.a.annualTakeHome, colorClass: 'bg-emerald-500' },
+              { label: 'Job B take-home', value: results.b.annualTakeHome, colorClass: 'bg-teal-500' },
+            ],
+          },
+        };
+        root.dataset.sharePayload = JSON.stringify(sharePayload);
+
+        const card = root.querySelector<HTMLElement>('[data-share-card]');
+        if (card) {
+          const title = card.querySelector<HTMLElement>('[data-share-title]');
+          const value = card.querySelector<HTMLElement>('[data-share-value]');
+          const sub = card.querySelector<HTMLElement>('[data-share-sub]');
+          if (title) title.textContent = 'Salary comparison';
+          if (value) value.textContent = `${diffAnnual >= 0 ? '+' : ''}${moneyFmt(diffAnnual)}`;
+          if (sub) sub.textContent = 'per year difference in take-home pay';
+        }
+      }
+
+      function setToggle(panelEl: HTMLElement, attribute: string, value: string) {
+        panelEl.querySelectorAll<HTMLButtonElement>(`[${attribute}]`).forEach((btn) => {
+          const isActive = btn.getAttribute(attribute) === value;
+          btn.classList.toggle('bg-emerald-600', isActive);
+          btn.classList.toggle('text-white', isActive);
+          btn.classList.toggle('text-slate-600', !isActive);
+          btn.classList.toggle('hover:text-emerald-600', !isActive);
+        });
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => renderComparison(), 150);
+      }
+
+      panels.forEach((p) => {
+        const panelEl = root.querySelector<HTMLElement>(`[data-panel="${p}"]`);
+        if (!panelEl) return;
+
+        const bind = (sel: string, key: string) => {
+          const el = panelEl.querySelector<HTMLInputElement>(sel);
+          el?.addEventListener('input', () => {
+            const raw = parseFloat(el.value);
+            (states[p] as any)[key] = Number.isFinite(raw) ? raw : 0;
+            schedule();
+          });
+        };
+
+        bind('[data-gross]', 'gross');
+        bind('[data-bonus]', 'bonus');
+        bind('[data-hours]', 'hours');
+
+        const pensionSlider = panelEl.querySelector<HTMLInputElement>('[data-pension]');
+        const pensionVal = panelEl.querySelector<HTMLElement>('[data-pension-value]');
+        pensionSlider?.addEventListener('input', () => {
+          const raw = parseFloat(pensionSlider.value);
+          states[p].pension = Number.isFinite(raw) ? raw : 0;
+          if (pensionVal) pensionVal.textContent = `${states[p].pension}%`;
+          schedule();
+        });
+
+        const loanSelect = panelEl.querySelector<HTMLSelectElement>('[data-loan]');
+        loanSelect?.addEventListener('change', () => {
+          states[p].loan = loanSelect.value;
+          schedule();
+        });
+
+        panelEl.querySelectorAll<HTMLButtonElement>('[data-region]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            states[p].region = btn.dataset.region;
+            setToggle(panelEl, 'data-region', btn.dataset.region || 'rest-of-uk');
+            schedule();
+          });
+        });
+      });
+
+      renderComparison();
+
+      // PDF download wiring
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generateComparePDF } = await import('../utils/pdfExport.js');
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        generateComparePDF({
+          grossA: f(results.a.gross), grossB: f(results.b.gross),
+          takeHomeA: f(results.a.annualTakeHome), takeHomeB: f(results.b.annualTakeHome),
+          monthlyA: f(results.a.monthlyTakeHome), monthlyB: f(results.b.monthlyTakeHome),
+          taxA: f(results.a.incomeTax), taxB: f(results.b.incomeTax),
+          niA: f(results.a.nationalInsurance), niB: f(results.b.nationalInsurance),
+          pensionA: f(results.a.pension), pensionB: f(results.b.pension),
+          annualDiff: `${diffAnnual >= 0 ? '+' : ''}${f(diffAnnual)}`,
+          monthlyDiff: `${diffAnnual >= 0 ? '+' : ''}${f(diffAnnual / 12)}`,
+        });
+      });
+    });
+  </script>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Compare Salaries",
+    "description": "Compare two UK salaries side-by-side to see the real difference in take-home pay.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+    "url": "https://wagecheck.co.uk/compare-salaries"
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much more will I take home with a higher salary?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use our Compare Salaries tool to see the exact monthly and annual difference in take-home pay between two salaries, including tax, NI, pension, and student loan impacts."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does a £5,000 pay rise mean £5,000 more per year?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Due to tax and National Insurance, a £5,000 gross increase typically results in £3,000–£3,500 extra take-home, depending on your tax band."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I compare different pension contributions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Enter different pension percentages for each salary to see how auto-enrolment or voluntary contributions affect the comparison."
+        }
+      }
+    ]
+  })} />
+</Layout>

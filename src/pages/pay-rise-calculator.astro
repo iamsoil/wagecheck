@@ -1,0 +1,424 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import CalculatorInput from '../components/CalculatorInput.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../utils/tax';
+
+const currentSalaryDefault = 35000;
+const newSalaryDefault = 40000;
+const taxCodeDefault = '1257L';
+const pensionDefault = 0;
+
+const currentResult = calculateTakeHomePay({
+  grossAnnualSalary: currentSalaryDefault,
+  pensionContributionPercent: pensionDefault,
+  studentLoanPlan: 'none',
+  region: 'rest-of-uk',
+  taxCode: taxCodeDefault,
+});
+
+const newResult = calculateTakeHomePay({
+  grossAnnualSalary: newSalaryDefault,
+  pensionContributionPercent: pensionDefault,
+  studentLoanPlan: 'none',
+  region: 'rest-of-uk',
+  taxCode: taxCodeDefault,
+});
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+const pct1 = (n: number) => `${gb(n)}%`;
+
+const inputClasses = 'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+---
+
+<Layout
+  title="Pay Rise Calculator 2026/27 | wagecheck"
+  description="See exactly how much more you take home after a pay rise. Free UK pay rise calculator covering income tax, National Insurance and the 40% higher-rate threshold."
+>
+  <CalculatorHero
+    category="Pay rise calculator"
+    titleHtml='Pay Rise <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Enter your current and new salary to see exactly how much more you take home after a pay rise — including any jump into the 40% higher-rate tax band."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div id="pay-rise-root" data-pay-rise-root class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your details</h2>
+        <div class="mt-5 space-y-5">
+          <CalculatorInput label="Current salary (£)" hint="Your gross annual salary before the rise.">
+            <input type="number" min="0" step="1000" value={currentSalaryDefault} data-current-salary class={inputClasses} />
+          </CalculatorInput>
+          <CalculatorInput label="New salary (£)" hint="Your gross annual salary after the rise.">
+            <input type="number" min="0" step="1000" value={newSalaryDefault} data-new-salary class={inputClasses} />
+          </CalculatorInput>
+          <CalculatorInput label="Tax code" hint="Usually found on your payslip, e.g. 1257L.">
+            <input type="text" value={taxCodeDefault} data-tax-code class={inputClasses} />
+          </CalculatorInput>
+          <div>
+            <div class="mb-1.5 flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-700">Pension contribution</span>
+              <span data-pension-value class="text-sm font-bold text-emerald-600">{pensionDefault}%</span>
+            </div>
+            <input type="range" min="0" max="20" step="1" value={pensionDefault} data-pension class="w-full accent-emerald-600" />
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your results</h2>
+
+        <div data-amber-warning class="mt-4 hidden rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <div class="flex items-start gap-3">
+            <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <div>
+              <p class="text-sm font-semibold text-amber-800">40% higher-rate tax band</p>
+              <p class="mt-1 text-sm leading-5 text-amber-700">
+                Your new salary crosses the £50,270 threshold. Earnings above this amount are taxed at 40% instead of 20%, so your take-home increase is smaller than the gross rise.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-3">Metric</th>
+                <th class="px-4 py-3 text-right">Before</th>
+                <th class="px-4 py-3 text-right">After</th>
+                <th class="px-4 py-3 text-right">Change</th>
+              </tr>
+            </thead>
+            <tbody data-comparison-body>
+            </tbody>
+          </table>
+        </div>
+
+        <button
+          data-download-pdf
+          class="hidden mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-emerald-200 text-emerald-700 font-medium rounded-xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-200 shadow-sm"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF Report
+        </button>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-slate-100 bg-white p-5">
+            <p class="text-sm font-semibold text-slate-900">Where your money goes — Before</p>
+            <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full" data-bar-before></div>
+            <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" data-legend-before></div>
+          </div>
+          <div class="rounded-2xl border border-slate-100 bg-white p-5">
+            <p class="text-sm font-semibold text-slate-900">Where your money goes — After</p>
+            <div class="mt-3 flex h-4 w-full overflow-hidden rounded-full" data-bar-after></div>
+            <div class="mt-3 flex flex-wrap gap-x-4 gap-y-2" data-legend-after></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How Pay Rises Are Taxed</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>
+          In the UK, pay rises are taxed at your marginal rate — the rate that applies to the next pound you earn. For most people that is 20% (basic rate). If your new salary takes you above £50,270, the portion above that threshold is taxed at 40% (higher rate).
+        </p>
+        <p>
+          National Insurance also changes: you pay 8% on earnings between £12,570 and £50,270, then 2% above £50,270. A pay rise can therefore push you into a lower NI rate on the marginal earnings while simultaneously hitting the higher income tax band.
+        </p>
+        <p>
+          This calculator shows you the exact before-and-after picture so you can see how much of your raise you actually keep.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="Does a pay rise always mean more take-home pay?">
+          <p>
+            Yes, but the amount you keep depends on which tax bands the extra earnings fall into. If the rise pushes you into the 40% higher-rate band, a larger slice of the extra money goes to tax, so your take-home increases by less than the gross amount.
+          </p>
+        </Accordion>
+        <Accordion title="What is the 40% higher-rate tax threshold for 2026/27?">
+          <p>
+            For the rest of the UK, the higher-rate threshold is £50,270 of taxable income. With a standard 1257L tax code that means any gross salary above £50,270 has the excess taxed at 40% instead of 20%. Scotland uses different bands.
+          </p>
+        </Accordion>
+        <Accordion title="Should I negotiate a bonus instead of a salary rise?">
+          <p>
+            It depends on your situation. A one-off bonus is taxed in the year it is received and can push you into a higher band for that year only. A permanent salary rise increases your baseline take-home every year but may lock you into the higher-rate band permanently. Use this calculator to compare both scenarios.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter a gross salary and see your full take-home breakdown.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/bonus-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Bonus Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">See how much tax and NI a bonus will cost you.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/compare-salaries" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Compare Salaries</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Put two salaries side by side and compare take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Convert your hourly rate into annual take-home pay.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Pay Rise Calculator 2026/27',
+    url: 'https://wagecheck.co.uk/pay-rise-calculator',
+    description: 'See exactly how much more you take home after a pay rise. Free UK pay rise calculator covering income tax, National Insurance and the 40% higher-rate threshold.',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'GBP',
+    },
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Will my tax code change with a pay rise?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Usually no, but if your income crosses £100,000 your personal allowance tapers, and HMRC may adjust your code."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much extra will I actually take home?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use the calculator above. The increase isn't linear — higher earnings mean higher marginal tax and NI."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if my pay rise includes a bonus?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Enter your new base salary here. Use the Bonus Calculator separately for one-off payments."
+        }
+      }
+    ]
+  })} />
+
+  <script>
+    import { calculateTakeHomePay } from '../utils/tax';
+
+    const CIRCUMFERENCE = 2 * Math.PI * 80;
+
+    function barSegments(result: ReturnType<typeof calculateTakeHomePay>) {
+      return [
+        { label: 'Take-home', value: result.annualTakeHome, colorClass: 'bg-emerald-500' },
+        { label: 'Income Tax', value: result.incomeTax, colorClass: 'bg-rose-500' },
+        { label: 'National Insurance', value: result.nationalInsurance, colorClass: 'bg-blue-500' },
+        { label: 'Pension', value: result.pension, colorClass: 'bg-slate-400' },
+      ];
+    }
+
+    function renderBar(container: HTMLElement, result: ReturnType<typeof calculateTakeHomePay>) {
+      const segs = barSegments(result);
+      const total = segs.reduce((s, seg) => s + seg.value, 0);
+      const barHtml = segs
+        .map(
+          (s) =>
+            `<div style="width:${total > 0 ? (s.value / total) * 100 : 0}%" class="${s.colorClass} ${s.value === 0 ? 'hidden' : ''}"></div>`
+        )
+        .join('');
+      const legendHtml = segs
+        .map(
+          (s) =>
+            `<span class="flex items-center gap-1.5 text-xs text-slate-600"><span class="h-2.5 w-2.5 rounded-full ${s.colorClass}"></span>${s.label} · ${total > 0 ? Math.round((s.value / total) * 100) : 0}%</span>`
+        )
+        .join('');
+
+      const barEl = container.querySelector<HTMLElement>('[data-bar]');
+      const legEl = container.querySelector<HTMLElement>('[data-legend]');
+      if (barEl) barEl.innerHTML = barHtml;
+      if (legEl) legEl.innerHTML = legendHtml;
+    }
+
+    function renderComparisonTable(
+      tbody: HTMLElement,
+      before: ReturnType<typeof calculateTakeHomePay>,
+      after: ReturnType<typeof calculateTakeHomePay>
+    ) {
+      const m = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+      const diff = (a: number, b: number) => {
+        const d = a - b;
+        if (Math.abs(d) < 0.5) return '<td class="px-4 py-2.5 text-right tabular-nums text-slate-400">—</td>';
+        const sign = d > 0 ? '+' : '';
+        const cls = d > 0 ? 'text-emerald-600' : 'text-rose-500';
+        return `<td class="px-4 py-2.5 text-right tabular-nums font-semibold ${cls}">${sign}${m(d)}</td>`;
+      };
+
+      const rows = [
+        {
+          label: 'Gross',
+          beforeVal: before.gross,
+          afterVal: after.gross,
+          beforeText: m(before.gross),
+          afterText: m(after.gross),
+        },
+        {
+          label: 'Monthly Take-Home',
+          beforeVal: before.monthlyTakeHome,
+          afterVal: after.monthlyTakeHome,
+          beforeText: m(before.monthlyTakeHome),
+          afterText: m(after.monthlyTakeHome),
+        },
+        {
+          label: 'Annual Take-Home',
+          beforeVal: before.annualTakeHome,
+          afterVal: after.annualTakeHome,
+          beforeText: m(before.annualTakeHome),
+          afterText: m(after.annualTakeHome),
+        },
+        {
+          label: 'Tax',
+          beforeVal: before.incomeTax,
+          afterVal: after.incomeTax,
+          beforeText: m(before.incomeTax),
+          afterText: m(after.incomeTax),
+        },
+        {
+          label: 'NI',
+          beforeVal: before.nationalInsurance,
+          afterVal: after.nationalInsurance,
+          beforeText: m(before.nationalInsurance),
+          afterText: m(after.nationalInsurance),
+        },
+      ];
+
+      tbody.innerHTML = rows
+        .map(
+          (r) =>
+            `<tr class="border-b border-slate-100 last:border-0">
+              <td class="px-4 py-2.5 font-medium text-slate-900">${r.label}</td>
+              <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">${r.beforeText}</td>
+              <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">${r.afterText}</td>
+              ${diff(r.afterVal, r.beforeVal)}
+            </tr>`
+        )
+        .join('');
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-pay-rise-root]').forEach((root) => {
+      const currentInput = root.querySelector<HTMLInputElement>('[data-current-salary]');
+      const newInput = root.querySelector<HTMLInputElement>('[data-new-salary]');
+      const taxCodeInput = root.querySelector<HTMLInputElement>('[data-tax-code]');
+      const pensionSlider = root.querySelector<HTMLInputElement>('[data-pension]');
+      const pensionValue = root.querySelector<HTMLElement>('[data-pension-value]');
+      const tbody = root.querySelector<HTMLElement>('[data-comparison-body]');
+      const amberWarning = root.querySelector<HTMLElement>('[data-amber-warning]');
+
+      function recompute() {
+        const currentSalary = Math.max(parseFloat(currentInput?.value || '0'), 0);
+        const newSalary = Math.max(parseFloat(newInput?.value || '0'), 0);
+        const taxCode = taxCodeInput?.value || '1257L';
+        const pension = Math.max(parseFloat(pensionSlider?.value || '0'), 0);
+
+        const before = calculateTakeHomePay({
+          grossAnnualSalary: currentSalary,
+          pensionContributionPercent: pension,
+          studentLoanPlan: 'none',
+          region: 'rest-of-uk',
+          taxCode,
+        });
+
+        const after = calculateTakeHomePay({
+          grossAnnualSalary: newSalary,
+          pensionContributionPercent: pension,
+          studentLoanPlan: 'none',
+          region: 'rest-of-uk',
+          taxCode,
+        });
+
+        if (tbody) {
+          renderComparisonTable(tbody, before, after);
+        }
+
+        renderBar(root.querySelector<HTMLElement>('[data-bar-before]')!.parentElement!, before);
+        renderBar(root.querySelector<HTMLElement>('[data-bar-after]')!.parentElement!, after);
+
+        if (amberWarning) {
+          const showWarning = newSalary > 50270 && currentSalary <= 50270;
+          amberWarning.classList.toggle('hidden', !showWarning);
+        }
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      currentInput?.addEventListener('input', schedule);
+      newInput?.addEventListener('input', schedule);
+      taxCodeInput?.addEventListener('input', schedule);
+
+      pensionSlider?.addEventListener('input', () => {
+        if (pensionValue) pensionValue.textContent = `${pensionSlider.value}%`;
+        schedule();
+      });
+
+      recompute();
+
+      // PDF download wiring
+      const pdfBtn = root.querySelector<HTMLElement>('[data-download-pdf]');
+      pdfBtn?.classList.remove('hidden');
+      pdfBtn?.addEventListener('click', async () => {
+        const { generatePayRisePDF } = await import('../utils/pdfExport.js');
+        const currentSalary = Math.max(parseFloat(currentInput?.value || '0'), 0);
+        const newSalary = Math.max(parseFloat(newInput?.value || '0'), 0);
+        const taxCode = taxCodeInput?.value || '1257L';
+        const pension = Math.max(parseFloat(pensionSlider?.value || '0'), 0);
+        const before = calculateTakeHomePay({ grossAnnualSalary: currentSalary, pensionContributionPercent: pension, studentLoanPlan: 'none', region: 'rest-of-uk', taxCode });
+        const after = calculateTakeHomePay({ grossAnnualSalary: newSalary, pensionContributionPercent: pension, studentLoanPlan: 'none', region: 'rest-of-uk', taxCode });
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        generatePayRisePDF({
+          currentSalary: f(currentSalary), newSalary: f(newSalary), taxCode,
+          currentGross: f(before.gross), newGross: f(after.gross), grossChange: f(after.gross - before.gross),
+          currentMonthlyNet: f(before.monthlyTakeHome), newMonthlyNet: f(after.monthlyTakeHome), monthlyChange: f(after.monthlyTakeHome - before.monthlyTakeHome),
+          currentAnnualNet: f(before.annualTakeHome), newAnnualNet: f(after.annualTakeHome), annualChange: f(after.annualTakeHome - before.annualTakeHome),
+          currentTax: f(before.incomeTax), newTax: f(after.incomeTax), taxChange: f(after.incomeTax - before.incomeTax),
+          currentNI: f(before.nationalInsurance), newNI: f(after.nationalInsurance), niChange: f(after.nationalInsurance - before.nationalInsurance),
+          newSalaryRaw: newSalary,
+        });
+      });
+    });
+  </script>
+</Layout>

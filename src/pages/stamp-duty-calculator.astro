@@ -1,25 +1,71 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
 import StampDutyCalculator from '../components/StampDutyCalculator.astro';
+import Accordion from '../components/Accordion.astro';
 ---
 
 <Layout
   title="Stamp Duty Calculator 2026/27 | wagecheck"
-  description="Calculate UK stamp duty, LBTT and LTT using 2026/27 rates."
+  description="Estimate stamp duty, LBTT and LTT for 2026/27. Free UK property tax calculator for England & Northern Ireland, Wales and Scotland with band-by-band results."
 >
-  <section class="bg-gradient-to-br from-emerald-50 via-white to-lime-50">
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      <div class="max-w-3xl">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">Stamp duty calculator</p>
-        <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Stamp Duty Calculator 2026/27</h1>
-        <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
-          Estimate the tax due on your purchase across England, Wales or Scotland with clear band-by-band results.
-        </p>
+  <CalculatorHero
+    category="Stamp duty calculator"
+    titleHtml='Stamp Duty <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Estimate the tax due on your property purchase across England & Northern Ireland, Wales or Scotland — with a clear band-by-band breakdown and first-time buyer relief."
+  />
+
+  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <StampDutyCalculator />
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="How much is stamp duty on a house in 2026/27?">
+          <p>
+            In England &amp; Northern Ireland you pay no stamp duty on the first £250,000 (up to £425,000 for first-time buyers), then 5% up to £925,000, 10% up to £1.5m and 12% above that. Wales (LTT) and Scotland (LBTT) use their own bands — select the right location above to see the exact figures.
+          </p>
+        </Accordion>
+        <Accordion title="Do first-time buyers pay stamp duty?">
+          <p>
+            In England &amp; Northern Ireland, first-time buyers pay no stamp duty on properties up to £425,000 and a reduced rate up to £625,000. In Scotland the LBTT zero band is raised to £175,000 for first-time buyers. Wales does not offer a first-time buyer relief.
+          </p>
+        </Accordion>
+        <Accordion title="How does Scottish stamp duty (LBTT) differ from England?">
+          <p>
+            Scotland's Land and Buildings Transaction Tax (LBTT) starts at 0% up to £145,000 (or £175,000 for first-time buyers), then 2%, 5%, 10% and 12% on higher bands. Buying an additional residential property in Scotland also triggers a 6% Additional Dwelling Supplement.
+          </p>
+        </Accordion>
+        <Accordion title="Do buy-to-let buyers pay a surcharge?">
+          <p>
+            Yes. Buying a second home or buy-to-let property in England &amp; Northern Ireland adds 3% to every band, and in Scotland a 6% Additional Dwelling Supplement applies. Non-UK residents buying in England &amp; Northern Ireland pay an extra 2% surcharge.
+          </p>
+        </Accordion>
       </div>
     </div>
   </section>
 
-  <StampDutyCalculator />
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <p class="text-sm font-semibold text-amber-800">Important note</p>
+      <p class="mt-1 text-sm leading-6 text-amber-700">
+        Calculations are estimates based on 2026/27 rates. Not financial advice. Always confirm the final figure with HMRC, Revenue Scotland or the Welsh Revenue Authority before completing your purchase.
+      </p>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': 'Stamp Duty Calculator',
+    'description': 'Calculate Stamp Duty Land Tax (SDLT) on property purchases in England and Northern Ireland.',
+    'applicationCategory': 'FinanceApplication',
+    'operatingSystem': 'Any',
+    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'GBP' },
+    'url': 'https://wagecheck.co.uk/stamp-duty-calculator'
+  })} />
 
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
@@ -27,10 +73,10 @@ import StampDutyCalculator from '../components/StampDutyCalculator.astro';
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'What is stamp duty?',
+        name: 'How much is stamp duty on a house in 2026/27?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Stamp duty is a property transaction tax applied when buying property in England and Northern Ireland, while Wales and Scotland use their own land transaction taxes.',
+          text: 'In England & Northern Ireland stamp duty is 0% up to £250,000 (up to £425,000 for first-time buyers), then 5%, 10% and 12% on higher bands. Wales and Scotland use their own land transaction taxes.',
         },
       },
       {
@@ -38,15 +84,23 @@ import StampDutyCalculator from '../components/StampDutyCalculator.astro';
         name: 'Do first-time buyers pay stamp duty?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'First-time buyers can receive relief in England and Northern Ireland, and in Scotland, depending on the purchase price.',
+          text: 'First-time buyers in England & Northern Ireland pay no stamp duty up to £425,000, and in Scotland the LBTT zero band is raised to £175,000. Wales does not offer first-time buyer relief.',
         },
       },
       {
         '@type': 'Question',
-        name: 'What is the non-resident surcharge?',
+        name: 'How does Scottish stamp duty (LBTT) differ from England?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Non-UK resident buyers may pay an additional surcharge on qualifying purchases in England and Northern Ireland.',
+          text: 'Scotland uses LBTT with bands starting at 0% up to £145,000 (or £175,000 for first-time buyers), plus a 6% Additional Dwelling Supplement for additional homes.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do buy-to-let buyers pay a surcharge?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Buying a second home or buy-to-let property in England & Northern Ireland adds 3% to every band, and in Scotland a 6% Additional Dwelling Supplement applies.',
         },
       },
     ],

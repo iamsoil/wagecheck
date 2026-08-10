@@ -1,45 +1,208 @@
-<---
+---
 import Layout from '../layouts/Layout.astro';
 import HeroSection from '../components/HeroSection.astro';
-import CalculatorCard from '../components/CalculatorCard.astro';
 
-const calculatorCards = [
+const featured = [
   {
-    title: 'Take-Home Pay Calculator',
-    description: 'Calculate your net salary after tax and National Insurance.',
+    name: 'Salary Calculator',
+    desc: 'Calculate your take-home pay after tax, NI, pension and student loan deductions.',
     href: '/salary-calculator',
-    icon: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a1 1 0 0 1 1 1v1.07a7.004 7.004 0 0 1 5.93 5.93H20a1 1 0 1 1 0 2h-1.07a7.004 7.004 0 0 1-5.93 5.93V20a1 1 0 1 1-2 0v-1.07a7.004 7.004 0 0 1-5.93-5.93H4a1 1 0 1 1 0-2h1.07a7.004 7.004 0 0 1 5.93-5.93V3a1 1 0 0 1 1-1Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Z" /></svg>',
+    badge: 'Most Popular',
+    badgeColor: 'bg-emerald-600',
   },
   {
-    title: 'Stamp Duty Calculator',
-    description: 'Estimate stamp duty land tax on UK property purchases.',
+    name: 'Stamp Duty Calculator',
+    desc: 'Work out how much SDLT you\u2019ll pay on your property purchase in England or Northern Ireland.',
     href: '/stamp-duty-calculator',
-    icon: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8.5a1 1 0 0 0-.293-.707l-4.5-4.5A1 1 0 0 0 15.5 3H4Zm11 1.5V8h3.5L15 4.5ZM7 12a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H8a1 1 0 0 1-1-1Z" /></svg>',
+    badge: 'Essential',
+    badgeColor: 'bg-amber-500',
   },
   {
-    title: 'Rental Yield Calculator',
-    description: 'Calculate rental yield for property investments.',
-    href: '/rental-yield',
-    icon: '<svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.25a.75.75 0 0 1 .53.22l8.25 8.25A.75.75 0 0 1 21.25 12H20v8a1 1 0 0 1-1 1h-4.75a.75.75 0 0 1-.75-.75V16a1.75 1.75 0 0 0-3.5 0v4.25a.75.75 0 0 1-.75.75H4a1 1 0 0 1-1-1v-8H1.75a.75.75 0 0 1-.53-1.28l8.25-8.25a.75.75 0 0 1 .53-.22Z" /></svg>',
-    badge: 'Coming soon',
+    name: 'Hourly Wage Calculator',
+    desc: 'Convert your hourly rate to annual salary and see your full-time equivalent earnings.',
+    href: '/hourly-wage-calculator',
+    badge: 'Trending',
+    badgeColor: 'bg-teal-500',
   },
 ];
---->
+
+const allCalcs = [
+  { name: 'Salary Calculator', desc: 'Annual to monthly, weekly, daily take-home', href: '/salary-calculator' },
+  { name: 'Hourly Wage', desc: 'Convert hourly rate to salary', href: '/hourly-wage-calculator' },
+  { name: 'Pro-Rata Calculator', desc: 'Part-time and irregular hours', href: '/pro-rata-calculator' },
+  { name: 'Stamp Duty', desc: 'SDLT on your property purchase', href: '/stamp-duty-calculator' },
+  { name: 'Required Salary', desc: 'Work backwards from target take-home', href: '/required-salary' },
+  { name: 'Compare Salaries', desc: 'Side-by-side comparison', href: '/compare-salaries' },
+  { name: 'Salary Tables', desc: 'Tax bands and thresholds', href: '/salary-tables' },
+  { name: 'National Minimum Wage', desc: 'National Living Wage rates', href: '/national-minimum-wage' },
+  { name: 'Rental Yield', desc: 'Gross and net yield calculator', href: '/rental-yield' },
+  { name: 'Bonus Calculator', desc: 'See how much of your bonus you keep', href: '/bonus-calculator' },
+  { name: 'Pay Rise Calculator', desc: 'Real take-home increase', href: '/pay-rise-calculator' },
+  { name: 'Overtime Calculator', desc: 'Time and a half, double time', href: '/overtime-calculator' },
+  { name: 'Mortgage Affordability', desc: 'How much can you borrow?', href: '/mortgage-affordability' },
+];
+
+const qaCards = [
+  {
+    q: 'What is the take-home pay for \u00a330,000?',
+    a: 'For the 2026/27 tax year, a \u00a330,000 salary gives roughly \u00a31,970\u2013\u00a32,020 per month after tax and NI (tax code 1257L, no pension or student loan).',
+    href: '/salary/30000',
+  },
+  {
+    q: 'How much tax do I pay on \u00a350,000?',
+    a: 'On \u00a350,000 you pay approximately \u00a37,400 in income tax and \u00a33,900 in National Insurance, leaving a take-home of around \u00a338,700 per year.',
+    href: '/salary/50000',
+  },
+  {
+    q: 'What is the National Living Wage 2026?',
+    a: 'From April 2026, the National Living Wage for workers aged 21+ is \u00a312.71 per hour. Ages 18\u201320 get \u00a310.85, under 18 get \u00a38.00, and apprentices get \u00a38.00.',
+    href: '/national-minimum-wage',
+  },
+  {
+    q: 'How much stamp duty on a \u00a3300,000 house?',
+    a: 'First-time buyers pay \u00a30 on a \u00a3300,000 property (relief covers up to \u00a3425,000). Home movers pay \u00a33,500. Buy-to-let or second homes add a 3% surcharge.',
+    href: '/stamp-duty/300000',
+  },
+  {
+    q: 'What is \u00a315 per hour annually?',
+    a: '\u00a315 per hour at 37.5 hours/week is \u00a329,250 per year gross. After tax and NI, your take-home is approximately \u00a323,500\u2013\u00a324,000.',
+    href: '/hourly-wage-calculator',
+  },
+  {
+    q: 'How much is \u00a345,000 after tax?',
+    a: 'A \u00a345,000 salary in 2026/27 gives roughly \u00a32,820\u2013\u00a32,880 per month after tax and NI (tax code 1257L). This assumes no pension contributions.',
+    href: '/salary-calculator',
+  },
+  {
+    q: 'Do I pay 40% tax on my bonus?',
+    a: 'Only if your total income (salary + bonus) exceeds \u00a350,270. The portion of your bonus that falls above this threshold is taxed at 40%.',
+    href: '/bonus-calculator',
+  },
+  {
+    q: 'How much can I borrow for a mortgage?',
+    a: 'Most UK lenders offer 4\u20134.5\u00d7 your annual income. A \u00a340,000 salary could borrow \u00a3160,000\u2013\u00a3180,000, plus your deposit.',
+    href: '/mortgage-affordability',
+  },
+];
+
+const faqItems = [
+  {
+    q: 'Are these calculations accurate?',
+    a: 'Our calculators use the official 2026/27 HMRC tax rates, National Insurance thresholds, and student loan repayment thresholds. Results are accurate for standard tax codes (e.g., 1257L) but individual circumstances may vary. Always verify with HMRC or a qualified accountant.',
+  },
+  {
+    q: 'What tax year do these calculators use?',
+    a: 'All calculations use the 2026/27 tax year rates, which run from 6 April 2026 to 5 April 2027. We update our rates within 48 hours of any HMRC budget announcement.',
+  },
+  {
+    q: 'Is my data stored or shared?',
+    a: 'No. All calculations run entirely in your browser. We do not collect, store, or transmit your salary, tax code, or any personal information. See our Privacy Policy for full details.',
+  },
+  {
+    q: 'What is tax code 1257L?',
+    a: '1257L is the standard tax code for 2026/27. It means you get the full personal allowance of \u00a312,570 before paying income tax. The \'L\' indicates you\u2019re entitled to the standard tax-free amount.',
+  },
+  {
+    q: 'How is National Insurance calculated?',
+    a: 'For 2026/27, employees pay 8% on earnings between \u00a312,570 and \u00a350,270, and 2% on earnings above \u00a350,270. These rates apply to Class 1 NI contributions deducted through PAYE.',
+  },
+  {
+    q: 'Can I use this for self-employed or contractor calculations?',
+    a: 'Our calculators are designed for PAYE employees. Self-employed tax works differently (Class 2 and 4 NI, payments on account). We recommend consulting an accountant for self-assessment calculations.',
+  },
+];
+---
+
 <Layout
   title="wagecheck | UK salary, tax and stamp duty calculators"
   description="Free UK salary, tax and stamp duty calculators with a clean fintech design."
 >
   <HeroSection />
-  <section class="bg-[#f8fafc]">
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div class="max-w-2xl">
-        <h2 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Popular calculators</h2>
-        <p class="mt-3 text-base leading-7 text-slate-600">Start with the tools people use most often. Each calculator is designed to be fast, clear, and easy to trust.</p>
-      </div>
 
-      <div class="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {calculatorCards.map((card) => (
-          <CalculatorCard {...card} />
+  <!-- ═══════ SECTION 1: FEATURED CALCULATORS ═══════ -->
+  <section class="bg-white py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <p class="text-center text-sm font-semibold uppercase tracking-widest text-emerald-600 mb-4">Most-used calculators</p>
+      <div class="animate-on-scroll grid gap-6 md:grid-cols-3">
+        {featured.map((card) => (
+          <a
+            href={card.href}
+            class="featured-card group block p-8 text-left sm:pr-24"
+          >
+            <span class:list={['badge-pulse absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-bold text-white shadow-sm sm:right-4', card.badgeColor]}>
+              {card.badge}
+            </span>
+            <h2 class="pr-0 text-3xl font-bold tracking-tight text-slate-900 sm:pr-16">{card.name}</h2>
+            <p class="mt-3 text-base leading-relaxed text-slate-600">{card.desc}</p>
+            <span class="mt-6 inline-block font-semibold text-emerald-600 transition-colors hover:text-emerald-700">
+              Calculate now &rarr;
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SECTION 2: ALL CALCULATORS ═══════ -->
+  <section class="bg-slate-50/60 py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-slate-900 mb-8">All Calculators</h2>
+      <div class="animate-on-scroll grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {allCalcs.map((card) => (
+          <a
+            href={card.href}
+            class="calc-card block rounded-2xl border border-slate-100 bg-white p-6"
+          >
+            <h3 class="text-xl font-bold text-slate-900">{card.name}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-500">{card.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SECTION 3: MOST SEARCHED UK ANSWERS ═══════ -->
+  <section id="most-searched" class="bg-white py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Most Searched UK Answers</h2>
+      <p class="text-slate-500 mb-8">Quick answers to the UK's most common salary and tax questions</p>
+      <div class="animate-on-scroll grid gap-4 md:grid-cols-2">
+        {qaCards.map((card) => (
+          <div class="qa-card rounded-xl border border-slate-100 bg-slate-50 p-5">
+            <h3 class="text-lg font-semibold text-slate-900">{card.q}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-slate-600">{card.a}</p>
+            <a
+              href={card.href}
+              class="mt-3 inline-block text-sm font-medium text-emerald-600 hover:underline"
+            >
+              Check &rarr;
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SECTION 4: FAQ ═══════ -->
+  <section class="bg-slate-50/60 py-16">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Frequently Asked Questions</h2>
+      <p class="text-slate-500 mb-8">Common questions about UK tax, National Insurance and our calculators</p>
+      <div class="animate-on-scroll space-y-3">
+        {faqItems.map((item) => (
+          <details class="faq-item rounded-xl border border-slate-100 bg-white">
+            <summary class="flex cursor-pointer list-none items-center justify-between p-5 text-base font-semibold text-slate-900 hover:bg-slate-50 transition-colors [&::-webkit-details-marker]:hidden">
+              <span>{item.q}</span>
+              <svg class="h-5 w-5 shrink-0 text-slate-400 transition-transform duration-300 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+            <div class="faq-answer">
+              <div class="faq-answer-inner px-5 pb-5 text-sm leading-relaxed text-slate-600">
+                {item.a}
+              </div>
+            </div>
+          </details>
         ))}
       </div>
     </div>
