@@ -171,6 +171,20 @@
 	animation: pulse-shadow 3s ease-in-out infinite;
 }
 
+/* ── Mobile calculator scaling ── */
+.calc-section {
+	overflow-x: hidden;
+}
+
+@media (max-width: 640px) {
+	.calc-section {
+		transform: scale(0.94);
+		transform-origin: top center;
+		width: 106.4%;
+		margin-left: -3.2%;
+	}
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
 	.animate-on-scroll,
