@@ -171,17 +171,56 @@
 	animation: pulse-shadow 3s ease-in-out infinite;
 }
 
-/* ── Mobile calculator scaling ── */
+/* ── Mobile calculator helpers ── */
 .calc-section {
 	overflow-x: hidden;
 }
 
+/* Table scroll wrapper — scroll inside card only */
+.table-scroll {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	width: 100%;
+}
+
+.table-scroll table {
+	min-width: 100%;
+	width: max-content;
+}
+
+/* Hide Weekly + % columns on very small screens */
+@media (max-width: 480px) {
+	.table-scroll th:nth-child(4),
+	.table-scroll td:nth-child(4),
+	.table-scroll th:nth-child(5),
+	.table-scroll td:nth-child(5) {
+		display: none;
+	}
+}
+
+/* Reduce card padding on mobile */
 @media (max-width: 640px) {
-	.calc-section {
-		transform: scale(0.94);
-		transform-origin: top center;
-		width: 106.4%;
-		margin-left: -3.2%;
+	.calc-card-mobile {
+		padding: 1rem;
+		border-radius: 1rem;
+	}
+
+	.calc-card-mobile input,
+	.calc-card-mobile select {
+		font-size: 0.875rem;
+		padding: 0.5rem 0.75rem;
+	}
+
+	/* Summary/deduction cards: 3-col on mobile */
+	.calc-summary-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.5rem;
+	}
+
+	/* 5-col deduction grid → 3-col on mobile */
+	.calc-deduction-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.5rem;
 	}
 }
 

@@ -140,7 +140,7 @@ const initialShareRows = [
         </div>
       </div>
 
-      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
         <h2 class="text-lg font-bold tracking-tight text-slate-900">Your result</h2>
 
         <div class="mt-5 grid gap-4 sm:grid-cols-2">
@@ -165,7 +165,7 @@ const initialShareRows = [
           </div>
         </div>
 
-        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5 calc-deduction-grid">
           <div data-ded-tax-card class="rounded-2xl border border-rose-100 bg-rose-50/60 p-4">
             <p class="text-[11px] font-medium uppercase tracking-wider text-rose-600">Income Tax</p>
             <span data-var="dedTax" class="mt-1 block"><AnimatedNumber value={defaultResult.incomeTax} duration={500} class="text-lg text-rose-700" /></span>
@@ -206,7 +206,8 @@ const initialShareRows = [
           </div>
         </div>
 
-        <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div class="mt-4 rounded-2xl border border-slate-200 bg-white">
+          <div class="table-scroll">
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -255,6 +256,7 @@ const initialShareRows = [
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
 
         <div class="mt-6">
