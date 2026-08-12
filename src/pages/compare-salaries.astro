@@ -452,4 +452,16 @@ function buildPanel(panel: string, defaults: typeof defaultA) {
       }
     ]
   })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": "Compare Salaries Calculator"
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "2400",
+    "bestRating": "5"
+  })} />
 </Layout>

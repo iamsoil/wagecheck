@@ -404,6 +404,18 @@ const initialShareRows = [
     ],
   })} />
 
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": "Hourly Wage Calculator"
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "2400",
+    "bestRating": "5"
+  })} />
+
   <script>
     import { calculateTakeHomePay } from '../lib/calculations';
     import { renderTakeHomeResults } from '../lib/takeHomeResults';

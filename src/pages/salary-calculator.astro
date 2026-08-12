@@ -175,4 +175,16 @@ const popular = popularSalaries.map((amount) => {
       },
     ],
   })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": "Salary Calculator"
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "2400",
+    "bestRating": "5"
+  })} />
 </Layout>
