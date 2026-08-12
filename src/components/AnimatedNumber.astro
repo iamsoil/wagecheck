@@ -20,7 +20,7 @@ const {
 } = Astro.props as Props;
 
 const intDigits = Math.abs(Math.round(value)).toString().length;
-const sizeClass = !autoScale ? '' : intDigits <= 6 ? 'text-4xl' : intDigits <= 8 ? 'text-3xl' : 'text-2xl';
+const sizeClass = !autoScale ? '' : intDigits <= 6 ? 'text-3xl sm:text-4xl' : intDigits <= 8 ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl';
 
 const format = (v: number) =>
   `${prefix}${v.toLocaleString('en-GB', {

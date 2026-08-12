@@ -87,7 +87,7 @@ const initialShareRows = [
       class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]"
     >
       <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
-        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your target</h2>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Your target</h2>
         <div class="mt-5 space-y-5">
           <CalculatorInput label="Desired annual take-home (£)">
             <input type="number" min="0" step="1000" value={defaultDesiredAnnual} data-desired-annual class={inputClasses} />
@@ -101,7 +101,7 @@ const initialShareRows = [
               <span class="text-sm font-semibold text-slate-700">Pension contribution</span>
               <span data-pension-value class="text-sm font-bold text-emerald-600">{defaultPension}%</span>
             </div>
-            <input type="range" min="0" max="20" step="1" value={defaultPension} data-pension class="w-full accent-emerald-600" />
+            <input type="range" min="0" max="20" step="1" value={defaultPension} data-pension class="w-full max-w-full accent-emerald-600" />
           </div>
 
           <CalculatorInput label="Student loan">
@@ -141,7 +141,7 @@ const initialShareRows = [
       </div>
 
       <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
-        <h2 class="text-lg font-bold tracking-tight text-slate-900">Your result</h2>
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Your result</h2>
 
         <div class="mt-5 grid gap-4 sm:grid-cols-2">
           <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
