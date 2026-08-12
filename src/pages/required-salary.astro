@@ -86,7 +86,7 @@ const initialShareRows = [
       data-initial-region={defaultRegion}
       class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]"
     >
-      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
         <h2 class="text-lg font-bold tracking-tight text-slate-900">Your target</h2>
         <div class="mt-5 space-y-5">
           <CalculatorInput label="Desired annual take-home (£)">
@@ -112,7 +112,7 @@ const initialShareRows = [
 
           <div>
             <span class="mb-1.5 block text-sm font-semibold text-slate-700">Region</span>
-            <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+            <div class="calc-toggle inline-flex rounded-xl border border-slate-200 bg-white p-1">
               <button type="button" data-region="rest-of-uk" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'rest-of-uk' ? toggleActive : toggleInactive]}>Rest of UK</button>
               <button type="button" data-region="scotland" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', defaultRegion === 'scotland' ? toggleActive : toggleInactive]}>Scotland</button>
             </div>

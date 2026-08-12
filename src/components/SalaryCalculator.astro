@@ -116,7 +116,7 @@ const keepOffset = circleCircumference * (1 - defaultResult.percentageTakenHome 
 
               <div class="sm:col-span-2">
                 <span class="mb-1.5 block text-sm font-semibold text-slate-700">Region</span>
-                <div class="inline-flex rounded-xl border border-slate-200 bg-white p-1">
+                <div class="calc-toggle inline-flex rounded-xl border border-slate-200 bg-white p-1">
                   <button type="button" data-region="rest-of-uk" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', initialRegion === 'rest-of-uk' ? toggleActive : toggleInactive]}>Rest of UK</button>
                   <button type="button" data-region="scotland" class:list={['rounded-lg px-4 py-2 text-sm font-semibold transition', initialRegion === 'scotland' ? toggleActive : toggleInactive]}>Scotland</button>
                 </div>
@@ -128,7 +128,7 @@ const keepOffset = circleCircumference * (1 - defaultResult.percentageTakenHome 
                   <span data-pension-value class="text-sm font-bold text-emerald-600">{initialPension}%</span>
                 </div>
                 <input type="range" min="0" max="20" step="1" value={initialPension} data-pension class="w-full accent-emerald-600" />
-                <div class="mt-3 inline-flex rounded-xl border border-slate-200 bg-white p-1">
+                <div class="mt-3 calc-toggle inline-flex rounded-xl border border-slate-200 bg-white p-1">
                   <button type="button" data-pension-type="on-gross" class={['rounded-lg px-4 py-2 text-sm font-semibold transition', toggleActive]}>On gross salary</button>
                   <button type="button" data-pension-type="qualifying" class={['rounded-lg px-4 py-2 text-sm font-semibold transition', toggleInactive]}>Qualifying earnings</button>
                 </div>
@@ -184,7 +184,7 @@ const keepOffset = circleCircumference * (1 - defaultResult.percentageTakenHome 
               </div>
             </details>
 
-            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+            <div class="mt-8 grid gap-4 sm:grid-cols-3 calc-donut-grid">
               <div class={['flex items-center justify-center rounded-2xl border border-slate-100 bg-white p-5', cardClasses]}>
                 <div class="relative h-48 w-48">
                   <svg viewBox="0 0 200 200" class="h-full w-full">
