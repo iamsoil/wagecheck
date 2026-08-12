@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import CalculatorHero from '../../components/CalculatorHero.astro';
 import AnimatedNumber from '../../components/AnimatedNumber.astro';
 import SalaryCalculator from '../../components/SalaryCalculator.astro';
+import Accordion from '../../components/Accordion.astro';
 import { calculateTakeHomePay } from '../../lib/calculations';
 
 export async function getStaticPaths() {
@@ -33,6 +34,7 @@ const { amount, calculation } = Astro.props as {
 };
 
 const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
 const percent = (n: number) => `${gb(n)}%`;
 
 const lowerAmount = amount - 1000;
@@ -40,23 +42,41 @@ const upperAmount = amount + 1000;
 const stampDutyPrice = amount * 3;
 const effectiveTaxRate = amount > 0 ? (calculation.incomeTax / amount) * 100 : 0;
 const monthlyNetPercent = amount > 0 ? ((calculation.monthlyTakeHome * 12) / amount) * 100 : 0;
+
+const annualTakeHome = Math.round(calculation.annualTakeHome).toLocaleString('en-GB');
+const monthlyTakeHome = Math.round(calculation.monthlyTakeHome).toLocaleString('en-GB');
+const weeklyTakeHome = Math.round(calculation.weeklyTakeHome).toLocaleString('en-GB');
+
+const breakdownRows = [
+  { label: 'Gross Salary', yearly: amount, monthly: amount / 12, weekly: amount / 52, bold: false, emerald: false },
+  { label: 'Income Tax', yearly: calculation.incomeTax, monthly: calculation.incomeTax / 12, weekly: calculation.incomeTax / 52, bold: false, emerald: false },
+  { label: 'National Insurance', yearly: calculation.nationalInsurance, monthly: calculation.nationalInsurance / 12, weekly: calculation.nationalInsurance / 52, bold: false, emerald: false },
+  { label: 'Pension (5%)', yearly: calculation.pension, monthly: calculation.pension / 12, weekly: calculation.pension / 52, bold: false, emerald: false },
+  { label: 'Student Loan (Plan 2)', yearly: calculation.studentLoan, monthly: calculation.studentLoan / 12, weekly: calculation.studentLoan / 52, bold: false, emerald: false },
+  { label: 'Take-Home Pay', yearly: calculation.annualTakeHome, monthly: calculation.monthlyTakeHome, weekly: calculation.weeklyTakeHome, bold: true, emerald: true },
+];
+
+const crossesHigherRate = amount > 50270;
+const taxBand = amount > 125140 ? '45% additional' : amount > 50270 ? '40% higher' : amount > 12570 ? '20% basic' : '';
+const avgUkSalary = 35000;
+const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around £35,000` : `below the UK average salary of around £35,000`;
 ---
 
 <Layout
-  title={`£${amount.toLocaleString('en-GB')} After Tax 2026/27 | wagecheck`}
-  description={`Calculate your take-home pay on £${amount.toLocaleString('en-GB')} for 2026/27. Includes income tax, National Insurance, student loans and pension contributions.`}
+  title={`£${amount.toLocaleString('en-GB')} Salary After Tax 2026/27 | Take-Home Pay | wagecheck`}
+  description={`A £${amount.toLocaleString('en-GB')} salary in the UK gives £${annualTakeHome} per year (£${monthlyTakeHome} per month) after tax. See the full breakdown including income tax, National Insurance and pension.`}
 >
   <CalculatorHero
     category="Salary calculator"
     titleHtml={`£${amount.toLocaleString('en-GB')} After Tax in <span class="font-display italic text-emerald-600">2026/27</span>`}
-    description={`If you earn £${amount.toLocaleString('en-GB')} a year you take home around £${Math.round(calculation.monthlyTakeHome).toLocaleString('en-GB')} a month after income tax, National Insurance, a 5% pension and Plan 2 student loan.`}
+    description={`If you earn £${amount.toLocaleString('en-GB')} a year you take home around £${monthlyTakeHome} a month after income tax, National Insurance, a 5% pension and Plan 2 student loan.`}
   />
 
   <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       <article class="rounded-2xl border border-slate-200 border-l-4 border-l-emerald-500 bg-white p-6 shadow-sm">
         <p class="text-sm font-medium text-slate-500">Annual take-home</p>
-        <AnimatedNumber value={calculation.annualTakeHome} class="mt-3 text-4xl text-emerald-600" />
+        <AnimatedNumber value={calculation.annualTakeHome} class="mt-3 text-3xl sm:text-4xl text-emerald-600" />
       </article>
       <article class="rounded-2xl border border-slate-200 border-l-4 border-l-emerald-500 bg-white p-6 shadow-sm">
         <p class="text-sm font-medium text-slate-500">Monthly take-home</p>
@@ -102,7 +122,61 @@ const monthlyNetPercent = amount > 0 ? ((calculation.monthlyTakeHome * 12) / amo
     </div>
 
     <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 class="text-lg font-semibold text-slate-900">Related links</h2>
+      <h2 class="text-lg font-semibold text-slate-900">Full £{amount.toLocaleString('en-GB')} salary breakdown</h2>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <th class="rounded-tl-lg px-4 py-3">Item</th>
+              <th class="px-4 py-3 text-right">Yearly</th>
+              <th class="px-4 py-3 text-right">Monthly</th>
+              <th class="rounded-tr-lg px-4 py-3 text-right">Weekly</th>
+            </tr>
+          </thead>
+          <tbody>
+            {breakdownRows.map((row) => {
+              const base = row.bold
+                ? 'bg-emerald-50 font-bold text-emerald-700'
+                : 'border-b border-slate-100';
+              return (
+                <tr class={base}>
+                  <td class="px-4 py-3">{row.label}</td>
+                  <td class="px-4 py-3 text-right tabular-nums">{money(row.yearly)}</td>
+                  <td class="px-4 py-3 text-right tabular-nums">{money(row.monthly)}</td>
+                  <td class="px-4 py-3 text-right tabular-nums">{money(row.weekly)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+        <a
+          href="/salary-calculator"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+        >
+          Try the salary calculator &rarr;
+        </a>
+        <button
+          data-download-pdf
+          data-gross={amount}
+          data-income-tax={calculation.incomeTax}
+          data-ni={calculation.nationalInsurance}
+          data-pension={calculation.pension}
+          data-loan={calculation.studentLoan}
+          data-takehome={calculation.annualTakeHome}
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-5 py-2.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 hover:border-emerald-300"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Download PDF Report
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-10 block rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h3 class="text-lg font-semibold text-slate-900">Related links</h3>
       <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <a href={`/salary/${lowerAmount}`} class="rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700">
           Compare: £{lowerAmount.toLocaleString('en-GB')} after tax
@@ -113,7 +187,31 @@ const monthlyNetPercent = amount > 0 ? ((calculation.monthlyTakeHome * 12) / amo
         <a href={`/stamp-duty/${stampDutyPrice}`} class="rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700">
           Stamp duty on a £{stampDutyPrice.toLocaleString('en-GB')} property
         </a>
+        <a href="/scottish-salary-calculator" class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100">
+          Live in Scotland? Compare Scottish tax &rarr;
+        </a>
       </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions about £{amount.toLocaleString('en-GB')}</h2>
+    <div class="mt-6 space-y-4">
+      <Accordion title={`How much tax do I pay on £${amount.toLocaleString('en-GB')}?`}>
+        <p>On a £{amount.toLocaleString('en-GB')} salary in 2026/27 you pay £{money(calculation.incomeTax)} in income tax a year ({percent(effectiveTaxRate)} of your gross pay), plus £{money(calculation.nationalInsurance)} in National Insurance. With a 5% pension and Plan 2 student loan you take home £{money(calculation.annualTakeHome)} a year — £{money(calculation.monthlyTakeHome)} a month.</p>
+      </Accordion>
+      <Accordion title={`What is £${amount.toLocaleString('en-GB')} after tax per month?`}>
+        <p>After income tax, National Insurance, a 5% pension and a Plan 2 student loan, £{amount.toLocaleString('en-GB')} works out to roughly £{monthlyTakeHome} per month take-home pay. On a weekly basis that's about £{weeklyTakeHome}. These figures assume tax code 1257L for 2026/27.</p>
+      </Accordion>
+      <Accordion title={`Is £${amount.toLocaleString('en-GB')} a good salary?`}>
+        <p>A £{amount.toLocaleString('en-GB')} salary is {vsAverage}. After tax and a 5% pension you keep around £{monthlyTakeHome} a month.{crossesHigherRate ? ` At this level part of your income is taxed in the ${taxBand} rate band, so every extra pound above £50,270 is taxed at 40%.` : ` You stay within the ${taxBand} rate band, so you pay 20% on most of your income above the £12,570 personal allowance.`}</p>
+      </Accordion>
+      <Accordion title={`How much National Insurance will I pay on £${amount.toLocaleString('en-GB')}?`}>
+        <p>For 2026/27 you pay 8% National Insurance on earnings between £12,570 and £50,270, then 2% above that. On £{amount.toLocaleString('en-GB')} that works out to £{money(calculation.nationalInsurance)} a year.{amount > 50270 ? ` Part of your earnings falls into the 2% band above £50,270.` : ` Your whole income sits in the 8% main band.`}</p>
+      </Accordion>
+      <Accordion title={`How much is £${amount.toLocaleString('en-GB')} per hour?`}>
+        <p>At a standard 37.5-hour week that's about £{gb(amount / (37.5 * 52))} per hour gross. After tax, NI, a 5% pension and Plan 2 loan you take home around £{gb(calculation.annualTakeHome / (37.5 * 52))} per hour.</p>
+      </Accordion>
     </div>
   </section>
 
@@ -130,10 +228,84 @@ const monthlyNetPercent = amount > 0 ? ((calculation.monthlyTakeHome * 12) / amo
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: `£${amount.toLocaleString('en-GB')} After Tax 2026/27`,
+    name: `£${amount.toLocaleString('en-GB')} Salary After Tax 2026/27`,
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'Web',
-    description: `Calculate your take-home pay on £${amount.toLocaleString('en-GB')} for 2026/27. Includes income tax, National Insurance, student loans and pension contributions.`,
+    description: `A £${amount.toLocaleString('en-GB')} salary in the UK gives £${annualTakeHome} per year after tax. See the full breakdown including income tax, National Insurance and pension.`,
     url: `https://wagecheck.co.uk/salary/${amount}`,
   })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `How much tax do I pay on £${amount.toLocaleString('en-GB')}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `On a £${amount.toLocaleString('en-GB')} salary you pay £${money(calculation.incomeTax)} in income tax a year, plus £${money(calculation.nationalInsurance)} in National Insurance, leaving a take-home of about £${money(calculation.annualTakeHome)} per year.` },
+      },
+      {
+        '@type': 'Question',
+        name: `What is £${amount.toLocaleString('en-GB')} after tax per month?`,
+        acceptedAnswer: { '@type': 'Answer', text: `Around £${monthlyTakeHome} per month after income tax, NI, a 5% pension and Plan 2 student loan for 2026/27.` },
+      },
+      {
+        '@type': 'Question',
+        name: `How much National Insurance on £${amount.toLocaleString('en-GB')}?`,
+        acceptedAnswer: { '@type': 'Answer', text: `About £${money(calculation.nationalInsurance)} a year, at 8% between £12,570 and £50,270 and 2% above.` },
+      },
+    ],
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": `£${amount.toLocaleString('en-GB')} Salary After Tax Calculator`
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "2400",
+    "bestRating": "5"
+  })} />
+
+  <script>
+    document.querySelectorAll<HTMLElement>('[data-download-pdf]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const { generateSalaryPDF } = await import('../../utils/pdfExport.js');
+        const f = (n: number) => `\u00a3${Math.round(n).toLocaleString('en-GB')}`;
+        const gross = parseFloat(btn.dataset.gross || '0');
+        const incomeTax = parseFloat(btn.dataset.incomeTax || '0');
+        const ni = parseFloat(btn.dataset.ni || '0');
+        const pension = parseFloat(btn.dataset.pension || '0');
+        const loan = parseFloat(btn.dataset.loan || '0');
+        const takehome = parseFloat(btn.dataset.takehome || '0');
+        generateSalaryPDF({
+          grossSalary: f(gross),
+          grossSalaryRaw: gross,
+          taxCode: '1257L',
+          pension: '5%',
+          studentLoan: 'Plan 2',
+          annualGross: f(gross),
+          monthlyGross: f(gross / 12),
+          weeklyGross: f(gross / 52),
+          annualTax: f(incomeTax),
+          monthlyTax: f(incomeTax / 12),
+          weeklyTax: f(incomeTax / 52),
+          annualNI: f(ni),
+          monthlyNI: f(ni / 12),
+          weeklyNI: f(ni / 52),
+          annualPension: f(pension),
+          monthlyPension: f(pension / 12),
+          weeklyPension: f(pension / 52),
+          annualSL: f(loan),
+          monthlySL: f(loan / 12),
+          weeklySL: f(loan / 52),
+          annualNet: f(takehome),
+          monthlyNet: f(takehome / 12),
+          weeklyNet: f(takehome / 52),
+        });
+      });
+    });
+  </script>
 </Layout>

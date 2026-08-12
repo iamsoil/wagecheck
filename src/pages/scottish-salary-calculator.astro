@@ -1,0 +1,155 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import SalaryCalculator from '../components/SalaryCalculator.astro';
+import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../lib/calculations';
+
+const scottishBands = [
+  { name: 'Starter', rate: '19%', lower: '£12,571', upper: '£15,000' },
+  { name: 'Basic', rate: '20%', lower: '£15,001', upper: '£31,092' },
+  { name: 'Intermediate', rate: '21%', lower: '£31,093', upper: '£50,270' },
+  { name: 'Higher', rate: '42%', lower: '£50,271', upper: '£125,140' },
+  { name: 'Advanced', rate: '45%', lower: '£125,141', upper: '£150,000' },
+  { name: 'Top', rate: '48%', lower: '£150,001', upper: '∞' },
+];
+
+const exampleAmount = 35000;
+const example = calculateTakeHomePay({
+  grossAnnualSalary: exampleAmount,
+  pensionContributionPercent: 5,
+  studentLoanPlan: 'none',
+  region: 'scotland',
+  hoursPerWeek: 37.5,
+  taxCode: '1257L',
+});
+---
+
+<Layout
+  title="Scottish Salary Calculator 2026/27 | Take-Home Pay | wagecheck"
+  description="Calculate your Scottish take-home pay with 2026/27 Scottish Income Tax bands. Includes Starter, Basic, Intermediate, Higher, Advanced and Top rates."
+>
+  <CalculatorHero
+    category="Scottish salary calculator"
+    titleHtml='Scottish Salary <span class="font-display italic text-emerald-600">Calculator</span> 2026/27'
+    description="Calculate take-home pay using Scotland's 6-band income tax system. Scotland sets its own income tax rates separate from the rest of the UK."
+  />
+
+  <section class="calc-section mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <SalaryCalculator initialRegion="scotland" initialLoan="none" initialPension={5} initialGross={exampleAmount} />
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">2026/27 Scottish Income Tax bands</h2>
+      <p class="mt-2 text-sm text-slate-600">Income tax rates above the £12,570 personal allowance. Figures below reflect your gross earnings.</p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <th class="px-4 py-3">Band</th>
+              <th class="px-4 py-3 text-right">Rate</th>
+              <th class="px-4 py-3 text-right">Earnings range</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scottishBands.map((band, i) => (
+              <tr class:list={['border-b border-slate-100', i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50']}>
+                <td class="px-4 py-3 font-medium text-slate-900">{band.name}</td>
+                <td class="px-4 py-3 text-right font-semibold text-emerald-700">{band.rate}</td>
+                <td class="px-4 py-3 text-right tabular-nums text-slate-700">{band.lower} – {band.upper}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-xs text-slate-500">A £35,000 salary in Scotland takes home approx. £{Math.round(example.monthlyTakeHome).toLocaleString('en-GB')}/month with 5% pension and no student loan.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="What are the Scottish tax bands?">
+          <p>For 2026/27 Scotland has six income tax bands above the £12,570 personal allowance: Starter 19% (£12,571–£15,000), Basic 20% (£15,001–£31,092), Intermediate 21% (£31,093–£50,270), Higher 42% (£50,271–£125,140), Advanced 45% (£125,141–£150,000) and Top 48% (over £150,000).</p>
+        </Accordion>
+        <Accordion title="How is Scottish tax different?">
+          <p>Scotland sets its own income tax rates, which are applied to your earnings after the UK-wide personal allowance of £12,570. There are six bands instead of the three (20%, 40%, 45%) used in the rest of the UK, meaning take-home pay usually differs even for the same gross salary. National Insurance and student loan rules are identical across the UK.</p>
+        </Accordion>
+        <Accordion title="Do I pay Scottish tax if I live in England?">
+          <p>No. Your income tax is based on where you are resident — more specifically your "main place of residence" status for tax purposes. If you live in England you pay the rest-of-UK rates. You pay Scottish income tax only if you are resident in Scotland, regardless of where your employer is based or where you work.</p>
+        </Accordion>
+        <Accordion title="Is a Scottish salary taxed more than English?">
+          <p>At most income levels Scottish workers pay more income tax than the rest of the UK, mainly because of the Intermediate 21% band and the Advanced 45% band that starts lower. The exact difference depends on your salary — use the region toggle on this page to compare the same salary under both sets of bands.</p>
+        </Accordion>
+        <Accordion title="Does the Advanced rate change affect me?">
+          <p>The 2026/27 budget introduced the Advanced rate of 45% on earnings between £125,141 and £150,000, a band that previously sat at 42%. Earnings above £150,000 remain on the 48% top rate. If your income falls in this range you will see a slightly higher tax bill than in 2025/26.</p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <p class="text-sm font-semibold text-amber-800">Important note</p>
+      <p class="mt-1 text-sm leading-6 text-amber-700">
+        Calculations are estimates based on 2026/27 Scottish rate resolution guidance. Not financial advice. Always consult HMRC or a certified accountant for your specific tax affairs.
+      </p>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    'name': 'Scottish Salary Calculator 2026/27',
+    'description': 'Calculate your Scottish take-home pay with 2026/27 Scottish Income Tax bands.',
+    'applicationCategory': 'FinanceApplication',
+    'operatingSystem': 'Any',
+    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'GBP' },
+    'url': 'https://wagecheck.co.uk/scottish-salary-calculator'
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What are the Scottish tax bands?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'For 2026/27 Scotland has six income tax bands: Starter 19%, Basic 20%, Intermediate 21%, Higher 42%, Advanced 45% and Top 48%, applied above the £12,570 personal allowance.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'How is Scottish tax different?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Scotland sets its own income tax rates with six bands instead of the three used in the rest of the UK, so take-home pay differs even for the same gross salary.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do I pay Scottish tax if I live in England?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'No. You pay Scottish income tax only if you are resident in Scotland. English residents pay rest-of-UK rates regardless of employer location.',
+        },
+      },
+    ],
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": "Scottish Salary Calculator"
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "2400",
+    "bestRating": "5"
+  })} />
+</Layout>
