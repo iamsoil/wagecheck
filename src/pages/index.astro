@@ -139,10 +139,10 @@ const faqItems = [
             href={card.href}
             class="featured-card group block p-8 text-left sm:pr-24"
           >
-            <span class:list={['badge-pulse absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-bold text-white shadow-sm sm:right-4', card.badgeColor]}>
+            <span class:list={['badge-pulse absolute top-3 right-3 rounded-full px-2 py-0.5 text-[11px] font-bold text-white shadow-sm md:top-4 md:right-4 md:px-3 md:py-1 md:text-xs', card.badgeColor]}>
               {card.badge}
             </span>
-            <h2 class="pr-0 text-3xl font-bold tracking-tight text-slate-900 sm:pr-16">{card.name}</h2>
+            <h2 class="pr-24 text-2xl font-bold tracking-tight text-slate-900 md:pr-28 md:text-3xl">{card.name}</h2>
             <p class="mt-3 text-base leading-relaxed text-slate-600">{card.desc}</p>
             <span class="mt-6 inline-block font-semibold text-emerald-600 transition-colors hover:text-emerald-700">
               Calculate now &rarr;
