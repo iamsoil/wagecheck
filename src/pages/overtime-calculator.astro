@@ -209,6 +209,37 @@ const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
 
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is overtime taxed at a higher rate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Overtime is taxed at your marginal rate. If it pushes your total earnings into a higher tax band, only the amount above the threshold is taxed at the higher rate."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is time and a half?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "1.5× your normal hourly rate. Common for weekday overtime beyond contracted hours."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do employers have to pay overtime?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There's no statutory right to overtime pay in the UK, but your employment contract must specify rates if they apply."
+        }
+      }
+    ]
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
     "@type": "AggregateRating",
     "itemReviewed": {
       "@type": "WebApplication",
