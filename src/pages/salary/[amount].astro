@@ -198,7 +198,7 @@ const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around
     <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions about £{amount.toLocaleString('en-GB')}</h2>
     <div class="mt-6 space-y-4">
       <Accordion title={`How much tax do I pay on £${amount.toLocaleString('en-GB')}?`}>
-        <p>On a £{amount.toLocaleString('en-GB')} salary in 2026/27 you pay £{money(calculation.incomeTax)} in income tax a year ({percent(effectiveTaxRate)} of your gross pay), plus £{money(calculation.nationalInsurance)} in National Insurance. With a 5% pension and Plan 2 student loan you take home £{money(calculation.annualTakeHome)} a year — £{money(calculation.monthlyTakeHome)} a month.</p>
+        <p>On a £{amount.toLocaleString('en-GB')} salary in 2026/27 you pay {money(calculation.incomeTax)} in income tax a year ({percent(effectiveTaxRate)} of your gross pay), plus {money(calculation.nationalInsurance)} in National Insurance. With a 5% pension and Plan 2 student loan you take home {money(calculation.annualTakeHome)} a year — {money(calculation.monthlyTakeHome)} a month.</p>
       </Accordion>
       <Accordion title={`What is £${amount.toLocaleString('en-GB')} after tax per month?`}>
         <p>After income tax, National Insurance, a 5% pension and a Plan 2 student loan, £{amount.toLocaleString('en-GB')} works out to roughly £{monthlyTakeHome} per month take-home pay. On a weekly basis that's about £{weeklyTakeHome}. These figures assume tax code 1257L for 2026/27.</p>
@@ -207,7 +207,7 @@ const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around
         <p>A £{amount.toLocaleString('en-GB')} salary is {vsAverage}. After tax and a 5% pension you keep around £{monthlyTakeHome} a month.{crossesHigherRate ? ` At this level part of your income is taxed in the ${taxBand} rate band, so every extra pound above £50,270 is taxed at 40%.` : ` You stay within the ${taxBand} rate band, so you pay 20% on most of your income above the £12,570 personal allowance.`}</p>
       </Accordion>
       <Accordion title={`How much National Insurance will I pay on £${amount.toLocaleString('en-GB')}?`}>
-        <p>For 2026/27 you pay 8% National Insurance on earnings between £12,570 and £50,270, then 2% above that. On £{amount.toLocaleString('en-GB')} that works out to £{money(calculation.nationalInsurance)} a year.{amount > 50270 ? ` Part of your earnings falls into the 2% band above £50,270.` : ` Your whole income sits in the 8% main band.`}</p>
+        <p>For 2026/27 you pay 8% National Insurance on earnings between £12,570 and £50,270, then 2% above that. On £{amount.toLocaleString('en-GB')} that works out to {money(calculation.nationalInsurance)} a year.{amount > 50270 ? ` Part of your earnings falls into the 2% band above £50,270.` : ` Your whole income sits in the 8% main band.`}</p>
       </Accordion>
       <Accordion title={`How much is £${amount.toLocaleString('en-GB')} per hour?`}>
         <p>At a standard 37.5-hour week that's about £{gb(amount / (37.5 * 52))} per hour gross. After tax, NI, a 5% pension and Plan 2 loan you take home around £{gb(calculation.annualTakeHome / (37.5 * 52))} per hour.</p>
@@ -242,7 +242,7 @@ const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around
       {
         '@type': 'Question',
         name: `How much tax do I pay on £${amount.toLocaleString('en-GB')}?`,
-        acceptedAnswer: { '@type': 'Answer', text: `On a £${amount.toLocaleString('en-GB')} salary you pay £${money(calculation.incomeTax)} in income tax a year, plus £${money(calculation.nationalInsurance)} in National Insurance, leaving a take-home of about £${money(calculation.annualTakeHome)} per year.` },
+        acceptedAnswer: { '@type': 'Answer', text: `On a £${amount.toLocaleString('en-GB')} salary you pay ${money(calculation.incomeTax)} in income tax a year, plus ${money(calculation.nationalInsurance)} in National Insurance, leaving a take-home of about ${money(calculation.annualTakeHome)} per year.` },
       },
       {
         '@type': 'Question',
@@ -252,7 +252,7 @@ const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around
       {
         '@type': 'Question',
         name: `How much National Insurance on £${amount.toLocaleString('en-GB')}?`,
-        acceptedAnswer: { '@type': 'Answer', text: `About £${money(calculation.nationalInsurance)} a year, at 8% between £12,570 and £50,270 and 2% above.` },
+        acceptedAnswer: { '@type': 'Answer', text: `About ${money(calculation.nationalInsurance)} a year, at 8% between £12,570 and £50,270 and 2% above.` },
       },
     ],
   })} />
