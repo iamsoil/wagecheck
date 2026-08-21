@@ -41,7 +41,7 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
           <tbody>
             {rows.map((row, i) => (
               <tr class:list={['border-b border-slate-100 transition hover:bg-emerald-50', i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50']}>
-                <td class="px-4 py-2.5 font-medium text-slate-900">{gb(row.gross)}</td>
+                <td class="px-4 py-2.5 font-medium text-slate-900">{row.gross >= 15000 && row.gross <= 100000 ? <a href={`/salary/${row.gross}`} class="text-emerald-600 hover:text-emerald-700 hover:underline">{gb(row.gross)}</a> : gb(row.gross)}</td>
                 <td class="px-4 py-2.5 text-right tabular-nums font-semibold text-emerald-700">{gb(row.takeHome)}</td>
                 <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">{gb(row.tax)}</td>
                 <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">{gb(row.ni)}</td>
