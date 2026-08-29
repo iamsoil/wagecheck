@@ -2,18 +2,38 @@
 import Layout from '../layouts/Layout.astro';
 import CalculatorHero from '../components/CalculatorHero.astro';
 import Accordion from '../components/Accordion.astro';
+import { calculateTakeHomePay } from '../utils/tax';
 
 const nmwRates = [
-  { age: '21 and over (National Living Wage)', rate: 12.71, weekly: 476.63, monthly: 2065.42, annual: 24785, takeHome: 21365, takeHomeMonthly: 1780 },
-  { age: '18 to 20', rate: 10.85, weekly: 406.88, monthly: 1763.17, annual: 21158, takeHome: 18753, takeHomeMonthly: 1563 },
-  { age: 'Under 18', rate: 8.00, weekly: 300.00, monthly: 1300.00, annual: 15600, takeHome: 14752, takeHomeMonthly: 1229 },
-  { age: 'Apprentice', rate: 8.00, weekly: 300.00, monthly: 1300.00, annual: 15600, takeHome: 14752, takeHomeMonthly: 1229 },
+  { age: '21 and over (National Living Wage)', rate: 12.71 },
+  { age: '18 to 20', rate: 10.85 },
+  { age: 'Under 18', rate: 8.00 },
+  { age: 'Apprentice', rate: 8.00 },
 ];
 
-const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
+const computed = nmwRates.map((row) => {
+  const annual = Math.round(row.rate * 37.5 * 52);
+  const result = calculateTakeHomePay({
+    grossAnnualSalary: annual,
+    pensionContributionPercent: 5,
+    studentLoanPlan: 'none',
+    region: 'rest-of-uk',
+    taxCode: '1257L',
+  });
+  return {
+    ...row,
+    weekly: annual / 52,
+    monthly: annual / 12,
+    annual,
+    takeHome: Math.round(result.annualTakeHome),
+    takeHomeMonthly: Math.round(result.monthlyTakeHome),
+  };
+});
+
+const gb = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
 ---
 
-<Layout title="National Minimum Wage 2026/27 UK | Rates & Take-Home Pay | Wagecheck" description="UK National Minimum Wage and National Living Wage rates for 2026/27. See hourly rates, monthly pay and take-home pay after tax for all age groups.">
+<Layout title="Minimum Wage 2026 UK | Rates & Take-Home Pay | Wagecheck" description="UK National Minimum Wage and National Living Wage rates for 2026/27. See hourly rates, monthly pay and take-home pay after tax for all age groups.">
   <CalculatorHero
     category="National Minimum Wage"
     titleHtml='National Minimum Wage <span class="font-display italic text-emerald-600">2026</span> UK'
@@ -23,7 +43,7 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
   <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
       <h2 class="text-2xl font-bold tracking-tight text-slate-900">Minimum Wage 2026 UK — Rates & Take-Home Pay</h2>
-      <p class="mt-2 text-sm text-slate-600">Rates effective from April 2026. Take-home pay calculated for 37.5 hours per week, 1257L tax code, 5% pension, no student loan.</p>
+      <p class="mt-2 text-sm text-slate-600">Rates effective from 1 April 2026. Take-home pay calculated for 37.5 hours per week, 1257L tax code, 5% pension, no student loan.</p>
 
       <div class="mt-6 overflow-x-auto">
         <table class="w-full text-sm">
@@ -38,12 +58,12 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
             </tr>
           </thead>
           <tbody>
-            {nmwRates.map((row, i) => (
+            {computed.map((row, i) => (
               <tr class:list={['border-b border-slate-100 transition hover:bg-emerald-50', i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50']}>
                 <td class="px-4 py-3 font-medium text-slate-900">{row.age}</td>
                 <td class="px-4 py-3 text-right tabular-nums font-semibold text-emerald-700">£{row.rate.toFixed(2)}</td>
-                <td class="px-4 py-3 text-right tabular-nums text-slate-700">{gb(Math.round(row.weekly))}</td>
-                <td class="px-4 py-3 text-right tabular-nums text-slate-700">{gb(Math.round(row.monthly))}</td>
+                <td class="px-4 py-3 text-right tabular-nums text-slate-700">{gb(row.weekly)}</td>
+                <td class="px-4 py-3 text-right tabular-nums text-slate-700">{gb(row.monthly)}</td>
                 <td class="px-4 py-3 text-right tabular-nums text-slate-700">{gb(row.annual)}</td>
                 <td class="px-4 py-3 text-right tabular-nums font-semibold text-emerald-700">{gb(row.takeHome)}</td>
               </tr>
@@ -52,7 +72,8 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
         </table>
       </div>
 
-      <p class="mt-4 text-xs text-slate-500">Take-home = after 20% income tax, 8% NI, 5% pension. Use our <a href="/hourly-wage-calculator" class="text-emerald-600 hover:text-emerald-700 font-semibold">hourly wage calculator</a> for your exact situation.</p>
+      <p class="mt-4 text-xs text-slate-500">Take-home pay after 5% pension, income tax and National Insurance. Based on 2026/27 rates. Use our <a href="/hourly-wage-calculator/" class="text-emerald-600 hover:text-emerald-700 font-semibold">hourly wage calculator</a> for your exact situation.</p>
+      <p class="mt-2 text-xs text-slate-500">Apprentice rate applies if you are under 19, or aged 19 or over and in the first year of your apprenticeship.</p>
 
       <button
         data-download-pdf
@@ -72,7 +93,7 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
           The <strong>National Minimum Wage (NMW)</strong> is the legal minimum hourly rate that employers must pay workers aged under 21. The <strong>National Living Wage (NLW)</strong> is the higher rate that applies to workers aged 21 and over. Both are set by the UK government and reviewed annually.
         </p>
         <p>
-          Despite the different names, both are legally enforceable minimums. The NLW is effectively a higher tier of the NMW system. From April 2026, the NLW is £12.71 per hour for workers aged 21+, while the NMW for 18–20 year olds is £10.85 per hour.
+          Despite the different names, both are legally enforceable minimums. The NLW is effectively a higher tier of the NMW system. From 1 April 2026, the NLW is £12.71 per hour for workers aged 21+, while the NMW for 18–20 year olds is £10.85 per hour.
         </p>
         <p>
           The <strong>Real Living Wage</strong> (set by the Living Wage Foundation) is a separate, voluntary rate based on the actual cost of living. It is higher than both the NMW and NLW. Many employers choose to pay the Real Living Wage as a minimum.
@@ -89,23 +110,23 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
       <div class="mt-6 grid gap-4 sm:grid-cols-2">
         <div class="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
           <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">21+ (National Living Wage)</p>
-          <p class="mt-2 text-3xl font-bold text-emerald-700">£1,780<span class="text-sm font-medium text-emerald-600">/month</span></p>
-          <p class="mt-1 text-sm text-emerald-600">£12.71/hr → £21,365 take-home</p>
+          <p class="mt-2 text-3xl font-bold text-emerald-700">{gb(computed[0].takeHomeMonthly)}<span class="text-sm font-medium text-emerald-600">/month</span></p>
+          <p class="mt-1 text-sm text-emerald-600">£12.71/hr → {gb(computed[0].takeHome)} take-home</p>
         </div>
         <div class="rounded-2xl border border-slate-200 bg-white p-5">
           <p class="text-xs font-medium uppercase tracking-wider text-slate-500">18 to 20</p>
-          <p class="mt-2 text-3xl font-bold text-slate-900">£1,563<span class="text-sm font-medium text-slate-500">/month</span></p>
-          <p class="mt-1 text-sm text-slate-600">£10.85/hr → £18,753 take-home</p>
+          <p class="mt-2 text-3xl font-bold text-slate-900">{gb(computed[1].takeHomeMonthly)}<span class="text-sm font-medium text-slate-500">/month</span></p>
+          <p class="mt-1 text-sm text-slate-600">£10.85/hr → {gb(computed[1].takeHome)} take-home</p>
         </div>
         <div class="rounded-2xl border border-slate-200 bg-white p-5">
           <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Under 18</p>
-          <p class="mt-2 text-3xl font-bold text-slate-900">£1,229<span class="text-sm font-medium text-slate-500">/month</span></p>
-          <p class="mt-1 text-sm text-slate-600">£8.00/hr → £14,752 take-home</p>
+          <p class="mt-2 text-3xl font-bold text-slate-900">{gb(computed[2].takeHomeMonthly)}<span class="text-sm font-medium text-slate-500">/month</span></p>
+          <p class="mt-1 text-sm text-slate-600">£8.00/hr → {gb(computed[2].takeHome)} take-home</p>
         </div>
         <div class="rounded-2xl border border-slate-200 bg-white p-5">
           <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Apprentice</p>
-          <p class="mt-2 text-3xl font-bold text-slate-900">£1,229<span class="text-sm font-medium text-slate-500">/month</span></p>
-          <p class="mt-1 text-sm text-slate-600">£8.00/hr → £14,752 take-home</p>
+          <p class="mt-2 text-3xl font-bold text-slate-900">{gb(computed[3].takeHomeMonthly)}<span class="text-sm font-medium text-slate-500">/month</span></p>
+          <p class="mt-1 text-sm text-slate-600">£8.00/hr → {gb(computed[3].takeHome)} take-home</p>
         </div>
       </div>
     </div>
@@ -141,13 +162,13 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
       <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions about minimum wage 2026 UK</h2>
       <div class="mt-6 space-y-4">
         <Accordion title="What is the minimum wage in 2026 UK?">
-          <p>From April 2026, the UK minimum wage is £12.71 per hour for workers aged 21 and over (National Living Wage), £10.85 per hour for 18–20 year olds, and £8.00 per hour for under 18s and apprentices.</p>
+          <p>From 1 April 2026, the UK minimum wage is £12.71 per hour for workers aged 21 and over (National Living Wage), £10.85 per hour for 18–20 year olds, and £8.00 per hour for under 18s and apprentices.</p>
         </Accordion>
         <Accordion title="What is the National Living Wage 2026?">
           <p>The National Living Wage 2026 is £12.71 per hour for workers aged 21 and over. This is the highest tier of the UK minimum wage system and is a legal requirement for employers.</p>
         </Accordion>
         <Accordion title="How much is minimum wage per month?">
-          <p>At 37.5 hours per week, the minimum wage monthly pay is approximately £1,780 (21+), £1,563 (18–20), or £1,229 (under 18/apprentice) before tax. After tax and NI, take-home is roughly £1,480, £1,313 or £1,030 per month respectively.</p>
+          <p>At 37.5 hours per week, the minimum wage monthly pay is approximately {gb(computed[0].takeHomeMonthly)} (21+), {gb(computed[1].takeHomeMonthly)} (18–20), or {gb(computed[2].takeHomeMonthly)} (under 18/apprentice) after tax, NI and pension. Before tax, monthly gross is approximately £{Math.round(computed[0].monthly).toLocaleString('en-GB')}, £{Math.round(computed[1].monthly).toLocaleString('en-GB')}, or £{Math.round(computed[2].monthly).toLocaleString('en-GB')} respectively.</p>
         </Accordion>
         <Accordion title="Does minimum wage include tax?">
           <p>No. The minimum wage is a gross (before tax) rate. Income tax and National Insurance are deducted from your pay on top of this. Your employer must pay at least the NMW/NLW in gross pay, but your take-home will be lower after deductions.</p>
@@ -162,22 +183,22 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <a href="/hourly-wage-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+      <a href="/hourly-wage-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <p class="text-base font-semibold text-slate-900">Hourly Wage Calculator</p>
         <p class="mt-2 text-sm leading-6 text-slate-600">Convert any hourly rate into annual take-home pay.</p>
         <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
       </a>
-      <a href="/salary-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+      <a href="/salary-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
         <p class="mt-2 text-sm leading-6 text-slate-600">Full take-home breakdown for any salary.</p>
         <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
       </a>
-      <a href="/salary-tables" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+      <a href="/salary-tables/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <p class="text-base font-semibold text-slate-900">Salary Tables</p>
         <p class="mt-2 text-sm leading-6 text-slate-600">Take-home pay for every £1,000 salary increment.</p>
         <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
       </a>
-      <a href="/pro-rata-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+      <a href="/pro-rata-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <p class="text-base font-semibold text-slate-900">Pro Rata Calculator</p>
         <p class="mt-2 text-sm leading-6 text-slate-600">Scale a full-time salary to part-time hours.</p>
         <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
@@ -205,10 +226,10 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
         startY: 44,
         head: [['Age Group', 'Hourly Rate', 'Annual (37.5h/wk)', 'Take-Home']],
         body: [
-          ['21+ (NLW)', '\u00a312.71', '\u00a324,785', '\u00a321,365'],
-          ['18 to 20', '\u00a310.85', '\u00a321,158', '\u00a318,753'],
-          ['Under 18', '\u00a38.00', '\u00a315,600', '\u00a314,752'],
-          ['Apprentice', '\u00a38.00', '\u00a315,600', '\u00a314,752'],
+          ['21+ (NLW)', '\u00a312.71', `\u00a3${computed[0].annual.toLocaleString('en-GB')}`, `\u00a3${computed[0].takeHome.toLocaleString('en-GB')}`],
+          ['18 to 20', '\u00a310.85', `\u00a3${computed[1].annual.toLocaleString('en-GB')}`, `\u00a3${computed[1].takeHome.toLocaleString('en-GB')}`],
+          ['Under 18', '\u00a38.00', `\u00a3${computed[2].annual.toLocaleString('en-GB')}`, `\u00a3${computed[2].takeHome.toLocaleString('en-GB')}`],
+          ['Apprentice', '\u00a38.00', `\u00a3${computed[3].annual.toLocaleString('en-GB')}`, `\u00a3${computed[3].takeHome.toLocaleString('en-GB')}`],
         ],
         headStyles: { fillColor: [5, 150, 105], textColor: 255, fontStyle: 'bold' },
         styles: { fontSize: 10, cellPadding: 3 },
@@ -217,7 +238,7 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
       });
       doc.setTextColor(71, 85, 105);
       doc.setFontSize(8);
-      doc.text('wagecheck.co.uk | Rates effective from April 2026.', w / 2, 285, { align: 'center' });
+      doc.text('wagecheck.co.uk | Rates effective from 1 April 2026.', w / 2, 285, { align: 'center' });
       doc.save('wagecheck-nmw-rates.pdf');
     });
   });
@@ -243,7 +264,7 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
       "name": "What is the minimum wage in 2026 UK?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "From April 2026, the UK minimum wage is £12.71 per hour for workers aged 21 and over (National Living Wage), £10.85 per hour for 18-20 year olds, and £8.00 per hour for under 18s and apprentices."
+        "text": "From 1 April 2026, the UK minimum wage is £12.71 per hour for workers aged 21 and over (National Living Wage), £10.85 per hour for 18-20 year olds, and £8.00 per hour for under 18s and apprentices."
       }
     },
     {
@@ -259,7 +280,7 @@ const gb = (n: number) => `£${n.toLocaleString('en-GB')}`;
       "name": "How much is minimum wage per month?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "At 37.5 hours per week, the minimum wage monthly pay is approximately £1,780 (21+), £1,563 (18-20), or £1,229 (under 18/apprentice) before tax."
+        "text": "At 37.5 hours per week, the minimum wage monthly take-home after tax, NI and 5% pension is approximately £1,480 (21+), £1,313 (18-20), or £1,030 (under 18/apprentice)."
       }
     },
     {

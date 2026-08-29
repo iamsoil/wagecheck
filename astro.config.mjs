@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://www.wagecheck.co.uk',
+	trailingSlash: 'always',
 	output: 'static',
 	integrations: [sitemap()],
 	vite: {
