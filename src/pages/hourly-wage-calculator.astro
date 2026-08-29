@@ -67,7 +67,7 @@ const initialShareRows = [
 
 <Layout
   title="Hourly Wage Calculator UK 2026/27 | Salary to Hourly Rate | Wagecheck"
-  description="Convert hourly rate to salary or salary to hourly rate for 2026/27. Free UK hourly wage calculator with take-home pay after tax, NI and pension."
+  description="Convert hourly rate to salary or annual salary to hourly rate with our UK hourly wage calculator. See take-home pay, tax, NI and pension for 2026/27."
 >
   <CalculatorHero
     category="Hourly wage calculator"
@@ -93,8 +93,22 @@ const initialShareRows = [
           <div class="w-full rounded-xl border border-emerald-200 bg-white p-4">
             <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Hourly rate</p>
             <p data-s2h-result class="text-2xl font-bold text-emerald-700">£15.38</p>
-            <p class="mt-1 text-xs text-emerald-600">= £30,000 ÷ 52 ÷ 37.5</p>
+            <p data-s2h-formula class="mt-1 text-xs text-emerald-600">= £30,000 ÷ 52 ÷ 37.5</p>
           </div>
+        </div>
+      </div>
+      <div class="mt-4 grid grid-cols-3 gap-4">
+        <div class="rounded-xl border border-emerald-200 bg-white p-4">
+          <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Weekly gross</p>
+          <p data-s2h-weekly class="text-lg font-bold text-emerald-700">£576.92</p>
+        </div>
+        <div class="rounded-xl border border-emerald-200 bg-white p-4">
+          <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Monthly gross</p>
+          <p data-s2h-monthly class="text-lg font-bold text-emerald-700">£2,500</p>
+        </div>
+        <div class="rounded-xl border border-emerald-200 bg-white p-4">
+          <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Annual gross</p>
+          <p data-s2h-annual class="text-lg font-bold text-emerald-700">£30,000</p>
         </div>
       </div>
     </div>
@@ -330,6 +344,37 @@ const initialShareRows = [
           </div>
         </div>
         <p>You can also use the shortcut: <strong>Annual salary ÷ (hours per week × 52)</strong>. For example: £30,000 ÷ (37.5 × 52) = £30,000 ÷ 1,950 = £15.38/hour.</p>
+        <h3 class="text-lg font-bold text-slate-900 pt-4">Quick Reference: Hourly Rates for Common Salaries</h3>
+        <p class="mt-2">Based on 37.5 hours per week (standard UK full-time):</p>
+        <div class="mt-3 overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-2.5">Annual Salary</th>
+                <th class="px-4 py-2.5 text-right">Hourly Rate</th>
+                <th class="px-4 py-2.5 text-right">Weekly Gross</th>
+                <th class="px-4 py-2.5 text-right">Monthly Gross</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { sal: 20000, rate: 20000 / 52 / 37.5 },
+                { sal: 25000, rate: 25000 / 52 / 37.5 },
+                { sal: 30000, rate: 30000 / 52 / 37.5 },
+                { sal: 35000, rate: 35000 / 52 / 37.5 },
+                { sal: 40000, rate: 40000 / 52 / 37.5 },
+                { sal: 50000, rate: 50000 / 52 / 37.5 },
+              ].map((row) => (
+                <tr class="border-b border-slate-100 hover:bg-emerald-50 transition">
+                  <td class="px-4 py-2.5 font-medium text-slate-900">{gb(row.sal)}</td>
+                  <td class="px-4 py-2.5 text-right tabular-nums font-semibold text-emerald-700">£{row.rate.toFixed(2)}</td>
+                  <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">{money(row.sal / 52)}</td>
+                  <td class="px-4 py-2.5 text-right tabular-nums text-slate-600">{money(row.sal / 12)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <p>Use our <a href="/hourly-wage-calculator" class="font-semibold text-emerald-600 hover:text-emerald-700">hourly wage calculator</a> above to do this instantly and see your take-home pay after tax. For context, the <a href="/national-minimum-wage" class="font-semibold text-emerald-600 hover:text-emerald-700">minimum wage 2026 uk</a> is £12.71/hour for workers aged 21+.</p>
       </div>
     </div>
@@ -414,6 +459,11 @@ const initialShareRows = [
       </a>
       <a href="/pro-rata-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <p class="text-base font-semibold text-slate-900">Pro-Rata Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Scale a full-time salary to your part-time hours or days.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/pro-rata-calculator" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Pro Rata Salary Calculator</p>
         <p class="mt-2 text-sm leading-6 text-slate-600">Scale a full-time salary to your part-time hours or days.</p>
         <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
       </a>
@@ -508,16 +558,22 @@ const initialShareRows = [
       const salary = root.querySelector<HTMLInputElement>('[data-s2h-salary]')!;
       const hours = root.querySelector<HTMLInputElement>('[data-s2h-hours]')!;
       const result = root.querySelector<HTMLElement>('[data-s2h-result]')!;
+      const formula = root.querySelector<HTMLElement>('[data-s2h-formula]')!;
+      const weekly = root.querySelector<HTMLElement>('[data-s2h-weekly]')!;
+      const monthly = root.querySelector<HTMLElement>('[data-s2h-monthly]')!;
+      const annual = root.querySelector<HTMLElement>('[data-s2h-annual]')!;
 
       function recalc() {
         const s = parseFloat(salary.value) || 0;
         const h = parseFloat(hours.value) || 37.5;
         const hourly = h > 0 && s > 0 ? s / 52 / h : 0;
         result.textContent = hourly > 0 ? `£${hourly.toFixed(2)}` : '—';
-        const formula = root.querySelector('p:last-child');
-        if (formula) {
-          formula.textContent = `= £${s.toLocaleString('en-GB')} ÷ 52 ÷ ${h}`;
-        }
+        formula.textContent = `= £${s.toLocaleString('en-GB')} ÷ 52 ÷ ${h}`;
+        const wk = s / 52;
+        const mo = s / 12;
+        weekly.textContent = s > 0 ? `£${wk.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—';
+        monthly.textContent = s > 0 ? `£${mo.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—';
+        annual.textContent = s > 0 ? `£${s.toLocaleString('en-GB')}` : '—';
       }
 
       salary.addEventListener('input', recalc);
