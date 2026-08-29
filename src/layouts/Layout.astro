@@ -6,14 +6,22 @@ import Footer from '../components/Footer.astro';
 type Props = {
   title?: string;
   description?: string;
+  breadcrumbName?: string;
 };
 
 const {
   title = 'wagecheck',
   description = 'Free UK salary, tax and stamp duty calculators for take-home pay estimates.',
+  breadcrumbName,
 } = Astro.props;
 
 const canonicalURL = Astro.url.href;
+
+const pathSegment = Astro.url.pathname.replace(/^\/|\/$/g, '');
+const pageTitle = breadcrumbName || (pathSegment
+  ? pathSegment.split('/').pop()!.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+  : 'Home');
+const pageURL = `https://www.wagecheck.co.uk${Astro.url.pathname}`;
 ---
 
 <!doctype html>
@@ -46,6 +54,15 @@ const canonicalURL = Astro.url.href;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://www.wagecheck.co.uk/og-image.png" />
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.wagecheck.co.uk/" },
+        ...(pathSegment ? [{ "@type": "ListItem", "position": 2, "name": pageTitle, "item": pageURL }] : [])
+      ]
+    })} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
