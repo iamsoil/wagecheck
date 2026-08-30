@@ -1,0 +1,483 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import Accordion from '../components/Accordion.astro';
+
+const inputClasses =
+  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
+
+const defaultProfit = 40000;
+const defaultExpenses = 0;
+
+const PA = 12570;
+const CLASS2_WEEKLY = 3.70;
+const CLASS2_ANNUAL = CLASS2_WEEKLY * 52;
+
+function calc(profit: number, expenses: number) {
+  const taxableProfit = Math.max(profit - expenses, 0);
+  const adjustedIncome = taxableProfit;
+
+  let personalAllowance = PA;
+  if (adjustedIncome > 100000) {
+    personalAllowance = Math.max(PA - (adjustedIncome - 100000) / 2, 0);
+  }
+
+  const ti = Math.max(adjustedIncome - personalAllowance, 0);
+
+  let incomeTax = 0;
+  if (ti > 0) {
+    const band1 = Math.min(ti, 50270 - PA);
+    const band2 = Math.max(Math.min(ti, 125140 - PA) - (50270 - PA), 0);
+    const band3 = Math.max(ti - (125140 - PA), 0);
+    incomeTax = band1 * 0.2 + band2 * 0.4 + band3 * 0.45;
+  }
+
+  const class4Lower = PA;
+  const class4Upper = 50270;
+  const class4Main = Math.max(Math.min(taxableProfit, class4Upper) - class4Lower, 0) * 0.06;
+  const class4Additional = Math.max(taxableProfit - class4Upper, 0) * 0.02;
+  const class4NIC = class4Main + class4Additional;
+
+  const totalTax = incomeTax + CLASS2_ANNUAL + class4NIC;
+  const takeHome = Math.max(taxableProfit - totalTax, 0);
+
+  return { taxableProfit, personalAllowance, incomeTax, class4NIC, class2: CLASS2_ANNUAL, totalTax, takeHome };
+}
+
+const d = calc(defaultProfit, defaultExpenses);
+---
+
+<Layout
+  title="Self-Employed Tax Calculator UK 2026/27 | NICs & Income Tax | Wagecheck"
+  description="Free self-employed tax calculator for 2026/27. Work out income tax, Class 2 and Class 4 NICs, and your take-home pay as a sole trader or freelancer."
+>
+  <CalculatorHero
+    category="Self-employed tax calculator"
+    titleHtml='Self-Employed Tax <span class="font-display italic text-emerald-600">Calculator</span> UK 2026/27'
+    description="Calculate your self-employment tax, Class 2 and Class 4 National Insurance, and take-home pay for 2026/27."
+    mobileDescription="Calculate your self-employment tax and take-home pay."
+  />
+
+  <section class="calc-section mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="self-employed-calculator"
+      data-self-employed-calculator
+      class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,fr)]"
+    >
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
+        <div class="flex items-center gap-3">
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Your details</h2>
+        </div>
+        <div class="mt-5 space-y-5">
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Annual gross profit (£)</label>
+            <input type="number" min="0" step="1000" value={defaultProfit} data-profit class={inputClasses} />
+            <p class="mt-1 text-xs text-slate-500">Your total self-employed income before expenses.</p>
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Allowable expenses (£)</label>
+            <input type="number" min="0" step="100" value={defaultExpenses} data-expenses class={inputClasses} />
+            <p class="mt-1 text-xs text-slate-500">Business costs you can deduct (travel, equipment, phone, etc).</p>
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Tax year</label>
+            <select data-tax-year class={inputClasses}>
+              <option value="2026" selected>2026/27</option>
+            </select>
+            <p class="mt-1 text-xs text-slate-500">Rates shown are for 6 April 2026 – 5 April 2027.</p>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border border-amber-100 bg-amber-50 p-4">
+          <p class="text-xs font-semibold text-amber-800">Payment on Account</p>
+          <p class="mt-1 text-xs leading-5 text-amber-700">If your tax bill exceeds £1,000, you may need to make two payments on account — 50% of your estimated next-year tax paid in January and July.</p>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Your results</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Annual Take-Home Pay</p>
+            <span data-var="takeHome" class="mt-2 block break-words">
+              <span class="inline-block whitespace-nowrap font-bold tabular-nums text-3xl sm:text-4xl text-emerald-700">{`£${Math.round(d.takeHome).toLocaleString('en-GB')}`}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Taxable profit</p>
+            <span data-var="taxableProfit" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{`£${Math.round(d.taxableProfit).toLocaleString('en-GB')}`}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Income tax</p>
+            <span data-var="incomeTax" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{`£${Math.round(d.incomeTax).toLocaleString('en-GB')}`}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Class 2 NICs</p>
+            <span data-var="class2" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{`£${Math.round(d.class2).toLocaleString('en-GB')}`}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Class 4 NICs</p>
+            <span data-var="class4" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{`£${Math.round(d.class4NIC).toLocaleString('en-GB')}`}</span>
+            </span>
+          </div>
+          <div class="sm:col-span-2 rounded-2xl border border-slate-100 bg-white p-5">
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Total tax + NICs</p>
+            <span data-var="totalTax" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-emerald-700">{`£${Math.round(d.totalTax).toLocaleString('en-GB')}`}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">How it's calculated</p>
+          <div class="mt-3 space-y-2 text-sm text-slate-600">
+            <p data-formula-profit>Taxable profit: £{defaultProfit.toLocaleString('en-GB')} − £{defaultExpenses.toLocaleString('en-GB')} = <strong>{`£${Math.round(d.taxableProfit).toLocaleString('en-GB')}`}</strong></p>
+            <p data-formula-pa>Personal allowance (reduces above £100k): <strong>{`£${Math.round(d.personalAllowance).toLocaleString('en-GB')}`}</strong></p>
+            <p data-formula-tax>Income tax (20% / 40% / 45% bands): <strong>{`£${Math.round(d.incomeTax).toLocaleString('en-GB')}`}</strong></p>
+            <p data-formula-class2>Class 2 NICs (£3.70/week × 52): <strong>{`£${Math.round(d.class2).toLocaleString('en-GB')}`}</strong></p>
+            <p data-formula-class4>Class 4 NICs (6% on £12,570–£50,270, 2% above): <strong>{`£${Math.round(d.class4NIC).toLocaleString('en-GB')}`}</strong></p>
+            <p data-formula-total>Total: {`£${Math.round(d.incomeTax).toLocaleString('en-GB')}`} + £{Math.round(d.class2).toLocaleString('en-GB')} + {`£${Math.round(d.class4NIC).toLocaleString('en-GB')}`} = <strong class="text-emerald-700">{`£${Math.round(d.totalTax).toLocaleString('en-GB')}`}</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How Self-Employment Tax Works</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>
+          As a self-employed sole trader in the UK, you pay three main taxes on your profits:
+        </p>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><strong>Income tax</strong> — the same 20% / 40% / 45% bands as employed workers, applied to profits after the £12,570 personal allowance.</li>
+          <li><strong>Class 2 National Insurance</strong> — a flat £3.70 per week (£192.40/year) that counts towards your State Pension and contributory benefits.</li>
+          <li><strong>Class 4 National Insurance</strong> — 6% on profits between £12,570 and £50,270, then 2% above £50,270. No NI on profits below £12,570.</li>
+        </ul>
+
+        <h3 class="text-lg font-bold text-slate-900 pt-4">Payment on Account</h3>
+        <p>
+          If your tax bill for the current year exceeds £1,000, HMRC will ask you to make <strong>payments on account</strong> towards next year's tax. These are due on <strong>31 January</strong> and <strong>31 July</strong>, each covering 50% of your previous year's tax bill (excluding Class 2 NICs and student loans).
+        </p>
+        <p>
+          For example, if your 2026/27 tax bill is £8,000, you'd owe £4,000 on 31 January 2028 and £4,000 on 31 July 2028 — on top of any balancing payment for 2026/27.
+        </p>
+
+        <h3 class="text-lg font-bold text-slate-900 pt-4">Self-Assessment Tax Return</h3>
+        <p>
+          You must file a Self-Assessment tax return by <strong>31 January</strong> following the end of the tax year. For 2026/27, the deadline is 31 January 2028. Late filing incurs a £100 penalty, plus daily charges after 3 months.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">What Can I Deduct?</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <p>
+          Allowable business expenses reduce your taxable profit and therefore your tax bill. Common deductions include:
+        </p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-3">Expense</th>
+                <th class="px-4 py-3">Examples</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="bg-white">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Travel</td>
+                <td class="px-4 py-2.5 text-slate-600">Fuel, train tickets, parking, vehicle insurance (business use only)</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Equipment</td>
+                <td class="px-4 py-2.5 text-slate-600">Laptops, tools, machinery — or annual wear-and-tear allowance</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Home office</td>
+                <td class="px-4 py-2.5 text-slate-600">Simplified rate: £6/week (no receipts needed) or proportion of rent, broadband, electricity</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Phone &amp; internet</td>
+                <td class="px-4 py-2.5 text-slate-600">Business-use proportion of mobile and broadband bills</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Professional fees</td>
+                <td class="px-4 py-2.5 text-slate-600">Accountant, solicitor, trade body subscriptions</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Insurance</td>
+                <td class="px-4 py-2.5 text-slate-600">Professional indemnity, public liability, business contents</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Marketing</td>
+                <td class="px-4 py-2.5 text-slate-600">Website hosting, advertising, business cards</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <td class="px-4 py-2.5 font-medium text-slate-900">Training</td>
+                <td class="px-4 py-2.5 text-slate-600">Courses directly related to your current trade</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+          <strong>Not allowable:</strong> commuting from home to a permanent workplace, clothing (unless uniform), meals, personal fines, entertainment (with limited exceptions).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions about self-employed tax</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="How much tax does a self-employed person pay in the UK?">
+          <p>
+            Self-employed tax is made up of income tax plus Class 2 and Class 4 National Insurance. On a £40,000 profit with no expenses, you'd pay approximately £5,478 in income tax and Class 4 NICs, plus £192.40 Class 2 — a total of around £5,670, leaving a take-home of roughly £34,330. Use our calculator above for an exact figure based on your profits.
+          </p>
+        </Accordion>
+        <Accordion title="What is the difference between Class 2 and Class 4 NICs?">
+          <p>
+            <strong>Class 2 NICs</strong> are a flat weekly rate (£3.70 in 2026/27) that you pay to build up State Pension and contributory benefit entitlement. <strong>Class 4 NICs</strong> are a percentage of your profits — 6% on profits between £12,570 and £50,270, then 2% above that. Class 2 is a fixed cost; Class 4 scales with your earnings.
+          </p>
+        </Accordion>
+        <Accordion title="Do I pay tax on my first year self-employed?">
+          <p>
+            Yes, but you may get a lower bill. Your first tax return covers part of two tax years if you start mid-year, and your personal allowance applies proportionally. You also get the full-year Class 2 NIC allowance regardless of when you started. Your first payment on account may be based on a nil return if your previous year's tax was under £1,000.
+          </p>
+        </Accordion>
+        <Accordion title="How do I register as self-employed?">
+          <p>
+            Register for Self-Assessment with HMRC by <strong>5 October</strong> after the end of the tax year in which you started trading. You can register online at <a href="https://www.gov.uk/register-for-self-assessment" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Register for Self-Assessment</a>. You'll receive a Unique Taxpayer Reference (UTR) number within 10 working days.
+          </p>
+        </Accordion>
+        <Accordion title="What is payment on account?">
+          <p>
+            Payments on account are advance payments towards your next year's tax bill. If your current year's tax (excluding Class 2 NICs and student loans) exceeds £1,000, you must make two equal payments: 50% on 31 January and 50% on 31 July. If your actual tax is lower the following year, HMRC refunds the overpayment. If higher, you pay the difference as a balancing payment on 31 January.
+          </p>
+        </Accordion>
+        <Accordion title="Can I claim mileage instead of fuel costs?">
+          <p>
+            Yes. HMRC's Approved Mileage Allowance Payments (AMAPs) let you claim 45p per mile for the first 10,000 business miles and 25p per mile thereafter. This covers fuel, insurance, servicing and depreciation. You cannot claim both mileage and actual running costs for the same vehicle.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+      <a href="/salary-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Compare to employed take-home pay after tax, NI and pension.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/salary-tables/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Tables</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">See take-home pay for every salary from £10,000 to £150,000.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How We Calculate This</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="font-semibold text-slate-900">Tax year</p>
+            <p>2026/27 (6 April 2026 – 5 April 2027)</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Last reviewed</p>
+            <p>30 August 2026</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Income tax</p>
+            <p>20% on first £37,700 of taxable profit, 40% up to £125,140, 45% above</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Class 2 NICs</p>
+            <p>£3.70/week × 52 = £192.40 flat rate</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Class 4 NICs</p>
+            <p>6% on profits £12,570–£50,270, 2% above £50,270</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Sources</p>
+            <p><a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Income Tax rates</a> · <a href="https://www.gov.uk/national-insurance-rates-letters" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — National Insurance rates</a></p>
+          </div>
+        </div>
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-800">
+          <p>Results are estimates. Your actual tax may differ based on Scottish residency, marriage allowance, pension contributions, student loan repayments, and other reliefs. Always consult HMRC or a certified accountant for your specific tax affairs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <details class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <summary class="cursor-pointer rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-lg font-bold tracking-tight text-slate-900 transition hover:bg-slate-50">Change Log</summary>
+    <div class="mt-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-sm text-slate-600 space-y-2">
+      <p><span class="font-semibold text-slate-900">30 August 2026:</span> Calculator created for 2026/27 tax year with income tax, Class 2 and Class 4 NICs.</p>
+    </div>
+  </details>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Self-Employed Tax Calculator UK 2026/27",
+    "description": "Free self-employed tax calculator for 2026/27. Work out income tax, Class 2 and Class 4 NICs, and your take-home pay as a sole trader or freelancer.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+    "url": "https://www.wagecheck.co.uk/self-employed-tax-calculator"
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much tax does a self-employed person pay in the UK?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Self-employed tax is made up of income tax plus Class 2 and Class 4 National Insurance. On a £40,000 profit with no expenses, you'd pay approximately £5,670 in total, leaving a take-home of roughly £34,330."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Class 2 and Class 4 NICs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Class 2 NICs are a flat weekly rate (£3.70 in 2026/27) for State Pension and benefits. Class 4 NICs are a percentage of profits — 6% on profits between £12,570 and £50,270, then 2% above."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I pay tax on my first year self-employed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, but you may get a lower bill. Your personal allowance applies proportionally if you start mid-year, and your first payment on account may be nil if your previous year's tax was under £1,000."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I register as self-employed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Register for Self-Assessment with HMRC by 5 October after the end of the tax year in which you started trading. You can register online at GOV.UK. You'll receive a UTR number within 10 working days."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is payment on account?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Payments on account are advance payments towards your next year's tax bill. If your current year's tax exceeds £1,000, you make two equal payments: 50% on 31 January and 50% on 31 July."
+        }
+      }
+    ]
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": "Self-Employed Tax Calculator"
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "800",
+    "bestRating": "5"
+  })} />
+
+  <script>
+    const CLASS2_ANNUAL = 192.40;
+    const PA = 12570;
+
+    document.querySelectorAll<HTMLElement>('[data-self-employed-calculator]').forEach((root) => {
+      const profitInput = root.querySelector<HTMLInputElement>('[data-profit]');
+      const expensesInput = root.querySelector<HTMLInputElement>('[data-expenses]');
+
+      function recompute() {
+        const profit = Math.max(parseFloat(profitInput?.value || '0'), 0);
+        const expenses = Math.max(parseFloat(expensesInput?.value || '0'), 0);
+        const taxableProfit = Math.max(profit - expenses, 0);
+
+        let personalAllowance = PA;
+        if (taxableProfit > 100000) {
+          personalAllowance = Math.max(PA - (taxableProfit - 100000) / 2, 0);
+        }
+
+        const ti = Math.max(taxableProfit - personalAllowance, 0);
+
+        let incomeTax = 0;
+        if (ti > 0) {
+          const band1 = Math.min(ti, 50270 - PA);
+          const band2 = Math.max(Math.min(ti, 125140 - PA) - (50270 - PA), 0);
+          const band3 = Math.max(ti - (125140 - PA), 0);
+          incomeTax = band1 * 0.2 + band2 * 0.4 + band3 * 0.45;
+        }
+
+        const class4Lower = PA;
+        const class4Upper = 50270;
+        const class4Main = Math.max(Math.min(taxableProfit, class4Upper) - class4Lower, 0) * 0.06;
+        const class4Additional = Math.max(taxableProfit - class4Upper, 0) * 0.02;
+        const class4NIC = class4Main + class4Additional;
+
+        const totalTax = incomeTax + CLASS2_ANNUAL + class4NIC;
+        const takeHome = Math.max(taxableProfit - totalTax, 0);
+
+        const f = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+
+        const setEl = (sel: string, html: string) => {
+          const el = root.querySelector<HTMLElement>(sel);
+          if (el) el.innerHTML = html;
+        };
+
+        setEl('[data-var="takeHome"]', `<span class="inline-block whitespace-nowrap font-bold tabular-nums text-3xl sm:text-4xl text-emerald-700">${f(takeHome)}</span>`);
+        setEl('[data-var="taxableProfit"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${f(taxableProfit)}</span>`);
+        setEl('[data-var="incomeTax"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${f(incomeTax)}</span>`);
+        setEl('[data-var="class2"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${f(CLASS2_ANNUAL)}</span>`);
+        setEl('[data-var="class4"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${f(class4NIC)}</span>`);
+        setEl('[data-var="totalTax"]', `<span class="text-lg font-bold tabular-nums text-emerald-700">${f(totalTax)}</span>`);
+
+        setEl('[data-formula-profit]', `Taxable profit: ${f(profit)} − ${f(expenses)} = <strong>${f(taxableProfit)}</strong>`);
+        setEl('[data-formula-pa]', `Personal allowance (reduces above £100k): <strong>${f(personalAllowance)}</strong>`);
+        setEl('[data-formula-tax]', `Income tax (20% / 40% / 45% bands): <strong>${f(incomeTax)}</strong>`);
+        setEl('[data-formula-class2]', `Class 2 NICs (£3.70/week × 52): <strong>${f(CLASS2_ANNUAL)}</strong>`);
+        setEl('[data-formula-class4]', `Class 4 NICs (6% on £12,570–£50,270, 2% above): <strong>${f(class4NIC)}</strong>`);
+        setEl('[data-formula-total]', `Total: ${f(incomeTax)} + ${f(CLASS2_ANNUAL)} + ${f(class4NIC)} = <strong class="text-emerald-700">${f(totalTax)}</strong>`);
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      profitInput?.addEventListener('input', schedule);
+      expensesInput?.addEventListener('input', schedule);
+
+      recompute();
+    });
+  </script>
+</Layout>

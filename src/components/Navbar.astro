@@ -4,35 +4,57 @@
 
     <div class="hidden items-center gap-8 md:flex">
       <a href="/" class="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600">Home</a>
-      <a href="/salary-calculator/" class="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600">Salary Calculator</a>
-      <a href="/stamp-duty-calculator/" class="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600">Stamp Duty</a>
-      <a href="/#most-searched" class="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600">Most Searched</a>
+
       <details class="group relative">
         <summary class="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600 [&::-webkit-details-marker]:hidden">
-          More Calculators
+          Calculators
           <svg class="h-3.5 w-3.5 text-slate-400 transition-transform duration-200 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="m6 9 6 6 6-6" />
           </svg>
         </summary>
-        <div class="absolute left-0 top-full mt-2 w-56 rounded-2xl border border-slate-100 bg-white p-2 shadow-lg shadow-slate-200/60">
-          <a href="/salary-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Salary Calculator</a>
-          <a href="/scottish-salary-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Scottish Salary Calculator</a>
-          <a href="/hourly-wage-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Hourly Wage Calculator</a>
-          <a href="/pro-rata-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Pro-Rata Calculator</a>
-          <a href="/stamp-duty-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Stamp Duty Calculator</a>
-          <a href="/compare-salaries/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Compare Salaries</a>
-          <a href="/required-salary/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Required Salary Calculator</a>
-          <a href="/salary-tables/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Salary Tables</a>
-          <a href="/national-minimum-wage/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">National Minimum Wage</a>
-          <a href="/rental-yield/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Rental Yield Calculator</a>
-          <a href="/bonus-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Bonus Tax Calculator</a>
-          <a href="/pay-rise-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Pay Rise Calculator</a>
-          <a href="/overtime-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Overtime Calculator</a>
-          <a href="/sick-pay-calculator/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Sick Pay Calculator</a>
-          <a href="/mortgage-affordability/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Mortgage Affordability</a>
+        <div class="absolute left-0 top-full mt-2 w-[520px] rounded-2xl border border-slate-100 bg-white p-3 shadow-lg shadow-slate-200/60">
+          <div class="grid grid-cols-2 gap-1">
+            <!-- Income & Pay -->
+            <div>
+              <div class="flex items-center gap-2 px-3 pt-2 pb-1.5">
+                <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m5-17H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Income & Pay</span>
+              </div>
+              <a href="/salary-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Salary Calculator</a>
+              <a href="/hourly-wage-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Hourly Wage Calculator</a>
+              <a href="/national-minimum-wage/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">National Minimum Wage</a>
+              <a href="/pro-rata-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Pro-Rata Calculator</a>
+              <a href="/scottish-salary-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Scottish Salary Calculator</a>
+              <a href="/self-employed-tax-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Self-Employed Tax Calculator</a>
+              <a href="/bonus-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Bonus Tax Calculator</a>
+              <a href="/overtime-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Overtime Calculator</a>
+              <a href="/pay-rise-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Pay Rise Calculator</a>
+            </div>
+            <!-- Property + Tools -->
+            <div>
+              <div class="flex items-center gap-2 px-3 pt-2 pb-1.5">
+                <svg class="h-4 w-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Property</span>
+              </div>
+              <a href="/stamp-duty-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Stamp Duty Calculator</a>
+              <a href="/mortgage-affordability/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Mortgage Affordability</a>
+              <a href="/rental-yield/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Rental Yield Calculator</a>
+
+              <div class="mt-3 flex items-center gap-2 px-3 pt-2 pb-1.5">
+                <svg class="h-4 w-4 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Tools</span>
+              </div>
+              <a href="/compare-salaries/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Compare Salaries</a>
+              <a href="/required-salary/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Required Salary Calculator</a>
+              <a href="/sick-pay-calculator/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Sick Pay Calculator</a>
+              <a href="/salary-tables/" class="block rounded-lg px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-700">Salary Tables</a>
+            </div>
+          </div>
         </div>
       </details>
+
       <a href="/about/" class="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600">About</a>
+      <a href="/contact/" class="text-sm font-medium text-slate-600 transition-colors hover:text-emerald-600">Contact</a>
     </div>
 
     <label
@@ -49,25 +71,66 @@
   <input id="mobile-menu-toggle" type="checkbox" class="peer sr-only" />
 
   <div id="mobile-menu" class="hidden border-t border-slate-100 bg-white peer-checked:block md:hidden">
-    <div class="mx-auto flex max-w-7xl flex-col px-4 py-3 sm:px-6 lg:px-8">
-      <a href="/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Home</a>
-      <a href="/salary-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Salary Calculator</a>
-      <a href="/scottish-salary-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Scottish Salary Calculator</a>
-      <a href="/#most-searched" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Most Searched</a>
-      <a href="/hourly-wage-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Hourly Wage Calculator</a>
-      <a href="/pro-rata-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Pro-Rata Calculator</a>
-      <a href="/stamp-duty-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Stamp Duty</a>
-      <a href="/compare-salaries/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Compare Salaries</a>
-      <a href="/required-salary/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Required Salary Calculator</a>
-      <a href="/salary-tables/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Salary Tables</a>
-      <a href="/national-minimum-wage/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">National Minimum Wage</a>
-      <a href="/rental-yield/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Rental Yield Calculator</a>
-      <a href="/bonus-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Bonus Tax Calculator</a>
-      <a href="/pay-rise-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Pay Rise Calculator</a>
-      <a href="/overtime-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Overtime Calculator</a>
-      <a href="/sick-pay-calculator/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Sick Pay Calculator</a>
-      <a href="/mortgage-affordability/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Mortgage Affordability</a>
-      <a href="/about/" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">About</a>
+    <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+      <a href="/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Home</a>
+
+      <!-- Income & Pay -->
+      <details class="group" open>
+        <summary class="flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+          <span class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m5-17H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Income & Pay
+          </span>
+          <svg class="h-4 w-4 text-slate-400 transition-transform duration-200 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="ml-4 space-y-0.5 border-l-2 border-slate-100 pl-3">
+          <a href="/salary-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Salary Calculator</a>
+          <a href="/hourly-wage-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Hourly Wage Calculator</a>
+          <a href="/national-minimum-wage/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">National Minimum Wage</a>
+          <a href="/pro-rata-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Pro-Rata Calculator</a>
+          <a href="/scottish-salary-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Scottish Salary Calculator</a>
+          <a href="/self-employed-tax-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Self-Employed Tax Calculator</a>
+          <a href="/bonus-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Bonus Tax Calculator</a>
+          <a href="/overtime-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Overtime Calculator</a>
+          <a href="/pay-rise-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Pay Rise Calculator</a>
+        </div>
+      </details>
+
+      <!-- Property -->
+      <details class="group">
+        <summary class="flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+          <span class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Property
+          </span>
+          <svg class="h-4 w-4 text-slate-400 transition-transform duration-200 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="ml-4 space-y-0.5 border-l-2 border-slate-100 pl-3">
+          <a href="/stamp-duty-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Stamp Duty Calculator</a>
+          <a href="/mortgage-affordability/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Mortgage Affordability</a>
+          <a href="/rental-yield/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Rental Yield Calculator</a>
+        </div>
+      </details>
+
+      <!-- Tools -->
+      <details class="group">
+        <summary class="flex cursor-pointer list-none items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+          <span class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-slate-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            Tools
+          </span>
+          <svg class="h-4 w-4 text-slate-400 transition-transform duration-200 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="ml-4 space-y-0.5 border-l-2 border-slate-100 pl-3">
+          <a href="/compare-salaries/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Compare Salaries</a>
+          <a href="/required-salary/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Required Salary Calculator</a>
+          <a href="/sick-pay-calculator/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Sick Pay Calculator</a>
+          <a href="/salary-tables/" class="block rounded-lg px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-600">Salary Tables</a>
+        </div>
+      </details>
+
+      <a href="/about/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">About</a>
+      <a href="/contact/" class="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-emerald-600">Contact</a>
     </div>
   </div>
 </header>

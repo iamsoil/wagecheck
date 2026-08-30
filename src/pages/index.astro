@@ -1,30 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import HeroSection from '../components/HeroSection.astro';
-
-const featured = [
-  {
-    name: 'Salary Calculator',
-    desc: 'Calculate your take-home pay after tax, NI, pension and student loan deductions.',
-    href: '/salary-calculator',
-    badge: 'Most Popular',
-    badgeColor: 'bg-emerald-600',
-  },
-  {
-    name: 'Stamp Duty Calculator',
-    desc: 'Work out how much SDLT you\u2019ll pay on your property purchase in England or Northern Ireland.',
-    href: '/stamp-duty-calculator',
-    badge: 'Essential',
-    badgeColor: 'bg-amber-500',
-  },
-  {
-    name: 'Hourly Wage Calculator',
-    desc: 'Convert your hourly rate to annual salary and see your full-time equivalent earnings.',
-    href: '/hourly-wage-calculator',
-    badge: 'Trending',
-    badgeColor: 'bg-teal-500',
-  },
-];
 
 const allCalcs = [
   { name: 'Salary Calculator', desc: 'Annual to monthly, weekly, daily take-home', href: '/salary-calculator' },
@@ -40,6 +15,8 @@ const allCalcs = [
   { name: 'Pay Rise Calculator', desc: 'Real take-home increase', href: '/pay-rise-calculator' },
   { name: 'Overtime Calculator', desc: 'Time and a half, double time', href: '/overtime-calculator' },
   { name: 'Mortgage Affordability', desc: 'How much can you borrow?', href: '/mortgage-affordability' },
+  { name: 'Sick Pay Calculator', desc: 'Statutory sick pay with 2026 rules', href: '/sick-pay-calculator' },
+  { name: 'Self-Employed Tax Calculator', desc: 'Income tax, Class 2 & 4 NICs', href: '/self-employed-tax-calculator' },
 ];
 
 const qaCards = [
@@ -127,34 +104,62 @@ const faqItems = [
   title="wagecheck | UK salary, tax and stamp duty calculators"
   description="Free UK salary, tax and stamp duty calculators with a clean fintech design."
 >
-  <HeroSection />
-
-  <!-- ═══════ SECTION 1: FEATURED CALCULATORS ═══════ -->
-  <section class="bg-white py-16">
+  <!-- ═══════ HERO: 3-CARD GRID ═══════ -->
+  <section class="bg-gradient-to-b from-emerald-50/50 to-white py-12 sm:py-16 lg:py-20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <p class="text-center text-sm font-semibold uppercase tracking-widest text-emerald-600 mb-4">Most-used calculators</p>
-      <div class="animate-on-scroll grid gap-6 md:grid-cols-3">
-        {featured.map((card) => (
-          <a
-            href={card.href}
-            class="featured-card group block p-8 text-left sm:pr-24"
-          >
-            <span class:list={['badge-pulse absolute top-3 right-3 rounded-full px-2 py-0.5 text-[11px] font-bold text-white shadow-sm md:top-4 md:right-4 md:px-3 md:py-1 md:text-xs', card.badgeColor]}>
-              {card.badge}
-            </span>
-            <h2 class="pr-24 text-2xl font-bold tracking-tight text-slate-900 md:pr-28 md:text-3xl">{card.name}</h2>
-            <p class="mt-3 text-base leading-relaxed text-slate-600">{card.desc}</p>
-            <span class="mt-6 inline-block font-semibold text-emerald-600 transition-colors hover:text-emerald-700">
-              Calculate now &rarr;
-            </span>
-          </a>
-        ))}
+      <div class="text-center mb-10">
+        <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+          Free UK Salary, Tax &amp; Stamp Duty <span class="font-display italic text-emerald-600">Calculators</span>
+        </h1>
+        <p class="mt-4 text-lg text-slate-500">17 accurate calculators for 2026/27. Clean, fast, and mobile-friendly.</p>
       </div>
+
+      <div class="grid gap-6 md:grid-cols-3">
+        <!-- Card 1: Salary Calculator -->
+        <a href="/salary-calculator/" class="group relative overflow-hidden rounded-2xl border-2 border-emerald-200 bg-white p-6 shadow-sm transition hover:border-emerald-400 hover:shadow-md sm:p-8">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
+            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m5-17H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <h2 class="mt-4 text-xl font-bold text-slate-900">Salary Calculator</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">Calculate your exact take-home pay, income tax, National Insurance, pension and student loans.</p>
+          <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 transition group-hover:gap-2.5">
+            Calculate Take-Home <span aria-hidden="true">&rarr;</span>
+          </span>
+        </a>
+
+        <!-- Card 2: Hourly Wage Calculator -->
+        <a href="/hourly-wage-calculator/" class="group relative overflow-hidden rounded-2xl border-2 border-blue-200 bg-white p-6 shadow-sm transition hover:border-blue-400 hover:shadow-md sm:p-8">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+            <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h2 class="mt-4 text-xl font-bold text-slate-900">Hourly Wage Calculator</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">Convert hourly rate to annual salary or annual salary to hourly rate. See take-home pay for any wage.</p>
+          <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition group-hover:gap-2.5">
+            Convert Wage <span aria-hidden="true">&rarr;</span>
+          </span>
+        </a>
+
+        <!-- Card 3: National Minimum Wage -->
+        <a href="/national-minimum-wage/" class="group relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm transition hover:border-slate-400 hover:shadow-md sm:p-8">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+            <svg class="h-6 w-6 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h2 class="mt-4 text-xl font-bold text-slate-900">National Minimum Wage 2026</h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500">Check minimum wage rates by age, see weekly and monthly take-home pay, and understand your rights.</p>
+          <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 transition group-hover:gap-2.5">
+            Check Rates <span aria-hidden="true">&rarr;</span>
+          </span>
+        </a>
+      </div>
+
+      <p class="mt-8 text-center">
+        <a href="#all-calculators" class="text-sm font-medium text-emerald-600 hover:underline">Explore all 17 calculators &rarr;</a>
+      </p>
     </div>
   </section>
 
-  <!-- ═══════ SECTION 2: ALL CALCULATORS ═══════ -->
-  <section class="bg-slate-50/60 py-16">
+  <!-- ═══════ ALL CALCULATORS ═══════ -->
+  <section id="all-calculators" class="bg-slate-50/60 py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <h2 class="text-2xl font-bold text-slate-900 mb-8">All Calculators</h2>
       <div class="animate-on-scroll grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -171,7 +176,7 @@ const faqItems = [
     </div>
   </section>
 
-  <!-- ═══════ SECTION 3: MOST SEARCHED UK ANSWERS ═══════ -->
+  <!-- ═══════ MOST SEARCHED UK ANSWERS ═══════ -->
   <section id="most-searched" class="bg-white py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <h2 class="text-2xl font-bold text-slate-900 mb-2">Most Searched UK Answers</h2>
@@ -193,7 +198,7 @@ const faqItems = [
     </div>
   </section>
 
-  <!-- ═══════ SECTION 4: FAQ ═══════ -->
+  <!-- ═══════ FAQ ═══════ -->
   <section class="bg-slate-50/60 py-16">
     <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
       <h2 class="text-2xl font-bold text-slate-900 mb-2">Frequently Asked Questions</h2>
