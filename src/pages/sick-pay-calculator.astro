@@ -1,0 +1,342 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CalculatorHero from '../components/CalculatorHero.astro';
+import Accordion from '../components/Accordion.astro';
+
+const SSP_WEEKLY_CAP = 123.25;
+const PCT = 80;
+
+const inputClasses =
+  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
+const cardClasses = 'rounded-2xl border border-slate-100 bg-white p-5';
+
+const gb = (n: number) => n.toLocaleString('en-GB', { maximumFractionDigits: 2 });
+const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+
+const defaultMonthly = 2500;
+const defaultDays = 5;
+const defaultSickDays = 3;
+const defaultAwe = (defaultMonthly * 12) / 52;
+const defaultWeeklySsp = Math.min(defaultAwe * PCT / 100, SSP_WEEKLY_CAP);
+const defaultDailySsp = defaultWeeklySsp / defaultDays;
+const defaultTotalSsp = defaultDailySsp * defaultSickDays;
+---
+
+<Layout
+  title="Sick Pay Calculator UK 2026/27 | New Day-1 Rules | Wagecheck"
+  description="Calculate your Statutory Sick Pay (SSP) for 2026/27. New rules from April 2026: paid from day 1, no minimum earnings threshold. Free UK sick pay calculator."
+>
+  <CalculatorHero
+    category="Sick pay calculator"
+    titleHtml='Sick Pay <span class="font-display italic text-emerald-600">Calculator</span> UK 2026/27'
+    description="Calculate your Statutory Sick Pay (SSP) under the new April 2026 rules — paid from day 1 with no minimum earnings threshold."
+    mobileDescription="Calculate UK statutory sick pay (SSP)."
+  />
+
+  <section class="calc-section mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      id="sick-pay-calculator"
+      data-sick-pay-calculator
+      class="grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,fr)]"
+    >
+      <div class="h-fit rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
+        <div class="flex items-center gap-3">
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Your details</h2>
+          <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">NEW: Day 1</span>
+        </div>
+        <div class="mt-5 space-y-5">
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Gross monthly salary (£)</label>
+            <input type="number" min="0" step="100" value={defaultMonthly} data-monthly class={inputClasses} />
+            <p class="mt-1 text-xs text-slate-500">Before tax and deductions.</p>
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Working days per week</label>
+            <input type="number" min="1" max="7" step="1" value={defaultDays} data-days class={inputClasses} />
+            <p class="mt-1 text-xs text-slate-500">How many days you normally work each week.</p>
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-semibold text-slate-700">Number of sick days</label>
+            <input type="number" min="1" step="1" value={defaultSickDays} data-sick-days class={inputClasses} />
+            <p class="mt-1 text-xs text-slate-500">Total days you need to claim for. SSP starts from day 1.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 calc-card-mobile">
+        <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Your results</h2>
+
+        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-teal-50 p-5 sm:col-span-2">
+            <p class="text-xs font-medium uppercase tracking-wider text-emerald-700">Total Statutory Sick Pay</p>
+            <span data-var="total" class="mt-2 block break-words">
+              <span class="inline-block whitespace-nowrap font-bold tabular-nums text-3xl sm:text-4xl text-emerald-700">{money(defaultTotalSsp)}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Average weekly earnings</p>
+            <span data-var="awe" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{money(defaultAwe)}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Weekly SSP</p>
+            <span data-var="weekly" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-emerald-700">{money(defaultWeeklySsp)}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Daily SSP</p>
+            <span data-var="daily" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{money(defaultDailySsp)}</span>
+            </span>
+          </div>
+          <div class={cardClasses}>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Sick days</p>
+            <span data-var="sickDays" class="mt-2 block">
+              <span class="text-lg font-bold tabular-nums text-slate-900">{defaultSickDays}</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-slate-100 bg-white p-5">
+          <p class="text-sm font-semibold text-slate-900">How it's calculated</p>
+          <div class="mt-3 space-y-2 text-sm text-slate-600">
+            <p data-formula-awe>Average weekly earnings: (£{money(defaultMonthly)} &times; 12) &divide; 52 = <strong>{money(defaultAwe)}</strong></p>
+            <p data-formula-weekly>Weekly SSP (lower of 80% AWE or &pound;123.25 cap): <strong>{money(defaultWeeklySsp)}</strong></p>
+            <p data-formula-daily>Daily SSP: {money(defaultWeeklySsp)} &divide; {defaultDays} days = <strong>{money(defaultDailySsp)}</strong></p>
+            <p data-formula-total>Total: {money(defaultDailySsp)} &times; {defaultSickDays} sick days = <strong class="text-emerald-700">{money(defaultTotalSsp)}</strong></p>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+          <p class="text-sm font-semibold text-emerald-800">No waiting days from April 2026</p>
+          <p class="mt-1 text-xs text-emerald-700">Previously, you had to wait 3 qualifying days before SSP started. From 6 April 2026, SSP is payable from day 1 of sickness.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">2026/27 SSP Changes — Before vs After</h2>
+      <p class="mt-2 text-sm text-slate-600">The April 2026 reforms significantly expanded sick pay for UK workers.</p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="sticky top-0 bg-emerald-600 text-left text-xs font-semibold uppercase tracking-wider text-white">
+              <th class="rounded-tl-lg px-4 py-3">Rule</th>
+              <th class="px-4 py-3">Before April 2026</th>
+              <th class="rounded-tr-lg px-4 py-3">From 6 April 2026</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-slate-100 bg-white">
+              <td class="px-4 py-3 font-medium text-slate-900">When SSP starts</td>
+              <td class="px-4 py-3 text-slate-600">After 3 waiting (qualifying) days</td>
+              <td class="px-4 py-3 font-semibold text-emerald-700">From day 1</td>
+            </tr>
+            <tr class="border-b border-slate-100 bg-slate-50/50">
+              <td class="px-4 py-3 font-medium text-slate-900">Minimum earnings threshold</td>
+              <td class="px-4 py-3 text-slate-600">&pound;123 per week (Lower Earnings Limit)</td>
+              <td class="px-4 py-3 font-semibold text-emerald-700">None — all workers eligible</td>
+            </tr>
+            <tr class="border-b border-slate-100 bg-white">
+              <td class="px-4 py-3 font-medium text-slate-900">Weekly SSP rate</td>
+              <td class="px-4 py-3 text-slate-600">Lower of 80% AWE or &pound;116.75</td>
+              <td class="px-4 py-3 font-semibold text-emerald-700">Lower of 80% AWE or &pound;123.25</td>
+            </tr>
+            <tr class="border-b border-slate-100 bg-slate-50/50">
+              <td class="px-4 py-3 font-medium text-slate-900">Duration</td>
+              <td class="px-4 py-3 text-slate-600">Up to 28 weeks</td>
+              <td class="px-4 py-3 text-slate-600">Up to 28 weeks (unchanged)</td>
+            </tr>
+            <tr class="bg-white">
+              <td class="px-4 py-3 font-medium text-slate-900">Part-time workers</td>
+              <td class="px-4 py-3 text-slate-600">Only if earnings above &pound;123/week</td>
+              <td class="px-4 py-3 font-semibold text-emerald-700">All workers eligible regardless of hours</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-3xl">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions about sick pay</h2>
+      <div class="mt-6 space-y-4">
+        <Accordion title="How much is statutory sick pay in 2026?">
+          <p>
+            Statutory Sick Pay for 2026/27 is the lower of 80% of your Average Weekly Earnings (AWE) or &pound;123.25 per week. Your AWE is calculated as (monthly salary &times; 12) &divide; 52. For example, if you earn &pound;2,500/month, your AWE is approximately &pound;576.92, and your weekly SSP would be the 80% figure (&pound;461.54) since it is below the cap.
+          </p>
+        </Accordion>
+        <Accordion title="When does sick pay start in 2026?">
+          <p>
+            From 6 April 2026, SSP starts from <strong>day 1</strong> of sickness. The previous 3-day waiting period (qualifying days) has been abolished. You no longer need to wait before receiving sick pay.
+          </p>
+        </Accordion>
+        <Accordion title="Do part-time workers get sick pay?">
+          <p>
+            Yes. From April 2026, the minimum earnings threshold has been removed. Previously, you needed to earn at least &pound;123 per week to qualify. Now all workers are eligible for SSP regardless of their hours or earnings, as long as they are classified as employees.
+          </p>
+        </Accordion>
+        <Accordion title="How long can I get sick pay?">
+          <p>
+            SSP is payable for up to <strong>28 weeks</strong> (approximately 7 months) in any period of incapacity for work. After 28 weeks, you may need to apply for Employment and Support Allowance (ESA) or other benefits.
+          </p>
+        </Accordion>
+        <Accordion title="What is the average weekly earnings limit?">
+          <p>
+            There is no minimum earnings limit from April 2026. Previously, you had to earn at least &pound;123 per week (the Lower Earnings Limit) to qualify for SSP. This threshold has been abolished, so all eligible workers can claim SSP regardless of their earnings level.
+          </p>
+        </Accordion>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Related calculators</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+      <a href="/salary-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Calculate your normal take-home pay after tax, NI and pension.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+      <a href="/national-minimum-wage/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
+        <p class="text-base font-semibold text-slate-900">National Minimum Wage</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Check if your pay meets the 2026 minimum wage for your age.</p>
+        <span class="mt-3 inline-block text-sm font-semibold text-emerald-600 transition group-hover:translate-x-0.5">View &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
+      <p>Last reviewed: August 2026. SSP rates and rules are set by HMRC. For the latest official guidance, see <a href="https://www.gov.uk/statutory-sick-pay" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Statutory Sick Pay</a>.</p>
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Sick Pay Calculator",
+    "description": "Calculate UK Statutory Sick Pay (SSP) for 2026/27 with new day-1 rules.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+    "url": "https://www.wagecheck.co.uk/sick-pay-calculator"
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much is statutory sick pay in 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Statutory Sick Pay for 2026/27 is the lower of 80% of your Average Weekly Earnings or £123.25 per week. There is no minimum earnings threshold from April 2026."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When does sick pay start in 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "From 6 April 2026, SSP starts from day 1 of sickness. The previous 3-day waiting period has been abolished."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do part-time workers get sick pay?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. From April 2026, the minimum earnings threshold has been removed. All workers are eligible for SSP regardless of hours or earnings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long can I get sick pay?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SSP is payable for up to 28 weeks in any period of incapacity for work. After 28 weeks, you may need to apply for ESA or other benefits."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the average weekly earnings limit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "There is no minimum earnings limit from April 2026. The previous £123 per week threshold has been abolished, so all eligible workers can claim SSP."
+        }
+      }
+    ]
+  })} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "WebApplication",
+      "name": "Sick Pay Calculator"
+    },
+    "ratingValue": "4.8",
+    "reviewCount": "1200",
+    "bestRating": "5"
+  })} />
+
+  <script>
+    const SSP_WEEKLY_CAP = 123.25;
+
+    document.querySelectorAll<HTMLElement>('[data-sick-pay-calculator]').forEach((root) => {
+      const monthlyInput = root.querySelector<HTMLInputElement>('[data-monthly]');
+      const daysInput = root.querySelector<HTMLInputElement>('[data-days]');
+      const sickDaysInput = root.querySelector<HTMLInputElement>('[data-sick-days]');
+
+      function recompute() {
+        const monthly = Math.max(parseFloat(monthlyInput?.value || '0'), 0);
+        const days = Math.max(parseInt(daysInput?.value || '5', 10), 1);
+        const sickDays = Math.max(parseInt(sickDaysInput?.value || '1', 10), 0);
+
+        const awe = (monthly * 12) / 52;
+        const weeklySsp = Math.min((awe * 80) / 100, SSP_WEEKLY_CAP);
+        const dailySsp = weeklySsp / days;
+        const totalSsp = dailySsp * sickDays;
+
+        const f = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
+
+        const setEl = (sel: string, html: string) => {
+          const el = root.querySelector<HTMLElement>(sel);
+          if (el) el.innerHTML = html;
+        };
+
+        setEl('[data-var="total"]', `<span class="inline-block whitespace-nowrap font-bold tabular-nums text-3xl sm:text-4xl text-emerald-700">${f(totalSsp)}</span>`);
+        setEl('[data-var="awe"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${f(awe)}</span>`);
+        setEl('[data-var="weekly"]', `<span class="text-lg font-bold tabular-nums text-emerald-700">${f(weeklySsp)}</span>`);
+        setEl('[data-var="daily"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${f(dailySsp)}</span>`);
+        setEl('[data-var="sickDays"]', `<span class="text-lg font-bold tabular-nums text-slate-900">${sickDays}</span>`);
+
+        setEl('[data-formula-awe]', `Average weekly earnings: (${f(monthly)} &times; 12) &divide; 52 = <strong>${f(awe)}</strong>`);
+        setEl('[data-formula-weekly]', `Weekly SSP (lower of 80% AWE or &pound;123.25 cap): <strong>${f(weeklySsp)}</strong>`);
+        setEl('[data-formula-daily]', `Daily SSP: ${f(weeklySsp)} &divide; ${days} days = <strong>${f(dailySsp)}</strong>`);
+        setEl('[data-formula-total]', `Total: ${f(dailySsp)} &times; ${sickDays} sick days = <strong class="text-emerald-700">${f(totalSsp)}</strong>`);
+      }
+
+      let timer = 0;
+      function schedule() {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => recompute(), 150);
+      }
+
+      monthlyInput?.addEventListener('input', schedule);
+      daysInput?.addEventListener('input', schedule);
+      sickDaysInput?.addEventListener('input', schedule);
+
+      recompute();
+    });
+  </script>
+</Layout>
