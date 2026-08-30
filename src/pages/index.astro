@@ -104,57 +104,93 @@ const faqItems = [
   title="wagecheck | UK salary, tax and stamp duty calculators"
   description="Free UK salary, tax and stamp duty calculators with a clean fintech design."
 >
-  <!-- ═══════ HERO: 3-CARD GRID ═══════ -->
-  <section class="bg-gradient-to-b from-emerald-50/50 to-white py-12 sm:py-16 lg:py-20">
+  <!-- ═══════ HERO: ANIMATED CAROUSEL ═══════ -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-emerald-50/50 to-white py-8 sm:py-10 lg:py-12" data-hero-carousel>
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-10">
-        <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-          Free UK Salary, Tax &amp; Stamp Duty <span class="font-display italic text-emerald-600">Calculators</span>
-        </h1>
-        <p class="mt-4 text-lg text-slate-500">17 accurate calculators for 2026/27. Clean, fast, and mobile-friendly.</p>
+      <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <div class="text-center lg:text-left">
+          <p class="text-xs font-semibold uppercase tracking-widest text-emerald-600">Free UK calculators</p>
+          <div class="relative mt-3 h-[100px] sm:h-[90px] lg:h-[80px]">
+            <h1 class="absolute inset-0 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
+              UK Salary &amp; Tax <span class="font-display italic text-emerald-600" data-hero-title>Calculators</span>
+            </h1>
+          </div>
+          <p class="mx-auto mt-1 max-w-xl text-sm text-slate-500 sm:text-base lg:mx-0" data-hero-subtitle>
+            17 accurate calculators for 2026/27. Clean, fast, and mobile-friendly.
+          </p>
+          <div class="mt-4 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+            <a
+              href="/salary-calculator/"
+              class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+              data-hero-cta
+            >
+              Calculate &rarr;
+            </a>
+            <a
+              href="#all-calculators"
+              class="inline-flex items-center justify-center rounded-lg border border-emerald-200 bg-white px-6 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50"
+            >
+              View All Calculators
+            </a>
+          </div>
+          <div class="mt-5 flex items-center justify-center gap-2 lg:justify-start" data-hero-dots>
+            <button class="h-2 w-2 rounded-full bg-emerald-600 transition-colors" data-dot="0" aria-label="Slide 1"></button>
+            <button class="h-2 w-2 rounded-full bg-slate-300 transition-colors" data-dot="1" aria-label="Slide 2"></button>
+            <button class="h-2 w-2 rounded-full bg-slate-300 transition-colors" data-dot="2" aria-label="Slide 3"></button>
+            <button class="h-2 w-2 rounded-full bg-slate-300 transition-colors" data-dot="3" aria-label="Slide 4"></button>
+          </div>
+        </div>
+        <div class="relative hidden items-center justify-center md:flex">
+          <img
+            src="/calculator-glass.png"
+            alt=""
+            width="480"
+            height="480"
+            loading="eager"
+            decoding="async"
+            class="h-auto w-full max-w-[260px] lg:max-w-[300px]"
+          />
+        </div>
       </div>
+    </div>
+  </section>
 
-      <div class="grid gap-6 md:grid-cols-3">
-        <!-- Card 1: Salary Calculator -->
-        <a href="/salary-calculator/" class="group relative overflow-hidden rounded-2xl border-2 border-emerald-200 bg-white p-6 shadow-sm transition hover:border-emerald-400 hover:shadow-md sm:p-8">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
-            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m5-17H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          </div>
-          <h2 class="mt-4 text-xl font-bold text-slate-900">Salary Calculator</h2>
-          <p class="mt-2 text-sm leading-6 text-slate-500">Calculate your exact take-home pay, income tax, National Insurance, pension and student loans.</p>
-          <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 transition group-hover:gap-2.5">
-            Calculate Take-Home <span aria-hidden="true">&rarr;</span>
-          </span>
+  <!-- ═══════ POPULAR CALCULATORS ═══════ -->
+  <section class="bg-white py-10 sm:py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-xl font-bold text-slate-900 mb-6">Popular Calculators</h2>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+        <a href="/salary-calculator/" class="group flex flex-col items-center rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <svg class="h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20m5-17H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <p class="mt-3 text-sm font-semibold text-slate-900">Salary Calculator</p>
+          <p class="mt-1 text-xs text-slate-500">Take-Home Pay</p>
         </a>
-
-        <!-- Card 2: Hourly Wage Calculator -->
-        <a href="/hourly-wage-calculator/" class="group relative overflow-hidden rounded-2xl border-2 border-blue-200 bg-white p-6 shadow-sm transition hover:border-blue-400 hover:shadow-md sm:p-8">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-            <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <h2 class="mt-4 text-xl font-bold text-slate-900">Hourly Wage Calculator</h2>
-          <p class="mt-2 text-sm leading-6 text-slate-500">Convert hourly rate to annual salary or annual salary to hourly rate. See take-home pay for any wage.</p>
-          <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 transition group-hover:gap-2.5">
-            Convert Wage <span aria-hidden="true">&rarr;</span>
-          </span>
+        <a href="/hourly-wage-calculator/" class="group flex flex-col items-center rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <svg class="h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <p class="mt-3 text-sm font-semibold text-slate-900">Hourly Wage</p>
+          <p class="mt-1 text-xs text-slate-500">Hourly &harr; Salary</p>
         </a>
-
-        <!-- Card 3: National Minimum Wage -->
-        <a href="/national-minimum-wage/" class="group relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm transition hover:border-slate-400 hover:shadow-md sm:p-8">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-            <svg class="h-6 w-6 text-slate-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          </div>
-          <h2 class="mt-4 text-xl font-bold text-slate-900">National Minimum Wage 2026</h2>
-          <p class="mt-2 text-sm leading-6 text-slate-500">Check minimum wage rates by age, see weekly and monthly take-home pay, and understand your rights.</p>
-          <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 transition group-hover:gap-2.5">
-            Check Rates <span aria-hidden="true">&rarr;</span>
-          </span>
+        <a href="/national-minimum-wage/" class="group flex flex-col items-center rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <svg class="h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <p class="mt-3 text-sm font-semibold text-slate-900">Minimum Wage</p>
+          <p class="mt-1 text-xs text-slate-500">2026 Rates</p>
+        </a>
+        <a href="/stamp-duty-calculator/" class="group flex flex-col items-center rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <svg class="h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <p class="mt-3 text-sm font-semibold text-slate-900">Stamp Duty</p>
+          <p class="mt-1 text-xs text-slate-500">Property Tax</p>
+        </a>
+        <a href="/self-employed-tax-calculator/" class="group flex flex-col items-center rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <svg class="h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <p class="mt-3 text-sm font-semibold text-slate-900">Self-Employed Tax</p>
+          <p class="mt-1 text-xs text-slate-500">Sole Trader</p>
+        </a>
+        <a href="/pro-rata-calculator/" class="group flex flex-col items-center rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md">
+          <svg class="h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          <p class="mt-3 text-sm font-semibold text-slate-900">Pro-Rata Calculator</p>
+          <p class="mt-1 text-xs text-slate-500">Part-Time Pay</p>
         </a>
       </div>
-
-      <p class="mt-8 text-center">
-        <a href="#all-calculators" class="text-sm font-medium text-emerald-600 hover:underline">Explore all 17 calculators &rarr;</a>
-      </p>
     </div>
   </section>
 
@@ -222,4 +258,50 @@ const faqItems = [
       </div>
     </div>
   </section>
+
+  <script>
+    const slides = [
+      { title: 'Salary Calculator 2026/27', subtitle: 'Calculate your exact take-home pay, tax, NI and pension.', cta: 'Calculate \u2192', href: '/salary-calculator/' },
+      { title: 'Hourly Wage Calculator', subtitle: 'Convert hourly to salary or annual to hourly rate.', cta: 'Convert \u2192', href: '/hourly-wage-calculator/' },
+      { title: 'National Minimum Wage', subtitle: 'Check 2026/27 rates by age and see your take-home pay.', cta: 'Check Rates \u2192', href: '/national-minimum-wage/' },
+      { title: 'Self-Employed Tax Calculator', subtitle: 'Work out income tax, Class 2 & 4 NICs for 2026/27.', cta: 'Calculate Tax \u2192', href: '/self-employed-tax-calculator/' },
+    ];
+
+    const root = document.querySelector('[data-hero-carousel]');
+    if (root) {
+      const titleEl = root.querySelector<HTMLElement>('[data-hero-title]');
+      const subtitleEl = root.querySelector<HTMLElement>('[data-hero-subtitle]');
+      const ctaEl = root.querySelector<HTMLAnchorElement>('[data-hero-cta]');
+      const dots = root.querySelectorAll<HTMLElement>('[data-dot]');
+      let current = 0;
+      let paused = false;
+      let interval: ReturnType<typeof setInterval>;
+
+      function goTo(index: number) {
+        current = index;
+        const s = slides[current];
+        if (titleEl) titleEl.textContent = s.title;
+        if (subtitleEl) subtitleEl.textContent = s.subtitle;
+        if (ctaEl) { ctaEl.textContent = s.cta; ctaEl.href = s.href; }
+        dots.forEach((d, i) => {
+          d.classList.toggle('bg-emerald-600', i === current);
+          d.classList.toggle('bg-slate-300', i !== current);
+        });
+      }
+
+      function next() { goTo((current + 1) % slides.length); }
+
+      function start() {
+        stop();
+        interval = setInterval(() => { if (!paused) next(); }, 5000);
+      }
+      function stop() { clearInterval(interval); }
+
+      dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); start(); }));
+      root.addEventListener('mouseenter', () => { paused = true; });
+      root.addEventListener('mouseleave', () => { paused = false; });
+
+      start();
+    }
+  </script>
 </Layout>
