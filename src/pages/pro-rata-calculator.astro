@@ -428,6 +428,43 @@ const initialShareRows = [
     </div>
   </section>
 
+  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How We Calculate This</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="font-semibold text-slate-900">Tax year</p>
+            <p>2026/27 (6 April 2026 – 5 April 2027)</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Last reviewed</p>
+            <p>30 August 2026</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Default assumptions</p>
+            <p>Pension: 5% · Tax code: 1257L · Working hours: 37.5/week · Student loan: none · Region: Rest of UK</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Sources</p>
+            <p><a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Income Tax rates and allowances</a> · <a href="https://www.gov.uk/national-insurance-rates-letters" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — National Insurance rates</a></p>
+          </div>
+        </div>
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-800">
+          <p>Results are estimates. Your payslip may include employer-specific deductions such as salary sacrifice, healthcare, or cycle-to-work schemes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <details class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <summary class="cursor-pointer rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-lg font-bold tracking-tight text-slate-900 transition hover:bg-slate-50">Change Log</summary>
+    <div class="mt-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-sm text-slate-600 space-y-2">
+      <p><span class="font-semibold text-slate-900">6 April 2026:</span> Tax year 2026/27 rates applied — income tax bands and NI thresholds updated.</p>
+      <p><span class="font-semibold text-slate-900">30 August 2026:</span> Fixed worked example take-home to use live tax engine (was hardcoded £16,920, now computed).</p>
+    </div>
+  </details>
+
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'WebApplication',

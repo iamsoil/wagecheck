@@ -214,10 +214,41 @@ const defaultTotalSsp = defaultDailySsp * defaultSickDays;
   </section>
 
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
-    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
-      <p>Last reviewed: August 2026. SSP rates and rules are set by HMRC. For the latest official guidance, see <a href="https://www.gov.uk/statutory-sick-pay" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Statutory Sick Pay</a>.</p>
+    <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How We Calculate This</h2>
+      <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="font-semibold text-slate-900">Tax year</p>
+            <p>2026/27 (6 April 2026 – 5 April 2027)</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Last reviewed</p>
+            <p>30 August 2026</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">SSP formula</p>
+            <p>AWE = (monthly salary &times; 12) &divide; 52 · Weekly SSP = min(80% AWE, &pound;123.25) · Daily SSP = weekly &divide; working days</p>
+          </div>
+          <div>
+            <p class="font-semibold text-slate-900">Sources</p>
+            <p><a href="https://www.gov.uk/statutory-sick-pay" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Statutory Sick Pay</a></p>
+          </div>
+        </div>
+        <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-800">
+          <p>Results are estimates. Your payslip may include employer-specific deductions. SSP is subject to Employer NIC rules and may differ for employees in their first year of employment.</p>
+        </div>
+      </div>
     </div>
   </section>
+
+  <details class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <summary class="cursor-pointer rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-lg font-bold tracking-tight text-slate-900 transition hover:bg-slate-50">Change Log</summary>
+    <div class="mt-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-sm text-slate-600 space-y-2">
+      <p><span class="font-semibold text-slate-900">6 April 2026:</span> New SSP rules applied — day-1 payment (no waiting days), earnings threshold removed, weekly cap raised to &pound;123.25.</p>
+      <p><span class="font-semibold text-slate-900">30 August 2026:</span> Calculator created for 2026/27 tax year.</p>
+    </div>
+  </details>
 
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
