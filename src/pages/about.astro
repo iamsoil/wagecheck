@@ -1,5 +1,42 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import {
+  Target,
+  Shield,
+  Landmark,
+  Zap,
+  MessageCircle,
+  Users,
+  Search,
+  Briefcase,
+  Building2,
+  GraduationCap,
+  Home,
+  CheckCircle,
+  Calendar,
+  BadgeCheck,
+  ArrowRight,
+  Coins,
+  Clock,
+  CalendarDays,
+  PoundSterling,
+  TrendingUp,
+  Calculator,
+  FileText,
+  BarChart3,
+  BadgeDollarSign,
+  ArrowLeftRight,
+  Table2,
+  CircleCheck,
+  BarChart2,
+  MapPin,
+  Heart,
+  BriefcaseBusiness,
+} from 'lucide-static';
+
+function icon(svg: string, cls: string): string {
+  return svg.replace('<svg', `<svg class="${cls}"`);
+}
 ---
 
 <Layout
@@ -23,7 +60,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- SECTION 1: OUR MISSION -->
   <section class="bg-white py-16 md:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-12 md:grid-cols-2 items-center">
+      <div class="grid items-center gap-12 md:grid-cols-2">
         <div>
           <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Our Mission</h2>
           <p class="mt-6 text-base leading-7 text-slate-600">
@@ -31,22 +68,22 @@ import Layout from '../layouts/Layout.astro';
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
             <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700">
-              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
+              <Fragment set:html={icon(Coins, 'h-4 w-4')} />
               17 Calculators
             </span>
             <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700">
-              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <Fragment set:html={icon(Calendar, 'h-4 w-4')} />
               2026/27 Rates
             </span>
             <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700">
-              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <Fragment set:html={icon(BadgeCheck, 'h-4 w-4')} />
               100% Free
             </span>
           </div>
         </div>
         <div class="flex items-center justify-center">
           <div class="flex h-32 w-32 items-center justify-center rounded-full bg-emerald-100">
-            <svg class="h-16 w-16 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            <Fragment set:html={icon(Target, 'h-16 w-16 text-emerald-600')} />
           </div>
         </div>
       </div>
@@ -65,28 +102,28 @@ import Layout from '../layouts/Layout.astro';
       <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
         <div class="rounded-xl bg-white p-6 text-center shadow-sm">
           <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <Fragment set:html={icon(Shield, 'h-6 w-6 text-emerald-600')} />
           </div>
           <h3 class="mt-4 text-sm font-semibold text-slate-900">Privacy First</h3>
           <p class="mt-1 text-xs text-slate-500">No data leaves your browser</p>
         </div>
         <div class="rounded-xl bg-white p-6 text-center shadow-sm">
           <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            <Fragment set:html={icon(Landmark, 'h-6 w-6 text-emerald-600')} />
           </div>
           <h3 class="mt-4 text-sm font-semibold text-slate-900">HMRC Aligned</h3>
           <p class="mt-1 text-xs text-slate-500">Rates from official sources</p>
         </div>
         <div class="rounded-xl bg-white p-6 text-center shadow-sm">
           <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <Fragment set:html={icon(Zap, 'h-6 w-6 text-emerald-600')} />
           </div>
           <h3 class="mt-4 text-sm font-semibold text-slate-900">Real-Time Updates</h3>
           <p class="mt-1 text-xs text-slate-500">Updated within days of rate changes</p>
         </div>
         <div class="rounded-xl bg-white p-6 text-center shadow-sm">
           <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
-            <svg class="h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/></svg>
+            <Fragment set:html={icon(MessageCircle, 'h-6 w-6 text-emerald-600')} />
           </div>
           <h3 class="mt-4 text-sm font-semibold text-slate-900">Community Driven</h3>
           <p class="mt-1 text-xs text-slate-500">Features shaped by user feedback</p>
@@ -98,7 +135,7 @@ import Layout from '../layouts/Layout.astro';
   <!-- SECTION 3: WHO IT'S FOR -->
   <section class="bg-white py-16 md:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-12 md:grid-cols-2 items-start">
+      <div class="grid items-start gap-12 md:grid-cols-2">
         <div>
           <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Who Wagecheck Is For</h2>
           <p class="mt-6 text-base leading-7 text-slate-600">
@@ -107,27 +144,27 @@ import Layout from '../layouts/Layout.astro';
         </div>
         <div class="flex flex-col gap-3">
           <div class="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700">
-            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <Fragment set:html={icon(Users, 'h-4 w-4 text-emerald-600')} />
             Employees
           </div>
           <div class="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700">
-            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <Fragment set:html={icon(Search, 'h-4 w-4 text-emerald-600')} />
             Job Seekers
           </div>
           <div class="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700">
-            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <Fragment set:html={icon(Briefcase, 'h-4 w-4 text-emerald-600')} />
             Freelancers
           </div>
           <div class="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700">
-            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+            <Fragment set:html={icon(Building2, 'h-4 w-4 text-emerald-600')} />
             Employers
           </div>
           <div class="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700">
-            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 12 0v-5"/></svg>
+            <Fragment set:html={icon(GraduationCap, 'h-4 w-4 text-emerald-600')} />
             Students & Graduates
           </div>
           <div class="flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-700">
-            <svg class="h-4 w-4 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <Fragment set:html={icon(Home, 'h-4 w-4 text-emerald-600')} />
             Landlords
           </div>
         </div>
@@ -136,34 +173,34 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- SECTION 4: WHY TRUST WAGECHECK? -->
-  <section class="bg-slate-900 py-16 md:py-24 text-center text-white">
+  <section class="bg-gradient-to-br from-emerald-50 via-white to-lime-50 py-16 text-center md:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Why Trust Wagecheck?</h2>
-      <p class="mx-auto mt-6 max-w-2xl text-base leading-7 text-slate-300">
+      <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Why Trust Wagecheck?</h2>
+      <p class="mx-auto mt-6 max-w-2xl text-base leading-7 text-slate-600">
         Every calculation is aligned to HMRC-published rates and verified against GOV.UK guidance. We review and update all calculators every April when the new tax year begins, and correct any errors as soon as they are identified. Wagecheck is used by thousands of people every month for salary planning, job comparisons and self-assessment preparation. The tool is 100% free with no paywalls, no premium tier and no hidden costs.
       </p>
       <div class="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
-        <div class="rounded-xl bg-white/10 p-6">
-          <svg class="mx-auto h-8 w-8 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <p class="mt-3 text-sm font-semibold">HMRC-Verified Rates</p>
+        <div class="rounded-xl border border-emerald-100 bg-white p-6 shadow-sm">
+          <Fragment set:html={icon(CheckCircle, 'mx-auto h-8 w-8 text-emerald-500')} />
+          <p class="mt-3 text-sm font-semibold text-slate-900">HMRC-Verified Rates</p>
         </div>
-        <div class="rounded-xl bg-white/10 p-6">
-          <svg class="mx-auto h-8 w-8 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-          <p class="mt-3 text-sm font-semibold">Updated Every April</p>
+        <div class="rounded-xl border border-emerald-100 bg-white p-6 shadow-sm">
+          <Fragment set:html={icon(CalendarDays, 'mx-auto h-8 w-8 text-emerald-500')} />
+          <p class="mt-3 text-sm font-semibold text-slate-900">Updated Every April</p>
         </div>
-        <div class="rounded-xl bg-white/10 p-6">
-          <svg class="mx-auto h-8 w-8 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <p class="mt-3 text-sm font-semibold">Used by Thousands Monthly</p>
+        <div class="rounded-xl border border-emerald-100 bg-white p-6 shadow-sm">
+          <Fragment set:html={icon(Users, 'mx-auto h-8 w-8 text-emerald-500')} />
+          <p class="mt-3 text-sm font-semibold text-slate-900">Used by Thousands Monthly</p>
         </div>
-        <div class="rounded-xl bg-white/10 p-6">
-          <svg class="mx-auto h-8 w-8 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.77 4 4 0 0 1 0 6.76 4 4 0 0 1-4.78 4.77 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
-          <p class="mt-3 text-sm font-semibold">100% Free Forever</p>
+        <div class="rounded-xl border border-emerald-100 bg-white p-6 shadow-sm">
+          <Fragment set:html={icon(BadgeCheck, 'mx-auto h-8 w-8 text-emerald-500')} />
+          <p class="mt-3 text-sm font-semibold text-slate-900">100% Free Forever</p>
         </div>
       </div>
       <div class="mt-12">
-        <a href="/salary-calculator/" class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600">
+        <a href="/salary-calculator/" class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700">
           Try the Salary Calculator
-          <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <Fragment set:html={icon(ArrowRight, 'h-4 w-4')} />
         </a>
       </div>
     </div>
@@ -171,85 +208,85 @@ import Layout from '../layouts/Layout.astro';
 
   <!-- WHAT WE COVER -->
   <section class="mx-auto max-w-7xl px-4 py-16 md:py-24 sm:px-6 lg:px-8">
-    <h2 class="text-3xl font-bold text-slate-900 mb-8">What We Cover</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <h2 class="mb-8 text-3xl font-bold text-slate-900">What We Cover</h2>
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       <a href="/salary-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659 1.236-2.02c.622-.462 1.29-.76 2.005-.967A6 6 0 1 1 12 6Z" /></svg>
+        <Fragment set:html={icon(Coins, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Salary &amp; Take-Home Pay</p>
         <p class="mt-1 text-sm text-slate-500">Full breakdown after tax, NI, pension and student loan</p>
       </a>
       <a href="/hourly-wage-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        <Fragment set:html={icon(Clock, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Hourly Wage</p>
         <p class="mt-1 text-sm text-slate-500">Convert your hourly rate to annual, monthly and weekly salary</p>
       </a>
       <a href="/pro-rata-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+        <Fragment set:html={icon(CalendarDays, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Pro-Rata Calculator</p>
         <p class="mt-1 text-sm text-slate-500">Part-time and irregular hours based on full-time equivalent</p>
       </a>
       <a href="/stamp-duty-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+        <Fragment set:html={icon(PoundSterling, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Stamp Duty (SDLT)</p>
         <p class="mt-1 text-sm text-slate-500">Property tax for England, Northern Ireland and Scotland</p>
       </a>
       <a href="/bonus-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>
+        <Fragment set:html={icon(TrendingUp, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Bonus Tax</p>
         <p class="mt-1 text-sm text-slate-500">See how much of your bonus you keep after tax and NI</p>
       </a>
       <a href="/pay-rise-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941" /></svg>
+        <Fragment set:html={icon(TrendingUp, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Pay Rise</p>
         <p class="mt-1 text-sm text-slate-500">Compare your current and new salary side-by-side</p>
       </a>
       <a href="/overtime-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        <Fragment set:html={icon(Clock, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Overtime Pay</p>
         <p class="mt-1 text-sm text-slate-500">Time and a half, double time — gross and net overtime pay</p>
       </a>
       <a href="/mortgage-affordability/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M3 3h12m-.75 4.5H21m-3.75 0H21m-3.75 3H21m-3.75 3H21" /></svg>
+        <Fragment set:html={icon(Home, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Mortgage Affordability</p>
         <p class="mt-1 text-sm text-slate-500">How much you can borrow and estimated monthly payments</p>
       </a>
       <a href="/required-salary/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+        <Fragment set:html={icon(Target, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Required Salary</p>
         <p class="mt-1 text-sm text-slate-500">Work backwards from your desired take-home pay</p>
       </a>
       <a href="/compare-salaries/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+        <Fragment set:html={icon(ArrowLeftRight, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Compare Salaries</p>
         <p class="mt-1 text-sm text-slate-500">Side-by-side comparison of two job offers</p>
       </a>
       <a href="/salary-tables/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-2.625 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0 1 18 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0 1 18 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 0 1 6 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m-1.5 0c-.621 0-1.125-.504-1.125-1.125v-1.5c0-.621.504-1.125 1.125-1.125m1.5 3.75c-.621 0-1.125-.504-1.125-1.125" /></svg>
+        <Fragment set:html={icon(Table2, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Salary Tables</p>
         <p class="mt-1 text-sm text-slate-500">Tax bands, thresholds and reference tables</p>
       </a>
       <a href="/national-minimum-wage/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        <Fragment set:html={icon(CircleCheck, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">National Minimum Wage</p>
         <p class="mt-1 text-sm text-slate-500">Current NMW and NLW rates by age group</p>
       </a>
       <a href="/rental-yield/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+        <Fragment set:html={icon(BarChart3, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Rental Yield</p>
         <p class="mt-1 text-sm text-slate-500">Gross and net yield for buy-to-let properties</p>
       </a>
       <a href="/scottish-salary-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
+        <Fragment set:html={icon(MapPin, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Scottish Salary Calculator</p>
         <p class="mt-1 text-sm text-slate-500">Calculate take-home pay using Scotland's 6-band income tax system</p>
       </a>
       <a href="/sick-pay-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+        <Fragment set:html={icon(Heart, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Sick Pay Calculator</p>
         <p class="mt-1 text-sm text-slate-500">Calculate Statutory Sick Pay (SSP) under the new day-1 rules</p>
       </a>
       <a href="/self-employed-tax-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 transition-all duration-200 hover:border-emerald-200 hover:shadow-sm">
-        <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z" /></svg>
+        <Fragment set:html={icon(BriefcaseBusiness, 'h-5 w-5 shrink-0 text-emerald-600')} />
         <p class="mt-3 text-base font-semibold text-slate-900">Self-Employed Tax Calculator</p>
         <p class="mt-1 text-sm text-slate-500">Income tax, Class 2 and Class 4 NICs for sole traders and freelancers</p>
       </a>
@@ -259,7 +296,7 @@ import Layout from '../layouts/Layout.astro';
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="rounded-2xl border-l-4 border-emerald-500 bg-white p-6 shadow-sm sm:p-8">
       <div class="flex items-start gap-3">
-        <svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg>
+        <Fragment set:html={icon(Shield, 'mt-0.5 h-5 w-5 shrink-0 text-emerald-600')} />
         <div>
           <h2 class="text-lg font-bold text-slate-900">Data &amp; Privacy</h2>
           <div class="mt-3 space-y-2 text-sm leading-6 text-slate-600">
@@ -299,13 +336,13 @@ import Layout from '../layouts/Layout.astro';
         <p class="mt-4 text-base leading-7 text-slate-600">
           All tax rates and thresholds on Wagecheck come from official UK government sources:
         </p>
-        <ul class="mt-3 list-disc pl-6 space-y-2 text-sm text-slate-600">
-          <li><a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Income Tax rates and allowances</a></li>
-          <li><a href="https://www.gov.uk/national-insurance-rates-letters" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — National Insurance rates</a></li>
-          <li><a href="https://www.gov.uk/stamp-duty-land-tax" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Stamp Duty Land Tax</a></li>
-          <li><a href="https://www.gov.uk/student-loan-repayment" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Student loan repayment</a></li>
-          <li><a href="https://www.gov.uk/national-minimum-wage-rates" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — National Minimum Wage rates</a></li>
-          <li><a href="https://www.gov.uk/tax-codes" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Understanding your tax code</a></li>
+        <ul class="mt-3 list-disc space-y-2 pl-6 text-sm text-slate-600">
+          <li><a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener" class="font-semibold text-emerald-600 hover:text-emerald-700">GOV.UK — Income Tax rates and allowances</a></li>
+          <li><a href="https://www.gov.uk/national-insurance-rates-letters" target="_blank" rel="noopener" class="font-semibold text-emerald-600 hover:text-emerald-700">GOV.UK — National Insurance rates</a></li>
+          <li><a href="https://www.gov.uk/stamp-duty-land-tax" target="_blank" rel="noopener" class="font-semibold text-emerald-600 hover:text-emerald-700">GOV.UK — Stamp Duty Land Tax</a></li>
+          <li><a href="https://www.gov.uk/student-loan-repayment" target="_blank" rel="noopener" class="font-semibold text-emerald-600 hover:text-emerald-700">GOV.UK — Student loan repayment</a></li>
+          <li><a href="https://www.gov.uk/national-minimum-wage-rates" target="_blank" rel="noopener" class="font-semibold text-emerald-600 hover:text-emerald-700">GOV.UK — National Minimum Wage rates</a></li>
+          <li><a href="https://www.gov.uk/tax-codes" target="_blank" rel="noopener" class="font-semibold text-emerald-600 hover:text-emerald-700">GOV.UK — Understanding your tax code</a></li>
         </ul>
       </div>
 
@@ -328,7 +365,7 @@ import Layout from '../layouts/Layout.astro';
   <section class="mx-auto max-w-7xl px-4 pb-16 md:pb-24 sm:px-6 lg:px-8">
     <div class="rounded-2xl border-l-4 border-amber-400 bg-amber-50 p-6 shadow-sm sm:p-8">
       <div class="flex items-start gap-3">
-        <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
+        <Fragment set:html={icon(FileText, 'mt-0.5 h-5 w-5 shrink-0 text-amber-500')} />
         <div>
           <h2 class="text-lg font-bold text-amber-900">Financial &amp; Tax Guidance Disclaimer</h2>
           <div class="mt-3 space-y-2 text-sm leading-6 text-amber-800">

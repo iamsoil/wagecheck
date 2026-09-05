@@ -5,6 +5,8 @@
     "astro": "^7.1.6",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
+    "lucide": "^1.41.0",
+    "lucide-static": "^1.41.0",
     "tailwindcss": "^4.3.3"
   },
   "scripts": {
