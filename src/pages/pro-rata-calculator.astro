@@ -632,18 +632,6 @@ const initialShareRows = [
     ],
   })} />
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    "itemReviewed": {
-      "@type": "WebApplication",
-      "name": "Pro-Rata Calculator"
-    },
-    "ratingValue": "4.8",
-    "reviewCount": "2400",
-    "bestRating": "5"
-  })} />
-
   <script>
     import { calculateTakeHomePay } from '../lib/calculations';
     import { renderTakeHomeResults, setNum, money as moneyFmt } from '../lib/takeHomeResults';

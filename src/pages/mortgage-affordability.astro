@@ -302,18 +302,6 @@ const depositPct = maxPropertyPrice > 0 ? (defaultDeposit / maxPropertyPrice) * 
     ],
   })} />
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    "itemReviewed": {
-      "@type": "WebApplication",
-      "name": "Mortgage Affordability Calculator"
-    },
-    "ratingValue": "4.8",
-    "reviewCount": "2400",
-    "bestRating": "5"
-  })} />
-
   <script>
     document.querySelectorAll<HTMLElement>('[data-mortgage-affordability]').forEach((root) => {
       const state = {

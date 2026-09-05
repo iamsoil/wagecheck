@@ -7,7 +7,11 @@ export default defineConfig({
 	site: 'https://www.wagecheck.co.uk',
 	trailingSlash: 'always',
 	output: 'static',
-	integrations: [sitemap()],
+	integrations: [
+		sitemap({
+			filter: (page) => !page.includes('/salary/') && !page.includes('/stamp-duty/'),
+		}),
+	],
 	vite: {
 		plugins: [tailwindcss()],
 	},

@@ -20,6 +20,72 @@ import Accordion from '../components/Accordion.astro';
     <StampDutyCalculator />
   </section>
 
+  <section class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+    <div class="max-w-3xl space-y-10">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">What is Stamp Duty?</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          Stamp Duty Land Tax (SDLT) is a tiered tax you pay when purchasing a property or land in England and Northern Ireland. The amount you owe depends on the purchase price and whether you are a first-time buyer, buying a main residence, or purchasing a second home. Scotland uses a separate system called the Land and Buildings Transaction Tax (LBTT), while Wales uses the Land Transaction Tax (LTT). The rates and thresholds differ across all three systems, so it is essential to use the right calculator for your location. Stamp duty is usually paid on completion and must be filed with HMRC (or Revenue Scotland / Welsh Revenue Authority) within 14 days.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Stamp Duty for First-Time Buyers</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          First-time buyers in England and Northern Ireland benefit from an enhanced nil-rate band of £425,000, meaning you pay no stamp duty on the first £425,000 of a property purchase. Between £425,001 and £625,000 you pay 5%, and above £625,000 the standard rates apply. This relief can save first-time buyers thousands of pounds compared to existing homeowners. In Scotland, first-time buyers get a higher nil-rate band of £175,000 under LBTT. Wales does not currently offer a first-time buyer relief — all buyers pay the same LTT rates. To qualify as a first-time buyer, you (and anyone else you are buying with) must never have owned a residential property anywhere in the world.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Stamp Duty Rates Table</h2>
+        <p class="mt-4 text-sm text-slate-600">England &amp; Northern Ireland (SDLT) — Main residence:</p>
+        <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <th class="px-4 py-3">Property Price</th>
+                <th class="px-4 py-3">Standard Rate</th>
+                <th class="px-4 py-3">First-Time Buyer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">Up to £250,000</td>
+                <td class="px-4 py-3 text-emerald-700 font-semibold">0%</td>
+                <td class="px-4 py-3 text-emerald-700 font-semibold">0%</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">£250,001 – £425,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">5%</td>
+                <td class="px-4 py-3 text-emerald-700 font-semibold">0%</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">£425,001 – £625,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">5%</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">5%</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">£625,001 – £925,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">10%</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">10%</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-medium text-slate-900">£925,001 – £1,500,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">10%</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">10%</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium text-slate-900">Over £1,500,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">12%</td>
+                <td class="px-4 py-3 font-semibold text-slate-900">12%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="max-w-3xl">
       <h2 class="text-2xl font-bold tracking-tight text-slate-900">Frequently asked questions</h2>
@@ -107,15 +173,4 @@ import Accordion from '../components/Accordion.astro';
     ],
   })} />
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    "itemReviewed": {
-      "@type": "WebApplication",
-      "name": "Stamp Duty Calculator"
-    },
-    "ratingValue": "4.8",
-    "reviewCount": "2400",
-    "bestRating": "5"
-  })} />
 </Layout>

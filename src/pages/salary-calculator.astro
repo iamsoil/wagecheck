@@ -38,6 +38,31 @@ const popular = popularSalaries.map((amount) => {
     <SalaryCalculator />
   </section>
 
+  <section class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+    <div class="max-w-3xl space-y-10">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">What is Take-Home Pay?</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          Take-home pay is the amount of money you actually receive in your bank account after all statutory deductions have been taken from your gross salary. In the UK, the main deductions are income tax, National Insurance contributions, pension contributions and student loan repayments. Your gross salary is the figure quoted in your employment contract, but it is not the amount you spend — your take-home pay is. Understanding the difference between gross and net pay helps you budget accurately, compare job offers on a like-for-like basis, and plan for major financial decisions like buying a home or saving for retirement.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">How is UK Income Tax Calculated?</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          UK income tax uses a progressive band system. Everyone gets a Personal Allowance of £12,570 (2026/27) on which no tax is paid. Earnings above this are taxed in bands: the basic rate of 20% applies to income between £12,571 and £50,270; the higher rate of 40% applies between £50,271 and £125,140; and the additional rate of 45% applies above £125,140. Your Personal Allowance reduces by £1 for every £2 you earn above £100,000, so it is fully lost at £125,140. This means that if you earn between £100,000 and £125,140, your effective marginal tax rate is 60% — combining the 40% higher rate with the Personal Allowance taper. Scotland uses different rates (19%, 20%, 21%, 42%, 45% and 48%) but the same Personal Allowance. Our calculator applies these rules automatically based on your selected region.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">What is National Insurance?</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          National Insurance is a separate tax on earned income that funds the State Pension and contributory benefits. For employees in 2026/27, Class 1 NI is charged at 8% on earnings between £12,570 and £50,270, then 2% above £50,270. Unlike income tax, NI is calculated on a weekly or monthly basis rather than annually, which means you can pay slightly different amounts depending on your pay frequency. Self-employed individuals pay Class 2 and Class 4 NICs instead. National Insurance is deducted alongside income tax and appears as a separate line on your payslip.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="rounded-3xl border border-slate-100 bg-gradient-to-br from-emerald-50 via-white to-lime-50 p-6 sm:p-8">
       <h2 class="text-2xl font-bold tracking-tight text-slate-900">Popular salaries</h2>
@@ -228,15 +253,4 @@ const popular = popularSalaries.map((amount) => {
     ],
   })} />
 
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    "itemReviewed": {
-      "@type": "WebApplication",
-      "name": "Salary Calculator"
-    },
-    "ratingValue": "4.8",
-    "reviewCount": "2400",
-    "bestRating": "5"
-  })} />
 </Layout>

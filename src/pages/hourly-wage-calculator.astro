@@ -76,6 +76,31 @@ const initialShareRows = [
     mobileDescription="Convert hourly rate to salary or salary to hourly rate."
   />
 
+  <section class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
+    <div class="max-w-3xl space-y-10">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Why Convert Hourly to Salary?</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          Knowing your annual salary from an hourly rate helps you compare job offers, negotiate pay and understand your true earning power. Many part-time and zero-hours roles quote an hourly figure, but when you are budgeting for rent, a mortgage or long-term savings, you need the annual equivalent. Converting also reveals the true tax position — at higher annual salaries you may cross into the 40% higher-rate tax band, which changes your take-home pay significantly.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">UK Average Hourly Wage 2026</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          According to the latest ONS data, the UK median hourly wage in 2026 is approximately £15.50–£17.00 per hour. This varies by region, sector and experience. London and the South East tend to be higher, while roles in hospitality, retail and care work typically fall closer to the National Living Wage of £12.71/hour. Understanding where your hourly rate sits against the national median gives you a useful benchmark for job negotiations and career planning.
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Part-Time vs Full-Time Hours</h2>
+        <p class="mt-4 text-base leading-7 text-slate-600">
+          The standard full-time working week in the UK is 37.5 hours, but many roles offer 35 or 40 hours. Part-time roles can be anything from 8 to 30 hours per week. The key thing to remember is that your hourly rate stays the same regardless of how many hours you work — only the annual total changes. This calculator defaults to 37.5 hours, but you can adjust it to match your exact contract. If you work irregular hours, multiply your average weekly hours by 52 to get a reliable annual figure.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 shadow-sm sm:p-8">
       <h2 class="text-2xl font-bold tracking-tight text-slate-900">Salary to Hourly Rate Calculator</h2>
@@ -576,18 +601,6 @@ const initialShareRows = [
         },
       },
     ],
-  })} />
-
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    "itemReviewed": {
-      "@type": "WebApplication",
-      "name": "Hourly Wage Calculator"
-    },
-    "ratingValue": "4.8",
-    "reviewCount": "2400",
-    "bestRating": "5"
   })} />
 
   <script>

@@ -65,6 +65,7 @@ const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around
 <Layout
   title={`£${amount.toLocaleString('en-GB')} Salary After Tax 2026/27 | Take-Home Pay | wagecheck`}
   description={`A £${amount.toLocaleString('en-GB')} salary in the UK gives £${annualTakeHome} per year (£${monthlyTakeHome} per month) after tax. See the full breakdown including income tax, National Insurance and pension.`}
+  noindex
 >
   <CalculatorHero
     category="Salary calculator"
@@ -255,18 +256,6 @@ const vsAverage = amount >= avgUkSalary ? `above the UK average salary of around
         acceptedAnswer: { '@type': 'Answer', text: `About ${money(calculation.nationalInsurance)} a year, at 8% between £12,570 and £50,270 and 2% above.` },
       },
     ],
-  })} />
-
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "AggregateRating",
-    "itemReviewed": {
-      "@type": "WebApplication",
-      "name": `£${amount.toLocaleString('en-GB')} Salary After Tax Calculator`
-    },
-    "ratingValue": "4.8",
-    "reviewCount": "2400",
-    "bestRating": "5"
   })} />
 
   <script>
