@@ -7,7 +7,7 @@ import Layout from '../layouts/Layout.astro';
   description="About wagecheck — free, accurate UK salary and tax calculators built for everyday financial clarity."
 >
   <section class="bg-gradient-to-br from-emerald-50 via-white to-lime-50">
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <div class="mx-auto max-w-7xl px-4 py-16 md:py-24 sm:px-6 lg:px-8">
       <div class="max-w-3xl">
         <p class="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">About</p>
         <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
@@ -20,28 +20,43 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-    <div class="grid gap-6 md:grid-cols-3">
+  <section class="mx-auto max-w-7xl px-4 py-16 md:py-24 sm:px-6 lg:px-8">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
       <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
           <svg class="h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg>
         </div>
         <h2 class="mt-4 text-lg font-bold text-slate-900">Our Mission</h2>
-        <p class="mt-3 text-sm leading-6 text-slate-600">To demystify UK take-home pay, tax, and property costs with fast, transparent, and free calculators.</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          We built Wagecheck because understanding your take-home pay should not require a degree in accounting. Too many UK workers accept job offers, plan mortgages and budget around rough guesses because accurate take-home pay tools are either paywalled or buried behind sign-ups. We wanted a single place where anyone can enter their salary and instantly see the real number — after income tax, National Insurance, pension and student loan. Every calculator is free, always. We update every April when HMRC publishes new rates, so you never work with outdated figures. Our goal is financial clarity for everyone, regardless of income.
+        </p>
       </div>
       <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
           <svg class="h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg>
         </div>
         <h2 class="mt-4 text-lg font-bold text-slate-900">Our Approach</h2>
-        <p class="mt-3 text-sm leading-6 text-slate-600">All calculations run instantly in your browser. No sign-ups, no data storage, no hidden agendas.</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          All calculations run instantly in your browser — your salary data never leaves your device. We do not collect, store or transmit any personal information. There are no sign-ups, no accounts and no hidden data harvesting. Every rate and threshold comes directly from HMRC, GOV.UK and the relevant devolved authorities. When rates change in April, we update our calculators within the first week of the new tax year. We also listen to community feedback: feature requests, corrections and suggestions directly shape what we build next. The result is a calculator suite that stays accurate, fast and genuinely useful.
+        </p>
       </div>
       <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
           <svg class="h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
         </div>
         <h2 class="mt-4 text-lg font-bold text-slate-900">Who It's For</h2>
-        <p class="mt-3 text-sm leading-6 text-slate-600">Employees, freelancers, employers, landlords, and anyone navigating UK tax and payroll.</p>
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          Employees checking whether their payslip is correct. Job seekers comparing two offers side by side to see which leaves more in their pocket. Freelancers and self-employed workers working out their tax bill before self-assessment deadline. Employers doing quick headcount calculations for payroll planning. Students and graduates entering the workforce for the first time and trying to understand what their starter salary actually means month-to-month. Landlords assessing rental yield. Anyone in the UK who earns money and wants to know exactly where it goes.
+        </p>
+      </div>
+      <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 shadow-sm">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+          <svg class="h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg>
+        </div>
+        <h2 class="mt-4 text-lg font-bold text-slate-900">Why Trust Wagecheck?</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-600">
+          Every calculation is aligned to HMRC-published rates and verified against GOV.UK guidance. We review and update all calculators every April when the new tax year begins, and correct any errors as soon as they are identified. Each page includes a change log so you can see exactly when rates were last updated. Wagecheck is used by thousands of people every month for salary planning, job comparisons and self-assessment preparation. The tool is 100% free with no paywalls, no premium tier and no hidden costs — we keep it that way through non-intrusive advertising.
+        </p>
       </div>
     </div>
   </section>
@@ -201,7 +216,7 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+  <section class="mx-auto max-w-7xl px-4 pb-16 md:pb-24 sm:px-6 lg:px-8">
     <div class="rounded-2xl border-l-4 border-amber-400 bg-amber-50 p-6 shadow-sm sm:p-8">
       <div class="flex items-start gap-3">
         <svg class="mt-0.5 h-5 w-5 shrink-0 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
