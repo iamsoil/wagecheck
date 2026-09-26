@@ -332,47 +332,17 @@ const d = calc(defaultProfit, defaultExpenses);
 
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">
-      <h2 class="text-2xl font-bold tracking-tight text-slate-900">How We Calculate This</h2>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-4">How we calculate self-employed tax</h2>
       <div class="mt-4 space-y-4 text-sm leading-7 text-slate-600">
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p class="font-semibold text-slate-900">Tax year</p>
-            <p>2026/27 (6 April 2026 – 5 April 2027)</p>
-          </div>
-          <div>
-            <p class="font-semibold text-slate-900">Last reviewed</p>
-            <p>30 August 2026</p>
-          </div>
-          <div>
-            <p class="font-semibold text-slate-900">Income tax</p>
-            <p>20% on first £37,700 of taxable profit, 40% up to £125,140, 45% above</p>
-          </div>
-          <div>
-            <p class="font-semibold text-slate-900">Class 2 NICs</p>
-            <p>£3.70/week × 52 = £192.40 flat rate</p>
-          </div>
-          <div>
-            <p class="font-semibold text-slate-900">Class 4 NICs</p>
-            <p>6% on profits £12,570–£50,270, 2% above £50,270</p>
-          </div>
-          <div>
-            <p class="font-semibold text-slate-900">Sources</p>
-            <p><a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — Income Tax rates</a> · <a href="https://www.gov.uk/national-insurance-rates-letters" target="_blank" rel="noopener" class="text-emerald-600 hover:text-emerald-700 font-semibold">GOV.UK — National Insurance rates</a></p>
-          </div>
-        </div>
-        <div class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-amber-800">
-          <p>Results are estimates. Your actual tax may differ based on Scottish residency, marriage allowance, pension contributions, student loan repayments, and other reliefs. Always consult HMRC or a certified accountant for your specific tax affairs.</p>
-        </div>
+        <p>
+          If your profits are above the <strong>£1,000 trading allowance</strong>, you pay Income Tax on profits after expenses, plus Class 2 and Class 4 National Insurance. The calculator applies the 2026/27 tax bands: 20% on the first £37,700 of taxable profit, 40% up to £125,140, and 45% above that. Class 4 NICs are 6% on profits between £12,570 and £50,270, then 2% above.
+        </p>
+        <p>
+          Use the calculator above to see your exact breakdown. Results are estimates — your actual tax may differ based on Scottish residency, marriage allowance, pension contributions, and other reliefs. Always check with HMRC or a qualified accountant for your specific situation.
+        </p>
       </div>
     </div>
   </section>
-
-  <details class="mx-auto max-w-7xl px-4 pb-16 md:pb-24 sm:px-6 lg:px-8">
-    <summary class="cursor-pointer rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-lg font-bold tracking-tight text-slate-900 transition hover:bg-slate-50">Change Log</summary>
-    <div class="mt-4 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8 text-sm text-slate-600 space-y-2">
-      <p><span class="font-semibold text-slate-900">30 August 2026:</span> Calculator created for 2026/27 tax year with income tax, Class 2 and Class 4 NICs.</p>
-    </div>
-  </details>
 
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
