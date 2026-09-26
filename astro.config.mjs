@@ -8,9 +8,7 @@ export default defineConfig({
 	trailingSlash: 'always',
 	output: 'static',
 	integrations: [
-		sitemap({
-			filter: (page) => !page.includes('/salary/') && !page.includes('/stamp-duty/'),
-		}),
+		sitemap(),
 	],
 	vite: {
 		plugins: [tailwindcss()],

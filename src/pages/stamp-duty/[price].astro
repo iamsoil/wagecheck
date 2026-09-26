@@ -33,7 +33,6 @@ const percent = (n: number) => `${gb(n)}%`;
 <Layout
   title={`£${price.toLocaleString('en-GB')} Property Stamp Duty 2026/27 | wagecheck`}
   description={`Estimate stamp duty on a £${price.toLocaleString('en-GB')} property in 2026/27. See band-by-band breakdown for England, Scotland and Wales.`}
-  noindex
 >
   <CalculatorHero
     category="Stamp duty calculator"
@@ -119,6 +118,6 @@ const percent = (n: number) => `${gb(n)}%`;
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'Web',
     description: `Estimate stamp duty on a £${price.toLocaleString('en-GB')} property for 2026/27 with band-by-band results.`,
-    url: `https://wagecheck.co.uk/stamp-duty/${price}`,
+    url: `https://www.wagecheck.co.uk/stamp-duty/${price}/`,
   })} />
 </Layout>
