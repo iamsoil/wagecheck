@@ -1,7 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/ads.txt", "destination": "/ads.txt" }
-  ],
   "headers": [
     {
       "source": "/favicon.ico",
