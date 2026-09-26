@@ -17,5 +17,6 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview"
-  }
+  },
+  "packageManager": "pnpm@10.12.0"
 }
