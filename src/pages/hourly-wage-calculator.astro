@@ -5,6 +5,7 @@ import AnimatedNumber from '../components/AnimatedNumber.astro';
 import CalculatorInput from '../components/CalculatorInput.astro';
 import ShareResults from '../components/ShareResults.astro';
 import Accordion from '../components/Accordion.astro';
+import AffiliateSection from '../components/AffiliateSection.astro';
 import { calculateTakeHomePay } from '../lib/calculations';
 
 const defaultRate = 15;
@@ -430,6 +431,40 @@ const initialShareRows = [
       </div>
     </div>
   </section>
+
+  <AffiliateSection
+    title="Put your hourly rate to work"
+    description="Whether you're paid by the hour or thinking about your annual equivalent, these are common next steps people take after seeing their take-home figure."
+    cards={[
+      {
+        icon: "🏦",
+        heading: "High-interest savings accounts",
+        description: "Even a modest hourly rate can build savings. Instant-access and fixed-term accounts pay well above the high street — compare rates and minimum deposits in one place.",
+        ctaText: "Compare savings accounts",
+        href: "#affiliate-savings",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "💳",
+        heading: "Credit card eligibility check",
+        description: "See which credit cards you're likely to be accepted for without affecting your credit score. Soft search only — no impact on your credit file.",
+        ctaText: "Check eligibility",
+        href: "#affiliate-creditcards",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "🏠",
+        heading: "Work out what you can afford",
+        description: "Once you know your take-home pay, use our mortgage affordability calculator to see how much you could borrow for a property.",
+        ctaText: "Try mortgage affordability",
+        href: "/mortgage-affordability/",
+        rel: "noopener",
+        sponsored: false,
+      },
+    ]}
+  />
 
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="max-w-3xl">

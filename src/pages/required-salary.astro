@@ -5,6 +5,7 @@ import AnimatedNumber from '../components/AnimatedNumber.astro';
 import CalculatorInput from '../components/CalculatorInput.astro';
 import ShareResults from '../components/ShareResults.astro';
 import Accordion from '../components/Accordion.astro';
+import AffiliateSection from '../components/AffiliateSection.astro';
 import { calculateTakeHomePay, findRequiredGross } from '../utils/tax';
 
 const defaultDesiredAnnual = 30000;
@@ -307,7 +308,7 @@ const initialShareRows = [
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <a href="/salary-calculator/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <p class="text-base font-semibold text-slate-900">Salary Calculator</p>
-        <p class="mt-2 text-sm leading-6 text-slate-600">Enter a gross salary and see your take-home breakdown.</p>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Enter a gross salary and see your full take-home breakdown.</p>
         <span class="mt-3 inline-block text-sm font-semibold text-emerald-600">View &rarr;</span>
       </a>
       <a href="/compare-salaries/" class="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
@@ -327,6 +328,40 @@ const initialShareRows = [
       </a>
     </div>
   </section>
+
+  <AffiliateSection
+    title="Plan around your required salary"
+    description="Once you know the gross salary you need, these are the next things people usually look at — from saving for a deposit to checking what credit products they qualify for."
+    cards={[
+      {
+        icon: "🏠",
+        heading: "Speak to a mortgage broker",
+        description: "If you know the salary you need, the next question is often what you can borrow. Whole-of-market brokers compare deals from dozens of lenders in one go.",
+        ctaText: "Compare brokers",
+        href: "#affiliate-broker",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "🏦",
+        heading: "Save for a deposit",
+        description: "A larger deposit unlocks better mortgage rates. High-interest savings accounts and Lifetime ISAs are popular ways to grow a deposit faster.",
+        ctaText: "Compare savings for a deposit",
+        href: "#affiliate-savings-deposit",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "💳",
+        heading: "Credit card eligibility check",
+        description: "At your target salary, see which credit cards you'd be eligible for. Soft search only — no impact on your credit file.",
+        ctaText: "Check eligibility",
+        href: "#affiliate-creditcards",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+    ]}
+  />
 
   <script>
     import { calculateTakeHomePay, findRequiredGross } from '../utils/tax';

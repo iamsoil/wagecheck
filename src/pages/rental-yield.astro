@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import CalculatorHero from '../components/CalculatorHero.astro';
 import CalculatorInput from '../components/CalculatorInput.astro';
 import Accordion from '../components/Accordion.astro';
+import AffiliateSection from '../components/AffiliateSection.astro';
 
 const inputClasses = 'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100';
 
@@ -167,6 +168,40 @@ const money = (n: number) => `£${Math.round(n).toLocaleString('en-GB')}`;
       </a>
     </div>
   </section>
+
+  <AffiliateSection
+    title="Take your rental yield further"
+    description="If you're looking at buy-to-let properties, these are the other things landlords usually compare alongside rental yield."
+    cards={[
+      {
+        icon: "🏠",
+        heading: "Speak to a buy-to-let mortgage broker",
+        description: "Buy-to-let mortgages work differently from residential ones. Whole-of-market brokers can compare deals across multiple lenders and explain the deposit and rate options.",
+        ctaText: "Compare buy-to-let brokers",
+        href: "#affiliate-btlmortgage",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "📋",
+        heading: "Compare conveyancing quotes",
+        description: "Once you've found a property, a conveyancer handles the legal work. Comparing quotes upfront can save hundreds on a purchase.",
+        ctaText: "Compare conveyancers",
+        href: "#affiliate-conveyancer",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "🛡️",
+        heading: "Landlord insurance",
+        description: "Landlord insurance covers property, rent arrears and liability. Compare policies to find one that matches the type of property you're buying.",
+        ctaText: "Compare landlord insurance",
+        href: "#affiliate-landlord-insurance",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+    ]}
+  />
 
   <script>
     document.querySelectorAll<HTMLElement>('[data-rental-yield]').forEach((root) => {

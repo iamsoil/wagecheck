@@ -5,6 +5,7 @@ import AnimatedNumber from '../components/AnimatedNumber.astro';
 import CalculatorInput from '../components/CalculatorInput.astro';
 import ShareResults from '../components/ShareResults.astro';
 import Accordion from '../components/Accordion.astro';
+import AffiliateSection from '../components/AffiliateSection.astro';
 import { calculateTakeHomePay } from '../lib/calculations';
 
 const defaultFtSalary = 30000;
@@ -323,6 +324,40 @@ const initialShareRows = [
       </div>
     </div>
   </section>
+
+  <AffiliateSection
+    title="Planning your part-time income"
+    description="Working part-time changes your budget and your plans. These are things people often look at when they know their pro-rata take-home figure."
+    cards={[
+      {
+        icon: "🏦",
+        heading: "High-interest savings accounts",
+        description: "A lower income makes every pound count. Compare instant-access and fixed-term savings accounts to get the best rate on what you can put aside.",
+        ctaText: "Compare savings accounts",
+        href: "#affiliate-savings",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "💳",
+        heading: "Credit card eligibility check",
+        description: "Part-time income still counts. See which credit cards you're likely to be accepted for without affecting your credit score.",
+        ctaText: "Check eligibility",
+        href: "#affiliate-creditcards",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+      {
+        icon: "📈",
+        heading: "Stocks & shares ISA",
+        description: "Tax-efficient investing is available no matter your income level. Compare ISAs from a range of platforms.",
+        ctaText: "Compare ISAs",
+        href: "#affiliate-isas",
+        rel: "noopener sponsored",
+        sponsored: true,
+      },
+    ]}
+  />
 
   <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
     <div class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm sm:p-8">

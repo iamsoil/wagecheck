@@ -56,7 +56,7 @@ const pageURL = `https://www.wagecheck.co.uk${Astro.url.pathname}`;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="https://www.wagecheck.co.uk/og-image.png" />
+    <meta property="twitter:image" content="https://www.wagecheck.co.uk/og-image.png" />
 
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -74,10 +74,6 @@ const pageURL = `https://www.wagecheck.co.uk${Astro.url.pathname}`;
       rel="stylesheet"
     />
     <title>{title}</title>
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8159295959866589"
-       crossorigin="anonymous"></script>
   </head>
   <body class="min-h-screen bg-white text-slate-900 antialiased" style="font-family: 'Inter', sans-serif;">
     <div class="flex min-h-screen flex-col bg-white">
@@ -138,7 +134,7 @@ const pageURL = `https://www.wagecheck.co.uk${Astro.url.pathname}`;
           <label class="flex items-center justify-between gap-4">
             <div>
               <p class="text-sm font-semibold text-slate-900">Advertising</p>
-              <p class="text-xs text-slate-500">Google AdSense — personalised ads</p>
+              <p class="text-xs text-slate-500">Advertising cookies — personalised ads</p>
             </div>
             <input
               id="cookie-advertising-toggle"

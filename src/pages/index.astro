@@ -116,7 +116,7 @@ const faqItems = [
             </h1>
           </div>
           <p class="mx-auto mt-1 max-w-xl text-sm text-slate-500 sm:text-base lg:mx-0" data-hero-subtitle>
-            17 accurate calculators for 2026/27. Clean, fast, and mobile-friendly.
+            Find your take-home pay after tax, NI and pension. All calculators use 2026/27 HMRC rates.
           </p>
           <div class="mt-4 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
             <a
@@ -215,10 +215,10 @@ const faqItems = [
   <!-- ═══════ MOST SEARCHED UK ANSWERS ═══════ -->
   <section id="most-searched" class="bg-white py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 class="text-2xl font-bold text-slate-900 mb-2">Most Searched UK Answers</h2>
+      <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-2">Most Searched UK Answers</h2>
       <p class="text-slate-500 mb-8">Quick answers to the UK's most common salary and tax questions</p>
-      <div class="animate-on-scroll grid gap-4 md:grid-cols-2">
-        {qaCards.map((card) => (
+      <div class="animate-on-scroll grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {qaCards.slice(0, 6).map((card) => (
           <div class="qa-card rounded-xl border border-slate-100 bg-slate-50 p-5">
             <h3 class="text-lg font-semibold text-slate-900">{card.q}</h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-600">{card.a}</p>
