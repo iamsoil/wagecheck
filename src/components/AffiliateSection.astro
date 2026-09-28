@@ -13,25 +13,44 @@ type Props = {
   }[];
 };
 
+function deriveCategory(href: string): string {
+  try {
+    const url = new URL(href);
+    const path = url.pathname;
+    if (path.includes('/savings/')) return 'savings';
+    if (path.includes('/credit-cards/')) return 'credit-cards';
+    if (path.includes('/isas/') || path.includes('/isa/')) return 'isas';
+    if (path.includes('/mortgages/')) return 'mortgages';
+    if (path.includes('/accounting/')) return 'accounting';
+    if (path.includes('/business-bank-accounts/')) return 'business-banking';
+    if (path.includes('/pensions/')) return 'pensions';
+    if (path.includes('/conveyancing/')) return 'conveyancing';
+    if (path.includes('/landlord-insurance/')) return 'landlord-insurance';
+    if (path.includes('/buy-to-let/')) return 'buy-to-let-mortgages';
+    return 'affiliate';
+  } catch {
+    return 'affiliate';
+  }
+}
+
 const { title = 'Next steps', description = '', cards } = Astro.props;
 ---
 
 <section class="mx-auto max-w-7xl px-4 py-12 md:py-16 sm:px-6 lg:px-8">
-  <div class="rounded-3xl border border-emerald-200 bg-emerald-50/40 p-6 sm:p-8">
-    <div class="flex items-center gap-3">
-      <svg class="h-5 w-5 shrink-0 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.369 0-3.248a3.5 3.5 0 00-4.242-4.242 3.5 3.5 0 00-1.061 1.06l.879.659m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.369 0-3.248a3.5 3.5 0 00-4.242-4.242 3.5 3.5 0 00-1.061 1.06l.879.659" />
-      </svg>
-      <h2 class="text-xl font-bold tracking-tight text-slate-900">{title}</h2>
-    </div>
-    {description && <p class="mt-2 text-sm text-slate-600">{description}</p>}
+<div class="rounded-3xl border border-emerald-200 bg-emerald-50/40 p-6 sm:p-8">
+  <h2 class="text-xl font-bold tracking-tight text-slate-900">{title}</h2>
+  {description && <p class="mt-2 text-sm text-slate-600">{description}</p>}
 
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {cards.map((card) => (
+      {cards.map((card) => {
+        const category = deriveCategory(card.href);
+        return (
         <a
           href={card.href}
           target="_blank"
           rel={card.rel ?? 'noopener'}
+          data-affiliate-category={category}
+          data-affiliate-heading={card.heading}
           class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md"
         >
           <div class="flex items-center gap-2.5 text-emerald-600">
@@ -47,7 +66,8 @@ const { title = 'Next steps', description = '', cards } = Astro.props;
             </svg>
           </p>
         </a>
-      ))}
+        );
+      })}
     </div>
 
     {cards.some(card => card.sponsored) && (
@@ -57,3 +77,22 @@ const { title = 'Next steps', description = '', cards } = Astro.props;
     )}
   </div>
 </section>
+
+<script is:inline>
+  (function() {
+    document.addEventListener('click', function(e) {
+      var el = e.target.closest('a[data-affiliate-category]');
+      if (!el || el.target !== '_blank') return;
+      var cat = el.getAttribute('data-affiliate-category') || 'affiliate';
+      var heading = el.getAttribute('data-affiliate-heading') || '';
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'affiliate_click',
+          affiliate_category: cat,
+          affiliate_heading: heading,
+          affiliate_outbound: true,
+        });
+      }
+    });
+  })();
+</script>
